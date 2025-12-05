@@ -8,11 +8,12 @@ import { z } from "zod";
 import { getMember } from "@/features/members/utils";
 import { TaskStatus } from "@/features/tasks/types";
 
-import { DATABASE_ID, IMAGES_BUCKET_ID, PROJECTS_ID, TASKS_ID } from "@/config";
+import { DATABASE_ID, B2_BUCKET_NAME, PROJECTS_ID, TASKS_ID } from "@/config";
 import { sessionMiddleware } from "@/lib/session-middleware";
 
 import { createProjectSchema, updateProjectSchema } from "../schemas";
 import { Project } from "../types";
+import { uploadFile, getSignedUrl } from "@/lib/storage";
 
 const app = new Hono();
 
@@ -21,40 +22,7 @@ const app = new Hono();
  * Tries storage.getFileView(...) first. If that fails and we have APPWRITE_ENDPOINT+PROJECT,
  * constructs a reasonable fallback view URL.
  */
-async function getFileViewUrl(storage: any, bucketId: string, fileId: string) {
-  try {
-    // Preferred: SDK helper that returns a no-transform view URL.
-    const viewUrl = await storage.getFileView(bucketId, fileId);
-    if (viewUrl) return String(viewUrl);
-  } catch (err) {
-    // ignore and attempt fallback below
-    console.warn(
-      "[getFileViewUrl] getFileView failed:",
-      (err as Error).message
-    );
-  }
-
-  // Fallback: if environment has Appwrite endpoint + project, construct a public view URL.
-  // This URL pattern is suitable for many Appwrite installs; if your deployment uses a custom gateway or auth,
-  // adjust this accordingly.
-  const endpoint =
-    process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || process.env.APPWRITE_ENDPOINT;
-  const project =
-    process.env.NEXT_PUBLIC_APPWRITE_PROJECT || process.env.APPWRITE_PROJECT;
-
-  if (endpoint && project) {
-    // ensure no trailing slash
-    const base = String(endpoint).replace(/\/$/, "");
-    return `${base}/v1/storage/buckets/${encodeURIComponent(
-      bucketId
-    )}/files/${encodeURIComponent(fileId)}/view?project=${encodeURIComponent(
-      project
-    )}`;
-  }
-
-  // If nothing else available, return fileId as fallback (client-side can handle file ids if needed)
-  return String(fileId);
-}
+// Helper removed (using getSignedUrl from lib/storage)
 
 /* ----------------------
    POST / - create project
@@ -85,24 +53,9 @@ app.post(
     try {
       // If the client sent a File object, upload to Appwrite and get a plain view URL (no preview/transforms).
       if (image instanceof File) {
-        // create file in Appwrite storage
-        const file = await storage.createFile(
-          IMAGES_BUCKET_ID,
-          ID.unique(),
-          image
-        );
-
-        // Try to get a no-transform view URL; fallback to constructed URL or fileId
-        uploadedImageUrl = await getFileViewUrl(
-          storage,
-          IMAGES_BUCKET_ID,
-          file.$id
-        );
+        const fileId = ID.unique();
+        uploadedImageUrl = await uploadFile(B2_BUCKET_NAME, fileId, image);
       } else if (typeof image === "string" && image) {
-        // If the client passed a string:
-        // - If it's a data: URL (base64), we store it as-is (avoids server-side transforms / upload).
-        // - If it's a remote URL (e.g. imagekit), store that URL directly.
-        // This preserves the behavior you used successfully in the edit flow.
         uploadedImageUrl = image;
       }
 
@@ -116,6 +69,17 @@ app.post(
           workspaceId,
         }
       );
+
+      if (
+        project.imageUrl &&
+        !project.imageUrl.startsWith("data:image") &&
+        !project.imageUrl.startsWith("http")
+      ) {
+        project.imageUrl = await getSignedUrl(
+          B2_BUCKET_NAME,
+          project.imageUrl
+        );
+      }
 
       return c.json({ data: project });
     } catch (err: unknown) {
@@ -162,7 +126,23 @@ app.get(
       [Query.equal("workspaceId", workspaceId), Query.orderDesc("$createdAt")]
     );
 
-    return c.json({ data: projects });
+    const populatedProjects = await Promise.all(
+      projects.documents.map(async (project) => {
+        if (
+          project.imageUrl &&
+          !project.imageUrl.startsWith("data:image") &&
+          !project.imageUrl.startsWith("http")
+        ) {
+          project.imageUrl = await getSignedUrl(
+            B2_BUCKET_NAME,
+            project.imageUrl
+          );
+        }
+        return project;
+      })
+    );
+
+    return c.json({ data: { ...projects, documents: populatedProjects } });
   }
 );
 
@@ -188,6 +168,14 @@ app.get("/:projectId", sessionMiddleware, async (c) => {
 
   if (!member) {
     return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  if (
+    project.imageUrl &&
+    !project.imageUrl.startsWith("data:image") &&
+    !project.imageUrl.startsWith("http")
+  ) {
+    project.imageUrl = await getSignedUrl(B2_BUCKET_NAME, project.imageUrl);
   }
 
   return c.json({ data: project });
@@ -228,19 +216,9 @@ app.patch(
 
     try {
       if (image instanceof File) {
-        // upload new file to Appwrite (same flow as create)
-        const file = await storage.createFile(
-          IMAGES_BUCKET_ID,
-          ID.unique(),
-          image
-        );
-        uploadedImageUrl = await getFileViewUrl(
-          storage,
-          IMAGES_BUCKET_ID,
-          file.$id
-        );
+        const fileId = ID.unique();
+        uploadedImageUrl = await uploadFile(B2_BUCKET_NAME, fileId, image);
       } else {
-        // accept string as-is (ImageKit URL, data URL, or already-stored URL)
         uploadedImageUrl = image;
       }
 
@@ -253,6 +231,17 @@ app.patch(
           imageUrl: uploadedImageUrl,
         }
       );
+
+      if (
+        project.imageUrl &&
+        !project.imageUrl.startsWith("data:image") &&
+        !project.imageUrl.startsWith("http")
+      ) {
+        project.imageUrl = await getSignedUrl(
+          B2_BUCKET_NAME,
+          project.imageUrl
+        );
+      }
 
       return c.json({ data: project });
     } catch (err: unknown) {

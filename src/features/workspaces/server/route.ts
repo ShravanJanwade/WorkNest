@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import {
   DATABASE_ID,
-  IMAGES_BUCKET_ID,
+  B2_BUCKET_NAME,
   MEMBERS_ID,
   TASKS_ID,
   WORKSPACES_ID,
@@ -20,6 +20,7 @@ import { TaskStatus } from "@/features/tasks/types";
 
 import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 import { Workspace } from "../types";
+import { uploadFile, getSignedUrl } from "@/lib/storage";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -42,7 +43,25 @@ const app = new Hono()
       [Query.orderDesc("$createdAt"), Query.contains("$id", workspaceIds)]
     );
 
-    return c.json({ data: workspaces });
+    const populatedWorkspaces = await Promise.all(
+      workspaces.documents.map(async (workspace) => {
+        if (workspace.imageUrl) {
+          // If it's a data URL or external URL, leave it. Otherwise, assume it's a B2 key.
+          if (
+            !workspace.imageUrl.startsWith("data:image") &&
+            !workspace.imageUrl.startsWith("http")
+          ) {
+            workspace.imageUrl = await getSignedUrl(
+              B2_BUCKET_NAME,
+              workspace.imageUrl
+            );
+          }
+        }
+        return workspace;
+      })
+    );
+
+    return c.json({ data: { ...workspaces, documents: populatedWorkspaces } });
   })
   .get("/:workspaceId", sessionMiddleware, async (c) => {
     const user = c.get("user");
@@ -65,6 +84,17 @@ const app = new Hono()
       workspaceId
     );
 
+      if (
+        workspace.imageUrl &&
+        !workspace.imageUrl.startsWith("data:image") &&
+        !workspace.imageUrl.startsWith("http")
+      ) {
+        workspace.imageUrl = await getSignedUrl(
+          B2_BUCKET_NAME,
+          workspace.imageUrl
+        );
+      }
+
     return c.json({ data: workspace });
   })
   .get("/:workspaceId/info", sessionMiddleware, async (c) => {
@@ -77,11 +107,18 @@ const app = new Hono()
       workspaceId
     );
 
+    let imageUrl = workspace.imageUrl;
+    if (imageUrl) {
+      if (!imageUrl.startsWith("data:image") && !imageUrl.startsWith("http")) {
+        imageUrl = await getSignedUrl(B2_BUCKET_NAME, imageUrl);
+      }
+    }
+
     return c.json({
       data: {
         $id: workspace.$id,
         name: workspace.name,
-        imageUrl: workspace.imageUrl,
+        imageUrl: imageUrl,
       },
     });
   })
@@ -99,20 +136,8 @@ const app = new Hono()
       let uploadedImageUrl: string | undefined;
 
       if (image instanceof File) {
-        const file = await storage.createFile(
-          IMAGES_BUCKET_ID,
-          ID.unique(),
-          image
-        );
-
-        const arrayBuffer = await storage.getFilePreview(
-          IMAGES_BUCKET_ID,
-          file.$id
-        );
-
-        uploadedImageUrl = `data:image/png;base64,${Buffer.from(
-          arrayBuffer
-        ).toString("base64")}`;
+        const fileId = ID.unique();
+        uploadedImageUrl = await uploadFile(B2_BUCKET_NAME, fileId, image);
       }
 
       const workspace = await databases.createDocument(
@@ -132,6 +157,17 @@ const app = new Hono()
         workspaceId: workspace.$id,
         role: MemberRole.ADMIN,
       });
+
+      if (
+        workspace.imageUrl &&
+        !workspace.imageUrl.startsWith("data:image") &&
+        !workspace.imageUrl.startsWith("http")
+      ) {
+        workspace.imageUrl = await getSignedUrl(
+          B2_BUCKET_NAME,
+          workspace.imageUrl
+        );
+      }
 
       return c.json({ data: workspace });
     }
@@ -161,20 +197,8 @@ const app = new Hono()
       let uploadedImageUrl: string | undefined;
 
       if (image instanceof File) {
-        const file = await storage.createFile(
-          IMAGES_BUCKET_ID,
-          ID.unique(),
-          image
-        );
-
-        const arrayBuffer = await storage.getFilePreview(
-          IMAGES_BUCKET_ID,
-          file.$id
-        );
-
-        uploadedImageUrl = `data:image/png;base64,${Buffer.from(
-          arrayBuffer
-        ).toString("base64")}`;
+        const fileId = ID.unique();
+        uploadedImageUrl = await uploadFile(B2_BUCKET_NAME, fileId, image);
       } else {
         uploadedImageUrl = image;
       }
@@ -185,6 +209,17 @@ const app = new Hono()
         workspaceId,
         { name, imageUrl: uploadedImageUrl }
       );
+
+      if (
+        workspace.imageUrl &&
+        !workspace.imageUrl.startsWith("data:image") &&
+        !workspace.imageUrl.startsWith("http")
+      ) {
+        workspace.imageUrl = await getSignedUrl(
+          B2_BUCKET_NAME,
+          workspace.imageUrl
+        );
+      }
 
       return c.json({ data: workspace });
     }

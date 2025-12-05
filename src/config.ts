@@ -5,3 +5,4 @@ export const PROJECTS_ID = process.env.NEXT_PUBLIC_APPWRITE_PROJECTS_ID!;
 export const TASKS_ID = process.env.NEXT_PUBLIC_APPWRITE_TASKS_ID!;
 export const IMAGES_BUCKET_ID =
   process.env.NEXT_PUBLIC_APPWRITE_IMAGES_BUCKET_ID!;
+export const B2_BUCKET_NAME = process.env.B2_BUCKET_NAME!;
