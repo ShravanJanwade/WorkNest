@@ -51,6 +51,16 @@ export const Navigation = () => {
   const workspaceId = useWorkspaceId();
   const pathname = usePathname();
 
+  // Don't render navigation if no workspace is selected
+  // This prevents broken /workspaces/undefined/... URLs
+  if (!workspaceId) {
+    return (
+      <div className="flex items-center justify-center py-4 text-sm text-muted-foreground">
+        Select a workspace to continue
+      </div>
+    );
+  }
+
   return (
     <ul className="flex flex-col">
       {routes.map((item) => {
