@@ -10,6 +10,7 @@ import {
   MEMBERS_ID,
   TASKS_ID,
   WORKSPACES_ID,
+  PROJECTS_ID
 } from "@/config";
 import { sessionMiddleware } from "@/lib/session-middleware";
 import { generateInviteCode } from "@/lib/utils";
@@ -20,12 +21,14 @@ import { TaskStatus } from "@/features/tasks/types";
 
 import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 import { Workspace } from "../types";
+import { Project } from "@/features/projects/types";
+import { Task } from "@/features/tasks/types";
 import { uploadFile, getSignedUrl } from "@/lib/storage";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
-    const user = c.get("user");
     const databases = c.get("databases");
+    const user = c.get("user");
 
     const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
       Query.equal("userId", user.$id),
@@ -463,6 +466,100 @@ const app = new Hono()
     const overdueTaskDifference =
       overdueTaskCount - lastMonthOverdueTasks.total;
 
+    const tasks = await databases.listDocuments<Task>(
+      DATABASE_ID,
+      TASKS_ID,
+      [
+        Query.equal("workspaceId", workspaceId),
+      ]
+    );
+
+    // 1. Tasks by Status (Bar Chart)
+    const taskStatusCounts: Record<string, number> = {};
+    Object.values(TaskStatus).forEach((status) => {
+      taskStatusCounts[status] = 0;
+    });
+    tasks.documents.forEach((task) => {
+      const status = task.status;
+      if (taskStatusCounts[status] !== undefined) {
+        taskStatusCounts[status]++;
+      }
+    });
+    const tasksByStatus = Object.keys(taskStatusCounts).map((status) => ({
+      name: status,
+      value: taskStatusCounts[status],
+    }));
+
+    // 2. Tasks by Priority (Pie Chart)
+    const taskPriorityCounts: Record<string, number> = {};
+    tasks.documents.forEach((task) => {
+      const priority = task.priority || "MEDIUM";
+      if (!taskPriorityCounts[priority]) {
+        taskPriorityCounts[priority] = 0;
+      }
+      taskPriorityCounts[priority]++;
+    });
+    const tasksByPriority = Object.keys(taskPriorityCounts).map((priority) => ({
+      name: priority,
+      value: taskPriorityCounts[priority],
+    }));
+
+    // 3. Tasks by Project (Bar Chart)
+    const projectCounts: Record<string, number> = {};
+    // We need project names. Let's fetch projects for this workspace.
+    const projects = await databases.listDocuments<Workspace>( // Actually Project type, but reusing generic
+        DATABASE_ID,
+        PROJECTS_ID,
+        [Query.equal("workspaceId", workspaceId)]
+    );
+     // Initialize all projects to 0
+    projects.documents.forEach(project => {
+        projectCounts[project.name] = 0;
+    });
+
+    // Count tasks
+    tasks.documents.forEach((task) => {
+       const project = projects.documents.find(p => p.$id === task.projectId);
+       if (project) {
+           projectCounts[project.name]++;
+       }
+    });
+
+    const tasksByProject = Object.keys(projectCounts).map((name) => ({
+        name: name,
+        value: projectCounts[name]
+    }));
+
+
+    // 4. Top Assignees
+    const assigneeCounts: Record<string, number> = {};
+    tasks.documents.forEach((task) => {
+      const assigneeId = task.assigneeId;
+      if (!assigneeCounts[assigneeId]) {
+        assigneeCounts[assigneeId] = 0;
+      }
+      assigneeCounts[assigneeId]++;
+    });
+
+    let workspaceMembers = { documents: [], total: 0 };
+    try {
+        workspaceMembers = await databases.listDocuments(
+            DATABASE_ID,
+            MEMBERS_ID,
+            [Query.equal("workspaceId", workspaceId)]
+        );
+    } catch (error) {
+        console.warn("Failed to fetch workspace members for analytics:", error);
+    }
+
+    const tasksByAssignee = Object.keys(assigneeCounts).map((assigneeId) => {
+        const member = workspaceMembers.documents.find((m: any) => m.$id === assigneeId);
+        return {
+            name: member ? member.name : "Unassigned",
+            value: assigneeCounts[assigneeId]
+        };
+    }).slice(0, 5);
+
     return c.json({
       data: {
         taskCount,
@@ -475,6 +572,11 @@ const app = new Hono()
         incompleteTaskDifference,
         overdueTaskCount,
         overdueTaskDifference,
+        // New Global Charts
+        tasksByStatus,
+        tasksByPriority,
+        tasksByProject,
+        tasksByAssignee
       },
     });
   });

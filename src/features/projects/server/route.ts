@@ -8,7 +8,7 @@ import { z } from "zod";
 import { getMember } from "@/features/members/utils";
 import { TaskStatus } from "@/features/tasks/types";
 
-import { DATABASE_ID, B2_BUCKET_NAME, PROJECTS_ID, TASKS_ID } from "@/config";
+import { DATABASE_ID, B2_BUCKET_NAME, PROJECTS_ID, TASKS_ID, MEMBERS_ID } from "@/config";
 import { sessionMiddleware } from "@/lib/session-middleware";
 
 import { createProjectSchema, updateProjectSchema } from "../schemas";

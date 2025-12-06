@@ -7,6 +7,7 @@ interface UseGetWorkspaceAnalyticsProps {
   workspaceId: string;
 }
 
+// This type is inferred globally, but we might need to manually extend it if Hono inference is tricky across files.
 export type WorkspaceAnalyticsResponseType = InferResponseType<
   (typeof client.api.workspaces)[":workspaceId"]["analytics"]["$get"],
   200

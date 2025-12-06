@@ -1,6 +1,8 @@
 "use client";
 
+import { Component } from "lucide-react";
 import { Analytics } from "@/components/analytics";
+import { WorkspaceDashboard } from "@/components/analytics/workspace-dashboard";
 import { DottedSeparator } from "@/components/dotted-separator";
 import { PageError } from "@/components/page-error";
 import { PageLoader } from "@/components/page-loader";
@@ -54,8 +56,9 @@ export const WorkspaceIdClient = () => {
 
   return (
     <div className="h-full flex flex-col space-y-4">
-      <Analytics data={analytics} />
+      <WorkspaceDashboard data={analytics} />
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {/* Keeping lists as supplementary data below the main dashboard */}
         <TaskList data={tasks.documents} total={tasks.total} />
         <ProjectList data={projects.documents} total={projects.total} />
         <MemberList data={members.documents} total={members.total} />
