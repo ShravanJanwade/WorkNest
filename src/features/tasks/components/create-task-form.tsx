@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
+import { toast } from "sonner";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
@@ -32,18 +32,22 @@ import {
 
 import { createTaskSchema } from "../schemas";
 import { useCreateTask } from "../api/use-create-task";
-import { TaskStatus } from "../types";
+import { TaskStatus, TaskPriority } from "../types";
+import { PrioritySelector } from "./priority-selector";
+import { EpicSelector } from "@/features/epics/components/epic-selector";
 
 interface CreateTaskFormProps {
   onCancel?: () => void;
   projectOptions: { id: string; name: string; imageUrl: string }[];
   memberOptions: { id: string; name: string }[];
+  parentId?: string;
 }
 
 export const CreateTaskForm = ({
   onCancel,
   projectOptions,
   memberOptions,
+  parentId,
 }: CreateTaskFormProps) => {
   const workspaceId = useWorkspaceId();
   const { mutate, isPending } = useCreateTask();
@@ -52,6 +56,9 @@ export const CreateTaskForm = ({
     resolver: zodResolver(createTaskSchema.omit({ workspaceId: true })),
     defaultValues: {
       workspaceId,
+      priority: TaskPriority.MEDIUM,
+      status: TaskStatus.TODO,
+      parentId, // Undefined if not passed, which is fine
     },
   });
 
@@ -77,7 +84,10 @@ export const CreateTaskForm = ({
       </div>
       <CardContent className="p-7">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
+            console.error("Form errors:", errors);
+            toast.error("Missing required fields. Please check the form.");
+          })}>
             <div className="flex flex-col gap-y-4">
               <FormField
                 control={form.control}
@@ -143,7 +153,7 @@ export const CreateTaskForm = ({
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Assignee</FormLabel>
+                    <FormLabel>Status</FormLabel>
                     <Select
                       defaultValue={field.value}
                       onValueChange={field.onChange}
@@ -168,6 +178,23 @@ export const CreateTaskForm = ({
                         <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
                       </SelectContent>
                     </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Priority</FormLabel>
+                    <FormControl>
+                      <PrioritySelector
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -202,6 +229,48 @@ export const CreateTaskForm = ({
                         ))}
                       </SelectContent>
                     </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="epicId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Epic</FormLabel>
+                    <FormControl>
+                      <EpicSelector
+                        projectId={form.watch("projectId")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isPending || !form.watch("projectId")}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="storyPoints"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Story Points</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        {...field}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ""
+                              ? undefined
+                              : Number(e.target.value)
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

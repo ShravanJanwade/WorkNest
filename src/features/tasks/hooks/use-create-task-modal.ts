@@ -1,4 +1,4 @@
-import { useQueryState, parseAsBoolean } from "nuqs";
+import { useQueryState, parseAsBoolean, parseAsString } from "nuqs";
 
 export const useCreateTaskModal = () => {
   const [isOpen, setIsOpen] = useQueryState(
@@ -6,13 +6,32 @@ export const useCreateTaskModal = () => {
     parseAsBoolean.withDefault(false).withOptions({ clearOnDefault: true })
   );
 
-  const open = () => setIsOpen(true);
-  const close = () => setIsOpen(false);
+  const [parentId, setParentId] = useQueryState(
+    "parent-task-id",
+    parseAsString.withOptions({ clearOnDefault: true })
+  );
+
+  const open = (id?: string) => {
+    setIsOpen(true);
+    
+    // Check if id is actually a string (not an event object from direct onClick binding)
+    if (typeof id === "string") {
+      setParentId(id);
+    } else {
+        setParentId(null);
+    }
+  };
+  
+  const close = () => {
+    setIsOpen(false);
+    setParentId(null);
+  };
 
   return {
     isOpen,
     open,
     close,
     setIsOpen,
+    parentId,
   };
 };

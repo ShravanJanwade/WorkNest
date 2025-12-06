@@ -3,7 +3,7 @@
 import { PencilIcon } from "lucide-react";
 import Link from "next/link";
 
-import { Analytics } from "@/components/analytics";
+import { AnalyticsDashboard } from "@/components/analytics/analytics-dashboard";
 import { PageError } from "@/components/page-error";
 import { PageLoader } from "@/components/page-loader";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,13 @@ export const ProjectIdClient = () => {
           <p className="text-lg font-semibold">{project.name}</p>
         </div>
         <div>
+          <Button variant="secondary" size="sm" asChild className="mr-2">
+            <Link
+              href={`/workspaces/${project.workspaceId}/projects/${project.$id}/epics`}
+            >
+              Epics
+            </Link>
+          </Button>
           <Button variant="secondary" size="sm" asChild>
             <Link
               href={`/workspaces/${project.workspaceId}/projects/${project.$id}/settings`}
@@ -54,7 +61,7 @@ export const ProjectIdClient = () => {
           </Button>
         </div>
       </div>
-      {analytics && <Analytics data={analytics} />}
+      {analytics ? <AnalyticsDashboard data={analytics} /> : null}
       <TaskViewSwitcher hideProjectFilter={true} />
     </div>
   );

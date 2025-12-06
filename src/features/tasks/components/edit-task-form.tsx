@@ -31,7 +31,8 @@ import {
 
 import { createTaskSchema } from "../schemas";
 import { useUpdateTask } from "../api/use-update-task";
-import { Task, TaskStatus } from "../types";
+import { Task, TaskStatus, TaskPriority } from "../types";
+import { PrioritySelector } from "./priority-selector";
 
 interface EditTaskFormProps {
   onCancel?: () => void;
@@ -176,6 +177,23 @@ export const EditTaskForm = ({
                         <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
                       </SelectContent>
                     </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Priority</FormLabel>
+                    <FormControl>
+                      <PrioritySelector
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

@@ -3,6 +3,12 @@ export const WORKSPACES_ID = process.env.NEXT_PUBLIC_APPWRITE_WORKSPACES_ID!;
 export const MEMBERS_ID = process.env.NEXT_PUBLIC_APPWRITE_MEMBERS_ID!;
 export const PROJECTS_ID = process.env.NEXT_PUBLIC_APPWRITE_PROJECTS_ID!;
 export const TASKS_ID = process.env.NEXT_PUBLIC_APPWRITE_TASKS_ID!;
+export const COMMENTS_ID = process.env.NEXT_PUBLIC_APPWRITE_COMMENTS_ID!;
+export const TIME_ENTRIES_ID = process.env.NEXT_PUBLIC_APPWRITE_TIME_ENTRIES_ID!;
+export const ACTIVITY_LOG_ID = process.env.NEXT_PUBLIC_APPWRITE_ACTIVITY_LOG_ID!;
+export const SPRINTS_ID = process.env.NEXT_PUBLIC_APPWRITE_SPRINTS_ID!;
 export const IMAGES_BUCKET_ID =
   process.env.NEXT_PUBLIC_APPWRITE_IMAGES_BUCKET_ID!;
 export const B2_BUCKET_NAME = process.env.B2_BUCKET_NAME!;
+export const EPICS_ID = process.env.NEXT_PUBLIC_APPWRITE_EPICS_ID!;
+

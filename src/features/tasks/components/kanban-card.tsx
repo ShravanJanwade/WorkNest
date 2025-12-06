@@ -7,8 +7,10 @@ import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 
 import { TaskActions } from "./task-actions";
 import { TaskDate } from "./task-date";
+import { PriorityIcon } from "./priority-selector";
+import { StatusDropdown } from "./status-dropdown";
 
-import { Task } from "../types";
+import { Task, TaskPriority } from "../types";
 
 interface KanbanCardProps {
   task: Task;
@@ -16,9 +18,14 @@ interface KanbanCardProps {
 
 export const KanbanCard = ({ task }: KanbanCardProps) => {
   return (
-    <div className="bg-white p-2.5 mb-1.5 rounded shadow-sm space-y-3">
+    <div className="bg-white p-2.5 mb-1.5 rounded shadow-sm space-y-3 hover:shadow-md transition-shadow border border-transparent hover:border-gray-200">
       <div className="flex items-start justify-between gap-x-2">
-        <p className="text-sm line-clamp-2">{task.name}</p>
+        <div className="flex items-center gap-x-2">
+          {task.priority && (
+            <PriorityIcon priority={task.priority as TaskPriority} />
+          )}
+          <p className="text-sm line-clamp-2 font-medium">{task.name}</p>
+        </div>
         <TaskActions id={task.$id} projectId={task.projectId}>
           <MoreHorizontalIcon className="size-[18px] stroke-1 shrink-0 text-neutral-700 hover:opacity-75 transition" />
         </TaskActions>
@@ -39,6 +46,14 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
           fallbackClassName="text-[10px]"
         />
         <span className="text-xs font-medium">{task.project.name}</span>
+      </div>
+      <div className="flex items-center justify-end">
+        <StatusDropdown
+          id={task.$id}
+          status={task.status}
+          projectId={task.projectId}
+          className="text-[10px] px-2 py-0.5 h-auto"
+        />
       </div>
     </div>
   );

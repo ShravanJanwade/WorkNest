@@ -12,6 +12,8 @@ import { Project } from "@/features/projects/types";
 
 import { createTaskSchema } from "../schemas";
 import { Task, TaskStatus } from "../types";
+import { logActivity } from "@/features/activity/server/route";
+import { ActivityAction } from "@/features/activity/types";
 
 const app = new Hono()
   .delete("/:taskId", sessionMiddleware, async (c) => {
@@ -37,6 +39,8 @@ const app = new Hono()
 
     await databases.deleteDocument(DATABASE_ID, TASKS_ID, taskId);
 
+    await logActivity(databases, user.$id, taskId, "deleted");
+
     return c.json({ data: { $id: task.$id } });
   })
   .get(
@@ -51,6 +55,7 @@ const app = new Hono()
         status: z.nativeEnum(TaskStatus).nullish(),
         search: z.string().nullish(),
         dueDate: z.string().nullish(),
+        parentId: z.string().nullish(),
       })
     ),
     async (c) => {
@@ -58,7 +63,7 @@ const app = new Hono()
       const databases = c.get("databases");
       const user = c.get("user");
 
-      const { workspaceId, projectId, assigneeId, status, search, dueDate } =
+      const { workspaceId, projectId, assigneeId, status, search, dueDate, parentId } =
         c.req.valid("query");
 
       const member = await getMember({
@@ -94,6 +99,11 @@ const app = new Hono()
       if (dueDate) {
         console.log("dueDate: ", dueDate);
         query.push(Query.equal("dueDate", dueDate));
+      }
+
+      if (parentId) {
+        console.log("parentId: ", parentId);
+        query.push(Query.equal("parentId", parentId));
       }
 
       if (search) {
@@ -160,7 +170,7 @@ const app = new Hono()
     async (c) => {
       const user = c.get("user");
       const databases = c.get("databases");
-      const { name, status, workspaceId, projectId, dueDate, assigneeId } =
+      const { name, status, priority, workspaceId, projectId, dueDate, assigneeId, parentId, epicId, storyPoints } =
         c.req.valid("json");
 
       const member = await getMember({
@@ -189,22 +199,34 @@ const app = new Hono()
           ? highestPositionTask.documents[0].position + 1000
           : 1000;
 
-      const task = await databases.createDocument(
-        DATABASE_ID,
-        TASKS_ID,
-        ID.unique(),
-        {
-          name,
-          status,
-          workspaceId,
-          projectId,
-          dueDate,
-          assigneeId,
-          position: newPosition,
-        }
-      );
+      try {
+        const task = await databases.createDocument(
+          DATABASE_ID,
+          TASKS_ID,
+          ID.unique(),
+          {
+            name,
+            status,
+            priority: priority || "MEDIUM",
+            workspaceId,
+            projectId,
+            dueDate,
+            assigneeId,
+            parentId,
+            epicId,
+            storyPoints,
+            position: newPosition,
+          }
+        );
 
-      return c.json({ data: task });
+        await logActivity(databases, user.$id, task.$id, "created");
+        return c.json({ data: task });
+      } catch (error) {
+        console.error("Task creation error:", error);
+        return c.json({ error: "Failed to create task" }, 500);
+      }
+
+
     }
   )
   .patch(
@@ -214,7 +236,7 @@ const app = new Hono()
     async (c) => {
       const user = c.get("user");
       const databases = c.get("databases");
-      const { name, status, projectId, dueDate, assigneeId, description } =
+      const { name, status, priority, projectId, dueDate, assigneeId, description, parentId, epicId, storyPoints } =
         c.req.valid("json");
 
       const { taskId } = c.req.param();
@@ -242,12 +264,54 @@ const app = new Hono()
         {
           name,
           status,
+          priority,
           projectId,
           dueDate,
           assigneeId,
           description,
+          parentId,
+          epicId,
+          storyPoints,
         }
       );
+
+      // Activity Logging
+      if (status && status !== existingTask.status) {
+        await logActivity(databases, user.$id, taskId, "status_changed", {
+          field: "status",
+          oldValue: existingTask.status,
+          newValue: status,
+        });
+      }
+
+      if (assigneeId && assigneeId !== existingTask.assigneeId) {
+        await logActivity(databases, user.$id, taskId, "assignee_changed", {
+          field: "assigneeId",
+          oldValue: existingTask.assigneeId,
+          newValue: assigneeId,
+        });
+      }
+      
+      if (priority && priority !== existingTask.priority) {
+        await logActivity(databases, user.$id, taskId, "priority_changed", {
+          field: "priority",
+          oldValue: existingTask.priority,
+          newValue: priority,
+        });
+      }
+
+      // If no specific specific change, but something updated (and not just creating a log for every field), 
+      // check if it's a general update like description or name
+      if (
+        (name && name !== existingTask.name) ||
+        (description && description !== existingTask.description) ||
+        (dueDate && dueDate.toISOString() !== existingTask.dueDate) ||
+        (projectId && projectId !== existingTask.projectId)
+      ) {
+        // Only log "updated" if we didn't log a specific action, or just log it additionally?
+        // Usually simpler to just log "updated" for these fields.
+        await logActivity(databases, user.$id, taskId, "updated");
+      }
 
       return c.json({ data: task });
     }

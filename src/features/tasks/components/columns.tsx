@@ -12,6 +12,7 @@ import { snakeCaseToTitleCase } from "@/lib/utils";
 
 import { TaskActions } from "./task-actions";
 import { TaskDate } from "./task-date";
+import { StatusDropdown } from "./status-dropdown";
 
 import { Task } from "../types";
 
@@ -124,9 +125,49 @@ export const columns: ColumnDef<Task>[] = [
       );
     },
     cell: ({ row }) => {
+      const id = row.original.$id;
+      const projectId = row.original.projectId;
       const status = row.original.status;
 
-      return <Badge variant={status}>{snakeCaseToTitleCase(status)}</Badge>;
+      return (
+        <StatusDropdown
+          id={id}
+          status={status}
+          projectId={projectId}
+        />
+      );
+    },
+  },
+  {
+    accessorKey: "priority",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Priority
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const priority = row.original.priority;
+      if (!priority) return <span className="text-muted-foreground">-</span>;
+      
+      const priorityColors: Record<string, string> = {
+        HIGHEST: "bg-red-100 text-red-700 border-red-300",
+        HIGH: "bg-orange-100 text-orange-700 border-orange-300",
+        MEDIUM: "bg-yellow-100 text-yellow-700 border-yellow-300",
+        LOW: "bg-blue-100 text-blue-700 border-blue-300",
+        LOWEST: "bg-gray-100 text-gray-600 border-gray-300",
+      };
+
+      return (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${priorityColors[priority] || ""}`}>
+          {snakeCaseToTitleCase(priority)}
+        </span>
+      );
     },
   },
   {

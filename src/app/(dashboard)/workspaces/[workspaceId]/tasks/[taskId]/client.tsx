@@ -8,7 +8,11 @@ import { useGetTask } from "@/features/tasks/api/use-get-task";
 import { TaskBreadcrumbs } from "@/features/tasks/components/task-breadcrumbs";
 import { TaskDescription } from "@/features/tasks/components/task-description";
 import { TaskOverview } from "@/features/tasks/components/task-overview";
+import { SubtasksList } from "@/features/tasks/components/subtasks-list";
 import { useTaskId } from "@/features/tasks/hooks/use-task-id";
+import { CommentThread } from "@/features/comments/components/comment-thread";
+import { TimeEntriesList } from "@/features/time-tracking/components/time-entries-list";
+import { ActivityTimeline } from "@/features/activity/components/activity-timeline";
 
 export const TaskIdClient = () => {
   const taskId = useTaskId();
@@ -29,6 +33,28 @@ export const TaskIdClient = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TaskOverview task={data} />
         <TaskDescription task={data} />
+      </div>
+
+      <DottedSeparator className="my-6" />
+      <div className="bg-white rounded-lg border p-6">
+        <SubtasksList taskId={taskId} />
+      </div>
+
+      {/* Time Tracking & Activity Grid */}
+      <DottedSeparator className="my-6" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-white rounded-lg border p-6">
+          <TimeEntriesList taskId={taskId} taskName={data.name} />
+        </div>
+        <div className="bg-white rounded-lg border p-6">
+          <ActivityTimeline taskId={taskId} />
+        </div>
+      </div>
+      
+      {/* Comments Section */}
+      <DottedSeparator className="my-6" />
+      <div className="bg-white rounded-lg border p-6">
+        <CommentThread taskId={taskId} />
       </div>
     </div>
   );
