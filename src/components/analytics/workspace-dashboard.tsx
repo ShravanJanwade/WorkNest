@@ -9,10 +9,14 @@ import { AnalyticsBarChart } from "./analytics-bar-chart";
 import { AnalyticsPieChart } from "./analytics-pie-chart";
 import { AnalyticsAssigneeChart } from "./analytics-assignee-chart";
 import { AnalyticsProjectChart } from "./analytics-project-chart";
+import { QuoteWidget } from "./quote-widget";
 
 export const WorkspaceDashboard = ({ data }: WorkspaceAnalyticsResponseType) => {
   return (
     <div className="flex flex-col gap-y-6">
+      {/* 0. Daily Inspiration */}
+      <QuoteWidget />
+
       {/* 1. Key Metrics Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-4 w-full">
          <AnalyticsCard
