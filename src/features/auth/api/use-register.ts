@@ -22,7 +22,7 @@ export const useRegister = () => {
     },
     onSuccess: () => {
       toast.success("Signed up.");
-      router.refresh();
+      router.push("/dashboard");
       queryClient.invalidateQueries({ queryKey: ["current"] });
     },
     onError: () => {
