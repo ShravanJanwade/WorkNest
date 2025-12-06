@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { RiAddCircleFill } from "react-icons/ri";
 
 import { useGetProjects } from "@/features/projects/api/use-get-projects";
+import { Project } from "@/features/projects/types";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { cn } from "@/lib/utils";
 import { useCreateProjectModal } from "@/features/projects/hooks/use-create-project-modal";
@@ -21,11 +22,11 @@ export const Projects = () => {
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase text-neutral-500">Projects</p>
         <RiAddCircleFill
-          onClick={open}
+          onClick={() => open()}
           className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition"
         />
       </div>
-      {data?.documents.map((project) => {
+      {data?.documents.map((project: Project) => {
         const href = `/workspaces/${workspaceId}/projects/${project.$id}`;
         const isActive = pathname === href;
 

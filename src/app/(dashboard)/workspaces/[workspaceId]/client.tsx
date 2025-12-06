@@ -81,7 +81,7 @@ export const TaskList = ({ data, total }: TaskListProps) => {
       <div className="bg-muted rounded-lg p-4">
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold">Tasks ({total})</p>
-          <Button variant="muted" size="icon" onClick={createTask}>
+          <Button variant="muted" size="icon" onClick={() => createTask()}>
             <PlusIcon className="size-4 text-neutral-400" />
           </Button>
         </div>
