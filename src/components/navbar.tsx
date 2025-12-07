@@ -6,6 +6,7 @@ import { GlobalTimerIndicator } from "@/features/time-tracking/components/global
 import { usePathname } from "next/navigation";
 
 import { MobileSidebar } from "./mobile-sidebar";
+import { ThemeToggle } from "./theme-toggle";
 
 const pathnameMap = {
   tasks: {
@@ -38,6 +39,7 @@ export const Navbar = () => {
       </div>
       <MobileSidebar />
       <div className="flex items-center gap-4">
+        <ThemeToggle />
         <GlobalTimerIndicator />
         <UserButton />
       </div>
