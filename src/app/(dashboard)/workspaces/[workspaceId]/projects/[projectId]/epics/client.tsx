@@ -55,7 +55,7 @@ export const EpicClient = () => {
       <DottedSeparator />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {epics.documents.length === 0 && (
-          <div className="col-span-1 lg:col-span-2 h-40 flex items-center justify-center bg-white rounded-lg border border-dashed text-muted-foreground">
+          <div className="col-span-1 lg:col-span-2 h-40 flex items-center justify-center bg-white dark:bg-card rounded-lg border border-dashed text-muted-foreground">
             No epics found
           </div>
         )}

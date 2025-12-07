@@ -37,7 +37,7 @@ export const TaskIdClient = () => {
       {/* Top Section: Overview & Time Tracking */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-lg border p-6">
+          <div className="bg-white dark:bg-card rounded-lg border p-6">
              <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold">Task Details</h2>
              </div>
@@ -48,7 +48,7 @@ export const TaskIdClient = () => {
         </div>
 
         <div className="lg:col-span-1">
-           <div className="bg-white rounded-lg border p-6 sticky top-6">
+           <div className="bg-white dark:bg-card rounded-lg border p-6 sticky top-6">
               <TimeEntriesList taskId={taskId} taskName={data.name} />
            </div>
         </div>
@@ -56,16 +56,16 @@ export const TaskIdClient = () => {
 
       {/* Middle Section: Subtasks & Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-         <div className="bg-white rounded-lg border p-6 h-[500px] flex flex-col">
+         <div className="bg-white dark:bg-card rounded-lg border p-6 h-[500px] flex flex-col">
             <SubtasksTable taskId={taskId} />
          </div>
-         <div className="bg-white rounded-lg border p-6 h-[500px] overflow-y-auto custom-scrollbar">
+         <div className="bg-white dark:bg-card rounded-lg border p-6 h-[500px] overflow-y-auto custom-scrollbar">
             <ActivityTimeline taskId={taskId} />
          </div>
       </div>
 
       {/* Bottom Section: Comments */}
-      <div className="bg-white rounded-lg border p-6">
+      <div className="bg-white dark:bg-card rounded-lg border p-6">
          <CommentThread taskId={taskId} />
       </div>
     </div>
