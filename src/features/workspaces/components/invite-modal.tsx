@@ -9,8 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { useResetInviteCode } from "@/features/workspaces/api/use-reset-invite-code";
-import { ResponsiveModal } from "@/components/responsive-modal";
-
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useInviteModal } from "../hooks/use-invite-modal";
 
 export const InviteModal = () => {
@@ -35,36 +34,38 @@ export const InviteModal = () => {
   };
 
   return (
-    <ResponsiveModal open={isOpen} onOpenChange={close}>
-      <Card className="w-full h-full border-none shadow-none">
-        <CardHeader className="p-7">
-          <CardTitle>Invite Members</CardTitle>
-          <CardDescription>
-            Use the copy link to add members to your workspace.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-7">
-          <div className="flex flex-col gap-y-4">
-            <div className="flex items-center gap-x-2">
-              <Input disabled value={fullInviteLink} />
-              <Button onClick={handleCopy} variant="secondary" className="size-12">
-                <CopyIcon className="size-5" />
-              </Button>
+    <Dialog open={isOpen} onOpenChange={close}>
+      <DialogContent className="w-full sm:max-w-lg p-0 border-none overflow-y-auto hide-scrollbar max-h-[85vh]">
+        <Card className="w-full h-auto border-none shadow-none">
+          <CardHeader className="p-7">
+            <CardTitle>Invite Members</CardTitle>
+            <CardDescription>
+              Use the copy link to add members to your workspace.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-7">
+            <div className="flex flex-col gap-y-4">
+              <div className="flex items-center gap-x-2">
+                <Input disabled value={fullInviteLink} />
+                <Button onClick={handleCopy} variant="secondary" className="size-12">
+                  <CopyIcon className="size-5" />
+                </Button>
+              </div>
+              <div className="flex items-center justify-between w-full">
+                <Button
+                  disabled={isPending}
+                  onClick={handleReset}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Reset invite link
+                  <RefreshCcw className="size-4 ml-2" />
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center justify-between w-full">
-              <Button
-                disabled={isPending}
-                onClick={handleReset}
-                variant="outline"
-                className="w-full"
-              >
-                Reset invite link
-                <RefreshCcw className="size-4 ml-2" />
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </ResponsiveModal>
+          </CardContent>
+        </Card>
+      </DialogContent>
+    </Dialog>
   );
 };
