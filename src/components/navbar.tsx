@@ -2,9 +2,7 @@
 
 import { UserButton } from "@/features/auth/components/user-button";
 import { GlobalTimerIndicator } from "@/features/time-tracking/components/global-timer-indicator";
-
 import { usePathname } from "next/navigation";
-
 import { MobileSidebar } from "./mobile-sidebar";
 import { ThemeToggle } from "./theme-toggle";
 

@@ -19,7 +19,7 @@ export const Projects = () => {
 
   return (
     <div className="flex flex-col gap-y-2">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-2">
         <p className="text-xs uppercase text-neutral-500 dark:text-neutral-400">Projects</p>
         <RiAddCircleFill
           onClick={() => open()}

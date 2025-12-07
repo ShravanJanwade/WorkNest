@@ -49,7 +49,7 @@ export const AnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType) => {
       <DottedSeparator />
 
       {/* 2. Charts Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[400px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Status Breakdown */}
         <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
              <AnalyticsBarChart 
@@ -70,7 +70,7 @@ export const AnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType) => {
       </div>
       
        {/* 3. Assignee Wrapper */}
-       <div className="grid grid-cols-1 gap-6 h-[400px]">
+       <div className="grid grid-cols-1 gap-6">
            <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
              <AnalyticsAssigneeChart 
                title="Top Assignees"

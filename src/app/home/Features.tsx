@@ -61,17 +61,17 @@ export default function FeaturesUltra() {
   }, []);
 
   return (
-    <section className="relative z-10 py-24 px-6 md:px-12 bg-gradient-to-br from-white via-blue-50 to-purple-100 dark:from-[#0e0f10] dark:via-[#11121b] dark:to-[#181926]">
+    <section className="relative z-10 py-24 px-6 md:px-12 bg-gradient-to-br from-white via-blue-50 to-purple-100">
       <div className="max-w-7xl mx-auto text-center mb-20">
         <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white tracking-tight"
+          className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
           Why <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">Choose TaskForge?</span>
         </motion.h2>
-        <p className="text-gray-600 dark:text-gray-400 mt-4 max-w-2xl mx-auto">
+        <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
           We've packed in magic, muscle, and a little mischief. ✨
         </p>
       </div>
@@ -80,7 +80,7 @@ export default function FeaturesUltra() {
         {features.map(({ icon: Icon, title, desc, hint }, i) => (
           <motion.div
             key={i}
-            className="relative group rounded-3xl bg-white/40 dark:bg-white/5 border border-white/20 backdrop-blur-xl p-6 shadow-lg hover:shadow-2xl transition-all hover:scale-[1.04] duration-300 overflow-hidden"
+            className="relative group rounded-3xl bg-white/40 border border-white/20 backdrop-blur-xl p-6 shadow-lg hover:shadow-2xl transition-all hover:scale-[1.04] duration-300 overflow-hidden"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -89,10 +89,10 @@ export default function FeaturesUltra() {
             <div className="flex items-center justify-center h-14 w-14 mb-5 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 text-white shadow-lg transition-transform group-hover:scale-110">
               <Icon className="h-6 w-6" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-purple-300 transition-colors">
+            <h3 className="text-xl font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
               {title}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">{desc}</p>
+            <p className="text-gray-600 mt-2">{desc}</p>
 
             {/* Easter Egg Hint */}
             <div className="absolute bottom-4 right-4 text-xs text-gray-400 group-hover:text-purple-400 transition-opacity opacity-0 group-hover:opacity-100">
