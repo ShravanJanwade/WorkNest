@@ -95,8 +95,8 @@ export const TimeEntriesList = ({ taskId, taskName }: TimeEntriesListProps) => {
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
         </div>
       ) : data?.entries && data.entries.length > 0 ? (
-        <div className="space-y-2">
-          <p className="text-sm text-gray-500 mb-3">Recent time entries</p>
+        <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+          <p className="text-sm text-gray-500 mb-3 sticky top-0 bg-white z-10 pb-2">Recent time entries</p>
           {data.entries.slice(0, 5).map((entry) => (
             <div
               key={entry.$id}
