@@ -77,7 +77,7 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
   );
 
   return (
-    <Card className="col-span-1 h-full shadow-sm border-none bg-white">
+    <Card className="col-span-1 h-full shadow-sm border-none bg-white dark:bg-card">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
         <CardTitle className="text-2xl font-bold">Timesheet</CardTitle>
         <div className="flex items-center space-x-2">
@@ -88,7 +88,7 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <div className="w-48 text-center font-medium">
+          <div className="w-48 text-center font-medium text-foreground">
             {format(currentWeekStart, "MMM d")} - {format(currentWeekEnd, "MMM d, yyyy")}
           </div>
           <Button
@@ -114,10 +114,10 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
                   {weekDays.map((day) => (
                     <TableHead key={day.toString()} className="text-center">
                       <div className="flex flex-col items-center">
-                        <span className="text-xs uppercase text-gray-500">
+                        <span className="text-xs uppercase text-gray-500 dark:text-gray-400">
                           {format(day, "EEE")}
                         </span>
-                        <span className="font-bold text-gray-900">
+                        <span className="font-bold text-gray-900 dark:text-foreground">
                           {format(day, "d")}
                         </span>
                       </div>
@@ -129,7 +129,7 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
               <TableBody>
                 {Object.keys(entriesByTask).length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="h-24 text-center text-gray-500">
+                    <TableCell colSpan={9} className="h-24 text-center text-gray-500 dark:text-gray-400">
                       No time entries for this week.
                     </TableCell>
                   </TableRow>
@@ -145,7 +145,7 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
                         const total = getDailyTotal(entries, day);
                         return (
                           <TableCell key={day.toString()} className="text-center text-sm">
-                            <span className={total > 0 ? "font-medium text-gray-900" : "text-gray-300"}>
+                            <span className={total > 0 ? "font-medium text-gray-900 dark:text-foreground" : "text-gray-300 dark:text-gray-600"}>
                               {formatDuration(total)}
                             </span>
                           </TableCell>
@@ -158,7 +158,7 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
                   ))
                 )}
                 {Object.keys(entriesByTask).length > 0 && (
-                  <TableRow className="bg-gray-50 font-bold">
+                  <TableRow className="bg-gray-50 dark:bg-muted font-bold">
                     <TableCell>Total</TableCell>
                     {weekDays.map((day) => {
                       const dayTotal = Object.values(entriesByTask).reduce(

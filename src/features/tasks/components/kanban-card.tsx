@@ -18,13 +18,13 @@ interface KanbanCardProps {
 
 export const KanbanCard = ({ task }: KanbanCardProps) => {
   return (
-    <div className="bg-white p-2.5 mb-1.5 rounded shadow-sm space-y-3 hover:shadow-md transition-shadow border border-transparent hover:border-gray-200">
+    <div className="bg-white dark:bg-card p-2.5 mb-1.5 rounded shadow-sm space-y-3 hover:shadow-md transition-shadow border border-transparent hover:border-gray-200 dark:hover:border-border">
       <div className="flex items-start justify-between gap-x-2">
         <div className="flex items-center gap-x-2">
           {task.priority && (
             <PriorityIcon priority={task.priority as TaskPriority} />
           )}
-          <p className="text-sm line-clamp-2 font-medium">{task.name}</p>
+          <p className="text-sm line-clamp-2 font-medium text-foreground">{task.name}</p>
         </div>
         <TaskActions id={task.$id} projectId={task.projectId}>
           <MoreHorizontalIcon className="size-[18px] stroke-1 shrink-0 text-neutral-700 hover:opacity-75 transition" />
@@ -45,7 +45,7 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
           image={task.project.imageUrl}
           fallbackClassName="text-[10px]"
         />
-        <span className="text-xs font-medium">{task.project.name}</span>
+        <span className="text-xs font-medium text-foreground">{task.project.name}</span>
       </div>
       <div className="flex items-center justify-end">
         <StatusDropdown
