@@ -12,7 +12,7 @@ import { uploadFile, getSignedUrl } from "@/lib/storage";
 import { B2_BUCKET_NAME } from "@/config";
 import { updateProfileSchema } from "../schemas";
 import { generateOtp } from "@/lib/otp";
-import { sendMfaEmail } from "@/lib/mail";
+import { sendMfaEmail, sendVerificationEmail } from "@/lib/mail";
 
 const app = new Hono()
   .get("/current", sessionMiddleware, async (c) => {
@@ -167,102 +167,106 @@ const app = new Hono()
   })
 
   .post("/resend-verification", sessionMiddleware, async (c) => {
-    const account = c.get("account");
-    const user = c.get("user");
-
-    console.log("=== RESEND VERIFICATION ===");
-    console.log("User ID:", user.$id);
-    console.log("User Email:", user.email);
-    console.log("Email Verified:", user.emailVerification);
-
-    try {
-      if (user.emailVerification) {
-        console.log("Email already verified, returning 400");
-        return c.json({ error: "Email already verified" }, 400);
+      const user = c.get("user");
+      const { users } = await createAdminClient();
+      
+      try {
+          if (user.emailVerification) {
+              return c.json({ error: "Email already verified" }, 400);
+          }
+          
+          // Generate Token
+          const verificationToken = generateOtp() + ID.unique();
+          
+          // Save token in prefs
+          const currentPrefs = await users.getPrefs(user.$id);
+          
+          await users.updatePrefs(user.$id, {
+              ...currentPrefs,
+              verificationToken: verificationToken,
+              verificationStatus: "pending"
+          });
+          
+          
+          // Send Email
+          console.log("Attempting to send verification email to:", user.email);
+          console.log("Token:", verificationToken);
+          await sendVerificationEmail(user.email, verificationToken, user.$id);
+          console.log("Email send function completed");
+          
+          return c.json({ success: true });
+      } catch (error) {
+          console.error("Resend Verification Error", error);
+          return c.json({ error: "Failed to resend verification email" }, 500);
       }
-
-      // Use Appwrite's built-in email verification
-      // This uses Appwrite Cloud's email service - no Resend needed!
-      const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/verify-email-confirm`;
-
-      console.log("Calling Appwrite createVerification with URL:", verificationUrl);
-
-      const verification = await account.createVerification(verificationUrl);
-
-      console.log("Appwrite verification created:", verification.$id);
-      console.log("=== END RESEND VERIFICATION ===");
-
-      return c.json({ success: true });
-    } catch (error) {
-      console.error("Resend Verification Error", error);
-      return c.json({ error: "Failed to resend verification email" }, 500);
-    }
   })
 
   .post("/register", zValidator("json", registerSchema), async (c) => {
     const { name, email, password } = c.req.valid("json");
 
-    const { account: adminAccount } = await createAdminClient();
+    const { account, users } = await createAdminClient();
     try {
-      // Create user
-      const user = await adminAccount.create(ID.unique(), email, password, name);
+        const user = await account.create(ID.unique(), email, password, name);
+        
+        // Generate Token
+        const verificationToken = generateOtp() + ID.unique(); 
+        
+        // Save token in prefs
+        await users.updatePrefs(user.$id, {
+            verificationToken: verificationToken,
+            verificationStatus: "pending"
+        });
+        
+        // Send Email
+        await sendVerificationEmail(email, verificationToken, user.$id);
+        
+        const session = await account.createEmailPasswordSession(email, password);
 
-      // Create session
-      const session = await adminAccount.createEmailPasswordSession(email, password);
-
-      setCookie(c, AUTH_COOKIE, session.secret, {
-        path: "/",
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-        maxAge: 60 * 60 * 24 * 30,
-      });
-
-      // Create a session-specific client to send verification email
-      // We need to use the user's session, not admin client
-      const { Client, Account } = await import("node-appwrite");
-      const userClient = new Client()
-        .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-        .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!)
-        .setSession(session.secret);
-
-      const userAccount = new Account(userClient);
-
-      // Use Appwrite's built-in email verification
-      const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/verify-email-confirm`;
-      await userAccount.createVerification(verificationUrl);
-
-      console.log("Verification email sent to:", email);
-
-      return c.json({ success: true, requireVerification: true });
-
+        setCookie(c, AUTH_COOKIE, session.secret, {
+          path: "/",
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict",
+          maxAge: 60 * 60 * 24 * 30,
+        });
+        
+        return c.json({ success: true, requireVerification: true });
+    
     } catch (error) {
-      console.error("Register Error", error);
-      return c.json({ error: "Registration failed" }, 500);
+        console.error("Register Error", error);
+        return c.json({ error: "Registration failed" }, 500);
     }
   })
 
   .post("/verify-email", zValidator("json", z.object({
-    userId: z.string(),
-    secret: z.string(),
+      userId: z.string(),
+      secret: z.string(),
   })), async (c) => {
-    const { userId, secret } = c.req.valid("json");
-    const { users, account } = await createAdminClient();
-
-    console.log("=== VERIFY EMAIL ===");
-    console.log("User ID:", userId);
-    console.log("Secret length:", secret?.length);
-
-    try {
-      // Use Appwrite's built-in updateVerification
-      // This works with tokens from createVerification()
-      await account.updateVerification(userId, secret);
-      console.log("Email verified successfully via Appwrite");
-      return c.json({ success: true });
-    } catch (error) {
-      console.error("Verification Error:", error);
-      return c.json({ error: "Verification failed. Link may be invalid or expired." }, 400);
-    }
+      const { userId, secret } = c.req.valid("json");
+      const { users } = await createAdminClient();
+      
+      try {
+          const prefs = await users.getPrefs(userId);
+          
+          if (prefs.verificationToken === secret) {
+              // Update Email Verification Status
+              await users.updateEmailVerification(userId, true);
+              
+              // Cleanup Prefs
+              await users.updatePrefs(userId, {
+                  ...prefs,
+                  verificationToken: null,
+                  verificationStatus: "verified"
+              });
+              
+              return c.json({ success: true });
+          } else {
+              return c.json({ error: "Invalid token" }, 400);
+          }
+      } catch (error) {
+          console.error("Verification Error", error);
+          return c.json({ error: "Verification failed" }, 500);
+      }
   })
 
   .post("/logout", sessionMiddleware, async (c) => {

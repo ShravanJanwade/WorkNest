@@ -1,11 +1,19 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+const domain = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 export const sendMfaEmail = async (email: string, code: string) => {
   try {
-    const result = await resend.emails.send({
-      from: "WorkNest <onboarding@resend.dev>",
+    const info = await transporter.sendMail({
+      from: `"WorkNest Security" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your Login Authentication Code",
       html: `
@@ -33,30 +41,20 @@ export const sendMfaEmail = async (email: string, code: string) => {
         </div>
       `,
     });
-
-    if (result.error) {
-      console.error("MFA Email Error:", result.error);
-      // Don't throw - just log the error
-    } else {
-      console.log("MFA email sent successfully to:", email, "- ID:", result.data?.id);
-    }
-
-    return result;
+    console.log("MFA Email sent: %s", info.messageId);
+    return info;
   } catch (error) {
-    console.error("MFA Email Exception:", error);
-    // Don't throw - return null to indicate failure without crashing
+    console.error("Error sending MFA email:", error);
     return null;
   }
 };
 
 export const sendVerificationEmail = async (email: string, token: string, userId: string) => {
-  const confirmLink = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/verify-email-confirm?userId=${userId}&secret=${token}`;
+  const confirmLink = `${domain}/verify-email-confirm?userId=${userId}&secret=${token}`;
 
   try {
-    console.log("Sending verification email to:", email);
-
-    const result = await resend.emails.send({
-      from: "WorkNest <onboarding@resend.dev>",
+    const info = await transporter.sendMail({
+      from: `"WorkNest Support" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Verify your email address",
       html: `
@@ -84,19 +82,10 @@ export const sendVerificationEmail = async (email: string, token: string, userId
       </div>
       `,
     });
-
-    if (result.error) {
-      console.error("Verification Email Error:", result.error);
-      // Note: onboarding@resend.dev only sends to the Resend account owner's email
-      // For production, you need to verify your own domain in Resend
-    } else {
-      console.log("Verification email sent successfully to:", email, "- ID:", result.data?.id);
-    }
-
-    return result;
+    console.log("Verification Email sent: %s", info.messageId);
+    return info;
   } catch (error) {
-    console.error("Verification Email Exception:", error);
-    // Don't throw - return null to indicate failure without crashing
+    console.error("Error sending verification email:", error);
     return null;
   }
 };
