@@ -19,7 +19,8 @@ export async function GET(request: NextRequest) {
   const { account } = await createAdminClient();
   const session = await account.createSession(userId, secret);
 
-  cookies().set(AUTH_COOKIE, session.secret, {
+  const cookieStore = await cookies();
+  cookieStore.set(AUTH_COOKIE, session.secret, {
     path: "/",
     httpOnly: true,
     sameSite: "strict",
@@ -28,3 +29,4 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.redirect(`${request.nextUrl.origin}/`);
 }
+
