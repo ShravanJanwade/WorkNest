@@ -49,6 +49,11 @@ app.post(
       return c.json({ error: "Unauthorized" }, 401);
     }
 
+    // Only ADMIN and MANAGER can create projects
+    if (member.role !== "ADMIN" && member.role !== "MANAGER") {
+      return c.json({ error: "Only admins and managers can create projects" }, 403);
+    }
+
     let uploadedImageUrl: string | undefined;
 
     try {
@@ -213,6 +218,10 @@ app.patch(
       return c.json({ error: "Unauthorized" }, 401);
     }
 
+    // Only ADMIN and MANAGER can update projects
+    if (member.role !== "ADMIN" && member.role !== "MANAGER") {
+      return c.json({ error: "Only admins and managers can update projects" }, 403);
+    }
     let uploadedImageUrl: string | undefined;
 
     try {
@@ -279,6 +288,11 @@ app.delete("/:projectId", sessionMiddleware, async (c) => {
 
   if (!member) {
     return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  // Only ADMIN and MANAGER can delete projects
+  if (member.role !== "ADMIN" && member.role !== "MANAGER") {
+    return c.json({ error: "Only admins and managers can delete projects" }, 403);
   }
 
   // TODO: optionally remove stored file if desired

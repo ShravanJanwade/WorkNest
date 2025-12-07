@@ -37,6 +37,11 @@ const app = new Hono()
       return c.json({ error: "Unauthorized" }, 401);
     }
 
+    // Only ADMIN and MANAGER can delete tasks
+    if (member.role !== "ADMIN" && member.role !== "MANAGER") {
+      return c.json({ error: "Only admins and managers can delete tasks" }, 403);
+    }
+
     await databases.deleteDocument(DATABASE_ID, TASKS_ID, taskId);
 
     await logActivity(databases, user.$id, taskId, "deleted");
@@ -183,6 +188,15 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
+      // Employees can only create tasks assigned to themselves
+      if (
+        member.role === "EMPLOYEE" &&
+        assigneeId &&
+        assigneeId !== member.$id
+      ) {
+        return c.json({ error: "Employees can only create tasks assigned to themselves" }, 403);
+      }
+
       const highestPositionTask = await databases.listDocuments(
         DATABASE_ID,
         TASKS_ID,
@@ -255,6 +269,14 @@ const app = new Hono()
 
       if (!member) {
         return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      // Employees can only update their own tasks
+      if (
+        member.role === "EMPLOYEE" &&
+        existingTask.assigneeId !== member.$id
+      ) {
+        return c.json({ error: "Employees can only edit their own tasks" }, 403);
       }
 
       const task = await databases.updateDocument(

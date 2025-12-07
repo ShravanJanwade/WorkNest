@@ -11,4 +11,8 @@ export const IMAGES_BUCKET_ID =
   process.env.NEXT_PUBLIC_APPWRITE_IMAGES_BUCKET_ID!;
 export const B2_BUCKET_NAME = process.env.B2_BUCKET_NAME!;
 export const EPICS_ID = process.env.NEXT_PUBLIC_APPWRITE_EPICS_ID!;
+export const COMPANIES_ID = process.env.NEXT_PUBLIC_APPWRITE_COMPANIES_ID!;
 
+// Initial admin credentials (for first deployment)
+export const INITIAL_ADMIN_EMAIL = process.env.INITIAL_ADMIN_EMAIL;
+export const INITIAL_ADMIN_PASSWORD = process.env.INITIAL_ADMIN_PASSWORD;

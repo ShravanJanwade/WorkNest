@@ -18,9 +18,26 @@ export const useLogin = () => {
       const response = await client.api.auth.login.$post({ json });
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Logged in.");
-      router.push("/dashboard");
+      
+      // Fetch current user to check if Super Admin
+      try {
+        const res = await client.api.auth.current.$get();
+        const userData = await res.json();
+        
+        if (userData && (userData as any).prefs?.isSuperAdmin) {
+          // Super Admin goes to super admin panel
+          router.push("/superadmin");
+        } else {
+          // Regular users go to dashboard
+          router.push("/");
+        }
+      } catch {
+        // Fallback to dashboard
+        router.push("/");
+      }
+      
       queryClient.invalidateQueries({ queryKey: ["current"] });
     },
     onError: () => {

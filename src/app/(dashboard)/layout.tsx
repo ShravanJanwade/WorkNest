@@ -1,3 +1,9 @@
+"use client";
+
+import { redirect } from "next/navigation";
+import { useCurrent } from "@/features/auth/api/use-current";
+import { Loader2 } from "lucide-react";
+
 import { CreateProjectModal } from "@/features/projects/components/create-project-modal";
 import { CreateWorkspaceModal } from "@/features/workspaces/components/create-workspace-modal";
 import { CreateTaskModal } from "@/features/tasks/components/create-task-modal";
@@ -12,6 +18,22 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  const { data: user, isLoading } = useCurrent();
+
+  // Show loading while checking user
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  // Redirect Super Admin to their panel - they shouldn't access regular dashboard
+  if (user?.prefs?.isSuperAdmin) {
+    redirect("/superadmin");
+  }
+
   return (
     <div className="min-h-screen">
       <CreateWorkspaceModal />

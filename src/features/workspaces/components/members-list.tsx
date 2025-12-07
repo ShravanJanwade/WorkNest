@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
-import { ArrowLeft, MoreVerticalIcon } from "lucide-react";
+import { ArrowLeft, MoreVerticalIcon, Shield, UserCog, Briefcase } from "lucide-react";
 import Link from "next/link";
 
 import { MemberAvatar } from "@/features/members/components/member-avatar";
@@ -10,11 +10,13 @@ import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { useDeleteMember } from "@/features/members/api/use-delete-member";
 import { useUpdateMember } from "@/features/members/api/use-update-member";
 import { MemberRole } from "@/features/members/types";
+import { getRoleLabel, getRoleColor } from "@/lib/permissions";
 
 import { useConfirm } from "@/hooks/use-confirm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DottedSeparator } from "@/components/dotted-separator";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -84,6 +86,9 @@ export const MembersList = () => {
                 <p className="text-sm font-medium">{member.name}</p>
                 <p className="text-xs text-muted-foreground">{member.email}</p>
               </div>
+              <Badge className={`ml-2 ${getRoleColor(member.role as MemberRole)}`}>
+                {getRoleLabel(member.role as MemberRole)}
+              </Badge>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button className="ml-auto" variant="secondary" size="icon">
@@ -98,16 +103,28 @@ export const MembersList = () => {
                     }
                     disabled={isUpdatingMember}
                   >
+                    <Shield className="size-4 mr-2 text-red-600" />
                     Set as Administrator
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="font-medium"
                     onClick={() =>
-                      handleUpdateMember(member.$id, MemberRole.MEMBER)
+                      handleUpdateMember(member.$id, MemberRole.MANAGER)
                     }
                     disabled={isUpdatingMember}
                   >
-                    Set as Member
+                    <UserCog className="size-4 mr-2 text-blue-600" />
+                    Set as Manager
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="font-medium"
+                    onClick={() =>
+                      handleUpdateMember(member.$id, MemberRole.EMPLOYEE)
+                    }
+                    disabled={isUpdatingMember}
+                  >
+                    <Briefcase className="size-4 mr-2 text-green-600" />
+                    Set as Employee
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="font-medium text-amber-700"

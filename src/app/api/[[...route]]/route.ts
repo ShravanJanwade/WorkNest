@@ -12,6 +12,8 @@ import activity from "@/features/activity/server/route";
 import sprints from "@/features/sprints/server/route";
 import upload from "@/features/upload/server/route";
 import epics from "@/features/epics/server/route";
+import admin from "@/features/admin/server/route";
+import superadmin from "@/features/superadmin/server/route";
 
 const app = new Hono().basePath("/api");
 
@@ -27,7 +29,9 @@ const routes = app
   .route("/activity", activity)
   .route("/sprints", sprints)
   .route("/upload", upload)
-  .route("/epics", epics);
+  .route("/epics", epics)
+  .route("/admin", admin)
+  .route("/superadmin", superadmin);
 
 export const GET = handle(app);
 export const POST = handle(app);
@@ -35,3 +39,5 @@ export const PATCH = handle(app);
 export const DELETE = handle(app);
 
 export type AppType = typeof routes;
+
+
