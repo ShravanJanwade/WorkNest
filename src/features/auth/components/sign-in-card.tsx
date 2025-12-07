@@ -93,7 +93,7 @@ export const SignInCard = () => {
             {/* Google Login Button */}
             <Button
               variant="outline"
-              className="w-full !mt-4 text-black hover:cursor-pointer hover:text-black/80 hover:scale-105 transition-transform"
+              className="w-full !mt-4 text-black bg-white border border-gray-300 hover:bg-gray-50 hover:cursor-pointer hover:text-black/80 hover:scale-105 transition-transform"
               onClick={() => signUpWithGoogle()}
               disabled={isPending}
             >
@@ -104,7 +104,7 @@ export const SignInCard = () => {
             {/* GitHub Login Button */}
             <Button
               variant="outline"
-              className="w-full text-black hover:cursor-pointer hover:text-black/80 hover:scale-105 transition-transform"
+              className="w-full text-black bg-white border border-gray-300 hover:bg-gray-50 hover:cursor-pointer hover:text-black/80 hover:scale-105 transition-transform"
               onClick={() => signUpWithGithub()}
               disabled={isPending}
             >
@@ -142,6 +142,7 @@ export const SignInCard = () => {
                         <Input
                           placeholder="email@example.com"
                           type="email"
+                          className="bg-white text-black border-gray-300"
                           {...field}
                           disabled={isPending}
                         />
@@ -162,6 +163,7 @@ export const SignInCard = () => {
                         <Input
                           placeholder="••••••••"
                           type="password"
+                          className="bg-white text-black border-gray-300"
                           {...field}
                           disabled={isPending}
                         />
