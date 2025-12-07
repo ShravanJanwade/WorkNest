@@ -1,73 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { Github } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="relative bg-gradient-to-tr from-white via-gray-100 to-white dark:from-[#0f0f11] dark:via-[#1a1a1d] dark:to-[#0f0f11] border-t border-gray-200 dark:border-gray-700 py-10">
-      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-6 px-6">
-        {}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="text-center md:text-left"
-        >
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            &copy; {new Date().getFullYear()} <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">WorkNest</span>. All
-            rights reserved.
-          </p>
-          <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">
-            Empowering teams to build the future.
-          </p>
-        </motion.div>
+    <footer className="bg-gray-900 text-gray-400 py-8">
+      <div className="container mx-auto px-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <img src="/Logo.png" className="w-6 h-6" alt="Logo" />
+            <span className="text-white font-semibold">WorkNest</span>
+          </div>
 
-        {}
-        <motion.div
-          className="flex flex-wrap gap-6 text-sm justify-center text-gray-600 dark:text-gray-400"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
-        >
-          <Link href="/team" className="hover:text-blue-600 transition-colors">
-            Team
-          </Link>
-          <Link href="/terms" className="hover:text-blue-600 transition-colors">
-            Terms
-          </Link>
-          <Link href="/privacy" className="hover:text-purple-600 transition-colors">
-            Privacy
-          </Link>
-          <Link href="/contact" className="hover:text-indigo-600 transition-colors">
-            Contact
-          </Link>
-        </motion.div>
+          <div className="flex gap-6 text-sm">
+            <Link href="/team" className="hover:text-white transition-colors">
+              Team
+            </Link>
+            <Link href="/sign-in" className="hover:text-white transition-colors">
+              Login
+            </Link>
+            <Link href="/sign-up" className="hover:text-white transition-colors">
+              Sign Up
+            </Link>
+          </div>
 
-        {}
-        <motion.div
-          className="flex gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.4 }}
-        >
-          {[
-            { icon: Github, link: "https://github.com/ShravanJanwade/WorkNest" },
-            { icon: Linkedin, link: "https://linkedin.com" },
-            { icon: Twitter, link: "https://twitter.com" },
-          ].map(({ icon: Icon, link }, i) => (
-            <a
-              key={i}
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:scale-110 transition-transform duration-200 text-gray-600 dark:text-gray-400 hover:text-blue-500"
-            >
-              <Icon className="w-5 h-5" />
-            </a>
-          ))}
-        </motion.div>
+          <a
+            href="https://github.com/ShravanJanwade/WorkNest"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 hover:text-white transition-colors"
+          >
+            <Github className="w-4 h-4" />
+            <span className="text-sm">GitHub</span>
+          </a>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-gray-800 text-center text-sm">
+          <p>© {new Date().getFullYear()} WorkNest. CS5610 Web Development Project.</p>
+        </div>
       </div>
     </footer>
   );

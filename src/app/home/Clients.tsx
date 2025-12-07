@@ -1,58 +1,31 @@
 "use client";
-import { FaGoogle, FaAmazon, FaMicrosoft, FaApple, FaFacebook } from "react-icons/fa";
-import { motion } from "framer-motion";
 
-export default function TrustedBySection() {
-  const logos = [
-    { icon: <FaGoogle />, name: "Google" },
-    { icon: <FaAmazon />, name: "Amazon" },
-    { icon: <FaMicrosoft />, name: "Microsoft" },
-    { icon: <FaApple />, name: "Apple" },
-    { icon: <FaFacebook />, name: "Facebook" },
+import { FaReact, FaNodeJs, FaGithub } from "react-icons/fa";
+import { SiNextdotjs, SiTypescript, SiTailwindcss } from "react-icons/si";
+
+export default function TechStack() {
+  const techs = [
+    { icon: <SiNextdotjs />, name: "Next.js" },
+    { icon: <FaReact />, name: "React" },
+    { icon: <SiTypescript />, name: "TypeScript" },
+    { icon: <SiTailwindcss />, name: "Tailwind" },
+    { icon: <FaNodeJs />, name: "Node.js" },
+    { icon: <FaGithub />, name: "GitHub" },
   ];
 
   return (
-    <section className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-[#0c0c0f] dark:to-[#1a1a1d] py-16">
-      <motion.h2
-        className="text-center text-3xl sm:text-4xl font-extrabold text-gray-800 dark:text-white mb-12 tracking-tight"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        Loved by the World's Most Innovative Teams
-      </motion.h2>
-
-      <motion.div
-        className="mx-auto flex max-w-6xl flex-wrap justify-center gap-10 px-6"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        transition={{ staggerChildren: 0.1 }}
-      >
-        {logos.map(({ icon, name }, idx) => (
-          <motion.div
-            key={name}
-            className="group relative flex h-20 w-20 items-center justify-center rounded-2xl border border-gray-200 bg-white/40 shadow-sm backdrop-blur-xl dark:bg-white/10 dark:border-white/20 transition-all duration-300 hover:shadow-xl hover:scale-105"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            whileHover={{ rotate: [0, -3, 3, 0], transition: { duration: 0.6 } }}
-          >
-            <span className="text-3xl text-gray-500 group-hover:text-black dark:text-gray-300 dark:group-hover:text-white transition-colors duration-300">
-              {icon}
-            </span>
-            <span className="sr-only">{name}</span>
-            {}
-            <div className="absolute bottom-full mb-2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition">
-              {name}
+    <section className="py-12 bg-gray-50 border-y">
+      <div className="container mx-auto px-6">
+        <p className="text-center text-sm text-gray-500 mb-6">Built with modern technologies</p>
+        <div className="flex flex-wrap justify-center gap-8">
+          {techs.map(({ icon, name }) => (
+            <div key={name} className="flex items-center gap-2 text-gray-600">
+              <span className="text-xl">{icon}</span>
+              <span className="text-sm">{name}</span>
             </div>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {}
-      <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 bg-purple-500 opacity-10 blur-3xl rounded-full pointer-events-none" />
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
