@@ -28,7 +28,7 @@ export default function CallToAction() {
           transition={{ duration: 0.4, delay: 0.2 }}
         >
           Join 10,000+ modern teams transforming productivity with{" "}
-          <span className="font-semibold text-indigo-600">TaskForge</span>. No credit card required.
+          <span className="font-semibold text-indigo-600">WorkNest</span>. No credit card required.
         </motion.p>
 
         <motion.div

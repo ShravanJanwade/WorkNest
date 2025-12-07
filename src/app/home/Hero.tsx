@@ -40,6 +40,13 @@ const Hero = () => {
           </motion.div>
           <nav className="flex items-center gap-5 text-white font-medium">
             <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 300 }}>
+              <Link href="/team">
+                <Button variant="ghost" className="text-white hover:text-purple-300">
+                  Team
+                </Button>
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 300 }}>
               <Link href="/sign-in">
                 <Button variant="ghost" className="text-white hover:text-blue-300">
                   Login

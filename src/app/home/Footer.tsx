@@ -31,6 +31,9 @@ export default function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
+          <Link href="/team" className="hover:text-blue-600 transition-colors">
+            Team
+          </Link>
           <Link href="/terms" className="hover:text-blue-600 transition-colors">
             Terms
           </Link>

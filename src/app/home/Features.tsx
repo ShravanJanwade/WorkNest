@@ -46,7 +46,7 @@ const features = [
 export default function FeaturesUltra() {
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
-      if (e.key === "l") alert("🚀 TaskForge Launch Mode Activated!");
+      if (e.key === "l") alert("🚀 WorkNest Launch Mode Activated!");
       if (e.key === "/") alert("👨‍💻 Dev Console Connected.");
     };
     window.addEventListener("keydown", listener);
@@ -64,12 +64,9 @@ export default function FeaturesUltra() {
         >
           Why{" "}
           <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
-            Choose TaskForge?
+            Choose WorkNest?
           </span>
         </motion.h2>
-        <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-          We've packed in magic, muscle, and a little mischief. ✨
-        </p>
       </div>
 
       <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">

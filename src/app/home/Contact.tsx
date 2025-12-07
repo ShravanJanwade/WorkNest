@@ -61,12 +61,6 @@ export default function ContactForm() {
             )}
           </motion.button>
         </motion.form>
-
-        {}
-        <div className="mt-16 flex justify-center items-center gap-2 text-white/50 text-sm animate-pulse">
-          <Sparkles className="w-4 h-4 text-yellow-300" />
-          <span>Made with magic ✨ & passion 💜</span>
-        </div>
       </div>
     </section>
   );
