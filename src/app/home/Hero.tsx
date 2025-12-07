@@ -84,7 +84,7 @@ const Hero = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9, duration: 1 }}
         >
-          <Link href="/signup">
+          <Link href="/sign-up">
             <Button
               size="lg"
               className="rounded-full px-8 py-4 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl hover:scale-105 hover:shadow-purple-500/50 transition-transform"
@@ -92,7 +92,7 @@ const Hero = () => {
               Get Started Free
             </Button>
           </Link>
-          <Link href="/login">
+          <Link href="/sign-in">
             <Button
               variant="outline"
               size="lg"

@@ -36,7 +36,7 @@ export default function CallToAction() {
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3, delay: 0.4 }}
         >
-          <Link href="/signup">
+          <Link href="/sign-up">
             <Button
               size="lg"
               className="relative inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 px-10 py-4 text-lg font-semibold text-white shadow-xl hover:shadow-2xl transition-shadow duration-300"
