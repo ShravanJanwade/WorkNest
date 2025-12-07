@@ -5,22 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:bg-neutral-100 disabled:from-neutral-100 disabled:to-neutral-100 disabled:text-neutral-300 border-neutral-200 shadow-sm [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:bg-neutral-100 disabled:from-neutral-100 disabled:to-neutral-100 disabled:text-neutral-300 dark:disabled:bg-muted dark:disabled:text-muted-foreground border-neutral-200 dark:border-border shadow-sm [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         primary:
-          "bg-gradient-to-b from-blue-600 to-blue-700 text-primary-foreground hover:from-blue-700 hover:to-blue-700",
+          "bg-gradient-to-b from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700",
         destructive:
-          "bg-gradient-to-b from-amber-600 to-amber-700 text-destructive-foreground hover:from-amber-700 hover:to-amber-700",
+          "bg-gradient-to-b from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800 dark:from-amber-500 dark:to-amber-600",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-white text-black hover:bg-neutral-100",
+        secondary: "bg-white text-black hover:bg-neutral-100 dark:bg-card dark:text-foreground dark:hover:bg-muted",
         ghost:
           "border-transparent shadow-none hover:bg-accent hover:text-accent-foreground",
-        muted: "bg-neutral-200 text-neutral-600 hover:bg-neutral-200/80",
+        muted: "bg-neutral-200 text-neutral-600 hover:bg-neutral-200/80 dark:bg-muted dark:text-muted-foreground",
         teritary:
-          "bg-blue-100 text-blue-600 border-transparent hover:bg-blue-200 shadow-none",
+          "bg-blue-100 text-blue-600 border-transparent hover:bg-blue-200 shadow-none dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30",
       },
       size: {
         default: "h-10 px-4 py-2",
