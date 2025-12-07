@@ -37,7 +37,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { useUpdateUser } from "../api/use-update-user";
 import { useChangePassword } from "../api/use-change-password";
+import { useUpdateMfa } from "../api/use-update-mfa";
+import { useResendVerification } from "../api/use-resend-verification";
 import { updateProfileSchema, changePasswordSchema } from "../schemas";
+import { Switch } from "@/components/ui/switch";
 import { Models } from "node-appwrite";
 import { ChangePasswordModal } from "./change-password-modal";
 
@@ -50,6 +53,8 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
   const router = useRouter();
   const { mutate, isPending } = useUpdateUser();
   const { mutate: changePassword, isPending: isChangingPassword } = useChangePassword();
+  const { mutate: updateMfa, isPending: isUpdatingMfa } = useUpdateMfa();
+  const resendVerification = useResendVerification();
   const inputRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -149,6 +154,42 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
         <CardContent className="p-7">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              {/* Unverified Email Warning */}
+              {!initialValues.emailVerification && (
+                  <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-md">
+                      <div className="flex items-start justify-between">
+                          <div className="flex">
+                              <div className="flex-shrink-0">
+                                  <Shield className="h-5 w-5 text-amber-500" />
+                              </div>
+                              <div className="ml-3">
+                                  <p className="text-sm text-amber-700">
+                                      Your email address is not verified. 
+                                      <span className="block mt-1">
+                                          Please check your inbox for the verification link. 
+                                          Verify to enable security features like MFA.
+                                      </span>
+                                  </p>
+                              </div>
+                          </div>
+                          
+                          <Button
+                              type="button" 
+                              variant="outline"
+                              size="sm"
+                              className="bg-white border-amber-200 text-amber-700 hover:bg-amber-100 hover:text-amber-800 ml-4 whitespace-nowrap"
+                              disabled={resendVerification.isPending}
+                              onClick={() => resendVerification.mutate()}
+                          >
+                              {resendVerification.isPending && (
+                                  <Loader className="h-3 w-3 mr-2 animate-spin" />
+                              )}
+                              Resend Email
+                          </Button>
+                      </div>
+                  </div>
+              )}
+              
               {/* Profile Header Section */}
               <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 p-8">
                 <div className="flex items-center gap-6">
@@ -332,13 +373,13 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                 </div>
               </div>
 
-              {/* Security Section */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
                   <Shield className="size-5 text-primary" />
                   <h3 className="text-xl font-bold">Security</h3>
                 </div>
-                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 border">
+                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 border space-y-6">
+                  {/* Password Change */}
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium flex items-center gap-2">
@@ -358,6 +399,34 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                       <KeyRound className="size-4 mr-2" />
                       Change Password
                     </Button>
+                  </div>
+                  
+                  <DottedSeparator />
+                  
+                  {/* MFA Toggle */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium flex items-center gap-2">
+                        <Shield className="size-4" />
+                        Two-Factor Authentication
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Require a 6-digit email OTP when logging in for extra security
+                      </p>
+                      {!initialValues.emailVerification && (
+                          <p className="text-xs text-amber-600 font-medium mt-1 flex items-center gap-1">
+                              Verify your email to enable this feature
+                          </p>
+                      )}
+                    </div>
+                     <Switch 
+                        checked={initialValues.prefs?.mfaEnabled || false}
+                        onCheckedChange={(checked) => updateMfa(
+                            { enabled: checked }, 
+                            { onSuccess: () => router.refresh() } // Refresh to update UI
+                        )}
+                        disabled={isUpdatingMfa || !initialValues.emailVerification}
+                      />
                   </div>
                 </div>
               </div>

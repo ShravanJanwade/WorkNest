@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { useCurrent } from "@/features/auth/api/use-current";
+import { useUpdateMfa } from "@/features/auth/api/use-update-mfa";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { Label } from "@/components/ui/label";
 const AdminSettingsPage = () => {
   const router = useRouter();
   const { data: user, isLoading: isLoadingUser } = useCurrent();
+  const { mutate: updateMfa, isPending: isUpdatingMfa } = useUpdateMfa();
 
   if (isLoadingUser) {
     return (
@@ -110,22 +112,19 @@ const AdminSettingsPage = () => {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Two-Factor Authentication</Label>
+                <Label>Two-Factor Authentication (Email)</Label>
                 <p className="text-sm text-muted-foreground">
-                  Require 2FA for all admin accounts
+                  Require 6-digit email OTP for login
                 </p>
               </div>
-              <Switch />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Session Timeout</Label>
-                <p className="text-sm text-muted-foreground">
-                  Auto-logout inactive users after 30 minutes
-                </p>
-              </div>
-              <Switch defaultChecked />
+              <Switch 
+                checked={user?.prefs?.mfaEnabled || false}
+                onCheckedChange={(checked) => updateMfa(
+                    { enabled: checked }, 
+                    { onSuccess: () => router.refresh() } // Refresh to update UI
+                )}
+                disabled={isUpdatingMfa}
+              />
             </div>
           </CardContent>
         </Card>

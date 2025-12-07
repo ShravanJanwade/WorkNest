@@ -139,7 +139,19 @@ const app = new Hono()
       const assignees = await Promise.all(
         members.documents.map(async (member) => {
           // ... existing logic
-          const user = await users.get(member.userId);
+          
+          let user;
+          try {
+            user = await users.get(member.userId);
+          } catch (error) {
+            console.warn(`User not found for member ${member.$id}`);
+            return {
+              ...member,
+              name: "Unknown User",
+              email: "unknown@example.com",
+            };
+          }
+
           return {
             ...member,
             name: user.name || user.email,

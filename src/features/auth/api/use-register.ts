@@ -20,7 +20,17 @@ export const useRegister = () => {
       const response = await client.api.auth.register.$post({ json });
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Check if verification is needed
+      if ((data as any).requireVerification) {
+          toast.success("Account created! Please check your email to verify.");
+          // We can redirect to a "check email" bridge page or just let them login (which will block/ask for verification)
+          // For now, redirect to dashboard but middleware might intercept?
+          // Actually, we'll redirect to a verify-request page.
+          router.push("/verify-email");
+          return;
+      }
+      
       toast.success("Signed up.");
       router.push("/dashboard");
       queryClient.invalidateQueries({ queryKey: ["current"] });
