@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${request.nextUrl.origin}/superadmin`);
     }
 
-    return NextResponse.redirect(`${request.nextUrl.origin}/`);
+    return NextResponse.redirect(`${request.nextUrl.origin}/dashboard`);
   } catch (error) {
     console.error("OAuth callback error:", error);
     return NextResponse.redirect(`${request.nextUrl.origin}/sign-in?error=oauth_failed`);
