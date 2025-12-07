@@ -16,8 +16,6 @@ import admin from "@/features/admin/server/route";
 import superadmin from "@/features/superadmin/server/route";
 
 const app = new Hono().basePath("/api");
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const routes = app
   .route("/auth", auth)
   .route("/workspaces", workspaces)
