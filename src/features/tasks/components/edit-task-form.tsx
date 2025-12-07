@@ -86,7 +86,7 @@ export const EditTaskForm = ({
       </div>
       <CardContent className="p-7">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit, (errors) => console.log("Form errors:", errors))}>
             <div className="flex flex-col gap-y-4">
               <FormField
                 control={form.control}

@@ -310,6 +310,7 @@ function ImageGenerator({
             <Button
               size="xs"
               variant="outline"
+              type="button"
               onClick={() => inputRef.current?.click()}
               disabled={isPending}
             >

@@ -248,7 +248,12 @@ const AdminUsersPage = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium">{member.name || "Unknown User"}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium">{member.name || "Unknown User"}</p>
+                        {member.userId === user?.$id && (
+                          <Badge variant="outline" className="text-xs">You</Badge>
+                        )}
+                      </div>
                       <p className="text-sm text-muted-foreground">{member.email}</p>
                     </div>
                   </div>
@@ -256,33 +261,36 @@ const AdminUsersPage = () => {
                     <Badge className={getRoleColor(member.role as MemberRole)}>
                       {getRoleLabel(member.role as MemberRole)}
                     </Badge>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleRoleChange(member.$id, MemberRole.ADMIN)}>
-                          <Shield className="h-4 w-4 mr-2 text-red-600" />
-                          Make Admin
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleRoleChange(member.$id, MemberRole.MANAGER)}>
-                          <UserCog className="h-4 w-4 mr-2 text-blue-600" />
-                          Make Manager
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleRoleChange(member.$id, MemberRole.EMPLOYEE)}>
-                          <Briefcase className="h-4 w-4 mr-2 text-green-600" />
-                          Make Employee
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={() => handleRemoveMember(member.$id)}
-                          className="text-red-600"
-                        >
-                          Remove from Workspace
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {/* Only show dropdown for other users, not current user */}
+                    {member.userId !== user?.$id && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleRoleChange(member.$id, MemberRole.ADMIN)}>
+                            <Shield className="h-4 w-4 mr-2 text-red-600" />
+                            Make Admin
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleRoleChange(member.$id, MemberRole.MANAGER)}>
+                            <UserCog className="h-4 w-4 mr-2 text-blue-600" />
+                            Make Manager
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleRoleChange(member.$id, MemberRole.EMPLOYEE)}>
+                            <Briefcase className="h-4 w-4 mr-2 text-green-600" />
+                            Make Employee
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleRemoveMember(member.$id)}
+                            className="text-red-600"
+                          >
+                            Remove from Workspace
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
                 </div>
               ))}

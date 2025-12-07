@@ -342,10 +342,18 @@ const app = new Hono()
 
         // Calculate duration if end time provided but no duration
         let calculatedDuration = duration;
+        let calculatedEndTime = endTime;
+
         if (endTime && !duration) {
           const start = new Date(startTime);
           const end = new Date(endTime);
           calculatedDuration = Math.round((end.getTime() - start.getTime()) / 60000);
+        } else if (duration && !endTime) {
+          // If duration provided but no endTime (manual entry), calculate endTime
+          // so it's not treated as an active timer
+          const start = new Date(startTime);
+          const end = new Date(start.getTime() + duration * 60000);
+          calculatedEndTime = end.toISOString();
         }
 
         const timeEntry = await databases.createDocument(
@@ -356,7 +364,7 @@ const app = new Hono()
             taskId,
             userId: user.$id,
             startTime,
-            endTime: endTime || null,
+            endTime: calculatedEndTime || null,
             duration: calculatedDuration || null,
             description: description || "",
             billable: billable ?? true,

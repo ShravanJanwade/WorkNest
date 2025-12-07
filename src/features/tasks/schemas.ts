@@ -10,10 +10,10 @@ export const createTaskSchema = z.object({
   projectId: z.string().trim().min(1, "Required"),
   dueDate: z.coerce.date().optional(),
   assigneeId: z.string().trim().min(1, "Required"),
-  description: z.string().optional(),
+  description: z.string().nullish(),
   estimatedHours: z.number().optional(),
   labels: z.array(z.string()).optional(),
-  parentId: z.string().optional(),
-  epicId: z.string().optional(),
+  parentId: z.string().nullish(),
+  epicId: z.string().nullish(),
   storyPoints: z.number().min(0).max(100).optional(),
 });

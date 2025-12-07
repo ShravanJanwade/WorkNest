@@ -9,6 +9,7 @@ import { CreateWorkspaceModal } from "@/features/workspaces/components/create-wo
 import { CreateTaskModal } from "@/features/tasks/components/create-task-modal";
 import { EditTaskModal } from "@/features/tasks/components/edit-task-modal";
 import { CreateEpicModal } from "@/features/epics/components/create-epic-modal";
+import { InviteModal } from "@/features/workspaces/components/invite-modal";
 
 import { Navbar } from "@/components/navbar";
 import { Sidebar } from "@/components/sidebar";
@@ -41,6 +42,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <CreateTaskModal />
       <EditTaskModal />
       <CreateEpicModal />
+      <InviteModal />
       <div className="flex w-full h-full">
         <div className="fixed left-0 top-0 hidden lg:block lg:w-[264px] h-full overflow-y-auto">
           <Sidebar />

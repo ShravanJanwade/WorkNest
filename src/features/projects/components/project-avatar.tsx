@@ -33,6 +33,13 @@ export const ProjectAvatar = ({
       </Avatar>
     );
   }
+  
+  // Handle case where image is just an ID (not signed URL)
+  // User requested fallback: https://f005.backblazeb2.com/file/WorkNest/<IMAGE_ID>
+  let imageUrl = image;
+  if (image && !image.startsWith("http") && !image.startsWith("data:")) {
+      imageUrl = `https://f005.backblazeb2.com/file/WorkNest/${image}`;
+  }
 
   try {
     return (
@@ -43,12 +50,15 @@ export const ProjectAvatar = ({
         )}
       >
         <Image
-          src={image}
+          src={imageUrl}
           alt={name}
           fill
           sizes="20px"
           className="object-cover"
-          unoptimized={isExternal} // optional: skip optimization for external URLs
+          // Skip optimization for external URLs if they are not allowed domains, but we added them.
+          // However, using unoptimized just to be safe if domain varies.
+          // Check if domain is one of our configured ones to decide optimization could be better
+          // but for now user just wants it to work.
         />
       </div>
     );

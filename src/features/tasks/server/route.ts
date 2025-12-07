@@ -15,8 +15,12 @@ import { Task, TaskStatus } from "../types";
 import { logActivity } from "@/features/activity/server/route";
 import { ActivityAction } from "@/features/activity/types";
 
+import { getSignedUrl } from "@/lib/storage";
+import { B2_BUCKET_NAME } from "@/config";
+
 const app = new Hono()
   .delete("/:taskId", sessionMiddleware, async (c) => {
+    // ... (existing delete logic)
     const user = c.get("user");
     const databases = c.get("databases");
     const { taskId } = c.req.param();
@@ -37,7 +41,6 @@ const app = new Hono()
       return c.json({ error: "Unauthorized" }, 401);
     }
 
-    // Only ADMIN and MANAGER can delete tasks
     if (member.role !== "ADMIN" && member.role !== "MANAGER") {
       return c.json({ error: "Only admins and managers can delete tasks" }, 403);
     }
@@ -86,35 +89,12 @@ const app = new Hono()
         Query.orderDesc("$createdAt"),
       ];
 
-      if (projectId) {
-        console.log("projectId: ", projectId);
-        query.push(Query.equal("projectId", projectId));
-      }
-
-      if (status) {
-        console.log("status: ", status);
-        query.push(Query.equal("status", status));
-      }
-
-      if (assigneeId) {
-        console.log("assigneeId: ", assigneeId);
-        query.push(Query.equal("assigneeId", assigneeId));
-      }
-
-      if (dueDate) {
-        console.log("dueDate: ", dueDate);
-        query.push(Query.equal("dueDate", dueDate));
-      }
-
-      if (parentId) {
-        console.log("parentId: ", parentId);
-        query.push(Query.equal("parentId", parentId));
-      }
-
-      if (search) {
-        console.log("search: ", search);
-        query.push(Query.search("name", search));
-      }
+      if (projectId) query.push(Query.equal("projectId", projectId));
+      if (status) query.push(Query.equal("status", status));
+      if (assigneeId) query.push(Query.equal("assigneeId", assigneeId));
+      if (dueDate) query.push(Query.equal("dueDate", dueDate));
+      if (parentId) query.push(Query.equal("parentId", parentId));
+      if (search) query.push(Query.search("name", search));
 
       const tasks = await databases.listDocuments<Task>(
         DATABASE_ID,
@@ -131,6 +111,25 @@ const app = new Hono()
         projectIds.length > 0 ? [Query.contains("$id", projectIds)] : []
       );
 
+      const signedProjects = await Promise.all(
+        projects.documents.map(async (project) => {
+          let imageUrl = project.imageUrl || project.image;
+          
+          if (
+            imageUrl &&
+            !imageUrl.startsWith("data:image") &&
+            !imageUrl.startsWith("http")
+          ) {
+            imageUrl = await getSignedUrl(B2_BUCKET_NAME, imageUrl);
+          }
+          
+          return {
+            ...project,
+            imageUrl,
+          };
+        })
+      );
+
       const members = await databases.listDocuments(
         DATABASE_ID,
         MEMBERS_ID,
@@ -139,8 +138,8 @@ const app = new Hono()
 
       const assignees = await Promise.all(
         members.documents.map(async (member) => {
+          // ... existing logic
           const user = await users.get(member.userId);
-
           return {
             ...member,
             name: user.name || user.email,
@@ -150,7 +149,7 @@ const app = new Hono()
       );
 
       const populatedTasks = tasks.documents.map((task) => {
-        const project = projects.documents.find(
+        const project = signedProjects.find(
           (project) => project.$id === task.projectId
         );
 
@@ -367,6 +366,22 @@ const app = new Hono()
       task.projectId
     );
 
+    // Sign project image if exists, similar to list view
+    let projectImageUrl = project.imageUrl || project.image;
+    if (
+      projectImageUrl &&
+      !projectImageUrl.startsWith("data:image") &&
+      !projectImageUrl.startsWith("http")
+    ) {
+      projectImageUrl = await getSignedUrl(B2_BUCKET_NAME, projectImageUrl);
+    }
+    
+    // Create a modified project object with the signed URL
+    const projectWithSignedImage = {
+      ...project,
+      imageUrl: projectImageUrl,
+    };
+
     const member = await databases.getDocument(
       DATABASE_ID,
       MEMBERS_ID,
@@ -384,7 +399,7 @@ const app = new Hono()
     return c.json({
       data: {
         ...task,
-        project,
+        project: projectWithSignedImage,
         assignee,
       },
     });

@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 
+import { useCurrent } from "@/features/auth/api/use-current";
+
 export const MembersList = () => {
   const workspaceId = useWorkspaceId();
   const [ConfirmDialog, confirm] = useConfirm(
@@ -33,30 +35,20 @@ export const MembersList = () => {
     "destructive"
   );
 
+  const { data: user } = useCurrent();
   const { data } = useGetMembers({ workspaceId });
   const { mutate: deleteMember, isPending: isDeletingMember } =
     useDeleteMember();
   const { mutate: updateMember, isPending: isUpdatingMember } =
     useUpdateMember();
 
+  const currentMember = data?.documents.find((m) => m.userId === user?.$id);
+  const isAdmin = currentMember?.role === MemberRole.ADMIN;
+
   const handleUpdateMember = (memberId: string, role: MemberRole) => {
     updateMember({ json: { role }, param: { memberId } });
   };
-
-  const handleDeleteMember = async (memberId: string) => {
-    const ok = await confirm();
-
-    if (!ok) return;
-
-    deleteMember(
-      { param: { memberId } },
-      {
-        onSuccess: () => {
-          window.location.reload();
-        },
-      }
-    );
-  };
+   // ... (existing helper functions)
 
   return (
     <Card className="size-full border-none shadow-none">
@@ -89,54 +81,62 @@ export const MembersList = () => {
               <Badge className={`ml-2 ${getRoleColor(member.role as MemberRole)}`}>
                 {getRoleLabel(member.role as MemberRole)}
               </Badge>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="ml-auto" variant="secondary" size="icon">
-                    <MoreVerticalIcon className="size-4 text-muted-foreground" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent side="bottom" align="end">
-                  <DropdownMenuItem
-                    className="font-medium"
-                    onClick={() =>
-                      handleUpdateMember(member.$id, MemberRole.ADMIN)
-                    }
-                    disabled={isUpdatingMember}
-                  >
-                    <Shield className="size-4 mr-2 text-red-600" />
-                    Set as Administrator
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="font-medium"
-                    onClick={() =>
-                      handleUpdateMember(member.$id, MemberRole.MANAGER)
-                    }
-                    disabled={isUpdatingMember}
-                  >
-                    <UserCog className="size-4 mr-2 text-blue-600" />
-                    Set as Manager
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="font-medium"
-                    onClick={() =>
-                      handleUpdateMember(member.$id, MemberRole.EMPLOYEE)
-                    }
-                    disabled={isUpdatingMember}
-                  >
-                    <Briefcase className="size-4 mr-2 text-green-600" />
-                    Set as Employee
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="font-medium text-amber-700"
-                    onClick={() =>
-                      handleDeleteMember(member.$id)
-                    }
-                    disabled={isDeletingMember}
-                  >
-                    Remove {member.name}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              
+              {/* Only Admins can manage other members */}
+              {isAdmin && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="ml-auto" variant="secondary" size="icon">
+                      <MoreVerticalIcon className="size-4 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent side="bottom" align="end">
+                    <DropdownMenuItem
+                      className="font-medium"
+                      onClick={() =>
+                        handleUpdateMember(member.$id, MemberRole.ADMIN)
+                      }
+                      disabled={isUpdatingMember}
+                    >
+                      <Shield className="size-4 mr-2 text-red-600" />
+                      Set as Administrator
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="font-medium"
+                      onClick={() =>
+                        handleUpdateMember(member.$id, MemberRole.MANAGER)
+                      }
+                      disabled={isUpdatingMember}
+                    >
+                      <UserCog className="size-4 mr-2 text-blue-600" />
+                      Set as Manager
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="font-medium"
+                      onClick={() =>
+                        handleUpdateMember(member.$id, MemberRole.EMPLOYEE)
+                      }
+                      disabled={isUpdatingMember}
+                    >
+                      <Briefcase className="size-4 mr-2 text-green-600" />
+                      Set as Employee
+                    </DropdownMenuItem>
+                    
+                    {/* Prevent self-deletion */}
+                    {member.userId !== user?.$id && (
+                      <DropdownMenuItem
+                        className="font-medium text-amber-700"
+                        onClick={() =>
+                          handleDeleteMember(member.$id)
+                        }
+                        disabled={isDeletingMember}
+                      >
+                        <RemoveIcon memberName={member.name} />
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
             {index < data.documents.length - 1 && (
               <Separator className="my-2.5" />
@@ -147,3 +147,9 @@ export const MembersList = () => {
     </Card>
   );
 };
+
+const RemoveIcon = ({ memberName }: { memberName: string }) => (
+    <>
+        Remove {memberName}
+    </>
+);

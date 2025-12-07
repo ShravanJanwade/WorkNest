@@ -146,16 +146,6 @@ const app = new Hono()
       const account = c.get("account");
       const { oldPassword, newPassword } = c.req.valid("json");
 
-      // Verify old password by attempting to create a session
-      try {
-        const { account: tempAccount } = await createAdminClient();
-        await tempAccount.createEmailPasswordSession(user.email, oldPassword);
-        // If successful, delete the temporary session
-        await tempAccount.deleteSession("current");
-      } catch (error) {
-        return c.json({ error: "Current password is incorrect." }, 400);
-      }
-
       // Update to new password
       try {
         await account.updatePassword(newPassword, oldPassword);
@@ -164,8 +154,55 @@ const app = new Hono()
         return c.json({ error: "Failed to update password." }, 500);
       }
     }
+  )
+  
+  // Forgot Password - Send recovery email
+  .post(
+    "/forgot-password",
+    zValidator("json", z.object({ email: z.string().email() })),
+    async (c) => {
+      const { email } = c.req.valid("json");
+      
+      try {
+        const { account } = await createAdminClient();
+        
+        // Create password recovery
+        // The URL should point to your reset-password page
+        const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`;
+        
+        await account.createRecovery(email, resetUrl);
+        
+        return c.json({ success: true, message: "Password reset email sent." });
+      } catch (error) {
+        console.error("Forgot password error:", error);
+        // Don't reveal if email exists or not for security
+        return c.json({ success: true, message: "If an account exists, a reset email has been sent." });
+      }
+    }
+  )
+  
+  // Reset Password - Complete recovery
+  .post(
+    "/reset-password",
+    zValidator("json", z.object({
+      userId: z.string(),
+      secret: z.string(), 
+      password: z.string().min(8),
+    })),
+    async (c) => {
+      const { userId, secret, password } = c.req.valid("json");
+      
+      try {
+        const { account } = await createAdminClient();
+        
+        await account.updateRecovery(userId, secret, password);
+        
+        return c.json({ success: true, message: "Password reset successfully." });
+      } catch (error) {
+        console.error("Reset password error:", error);
+        return c.json({ error: "Failed to reset password. Link may be expired." }, 400);
+      }
+    }
   );
 
 export default app;
-
-

@@ -15,6 +15,7 @@ import {
 import { DottedSeparator } from "@/components/dotted-separator";
 
 import { useGetTimeEntries } from "../api/use-get-time-entries";
+import { useDeleteTimeEntry } from "../api/use-delete-time-entry";
 import { TimerWidget } from "./timer-widget";
 
 interface TimeEntriesListProps {
@@ -35,7 +36,16 @@ const formatDuration = (minutes: number): string => {
 
 export const TimeEntriesList = ({ taskId, taskName }: TimeEntriesListProps) => {
   const { data, isLoading } = useGetTimeEntries({ taskId });
+  const { mutate: deleteTimeEntry } = useDeleteTimeEntry();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleDelete = (timeEntryId: string) => {
+    if (confirm("Are you sure you want to delete this time entry?")) {
+      deleteTimeEntry({
+        param: { timeEntryId },
+      });
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -122,7 +132,10 @@ export const TimeEntriesList = ({ taskId, taskName }: TimeEntriesListProps) => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem className="text-red-600">
+                  <DropdownMenuItem 
+                    className="text-red-600"
+                    onClick={() => handleDelete(entry.$id)}
+                  >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
                   </DropdownMenuItem>
@@ -141,3 +154,4 @@ export const TimeEntriesList = ({ taskId, taskName }: TimeEntriesListProps) => {
     </div>
   );
 };
+

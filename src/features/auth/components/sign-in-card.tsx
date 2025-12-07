@@ -183,14 +183,22 @@ export const SignInCard = () => {
             </Form>
           </CardContent>
 
-          <CardFooter className="text-sm text-center text-muted-foreground flex justify-center">
-            Don&apos;t have an account?{" "}
+          <CardFooter className="text-sm text-center text-muted-foreground flex flex-col gap-2">
             <Link
-              href="/sign-up"
-              className="text-blue-600 underline ml-1 hover:text-blue-700"
+              href="/forgot-password"
+              className="text-blue-600 underline hover:text-blue-700"
             >
-              Sign up
+              Forgot your password?
             </Link>
+            <div>
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/sign-up"
+                className="text-blue-600 underline ml-1 hover:text-blue-700"
+              >
+                Sign up
+              </Link>
+            </div>
           </CardFooter>
         </Card>
       </motion.div>

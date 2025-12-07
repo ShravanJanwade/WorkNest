@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import Link from "next/link";
 import { 
   Users, 
   Building2, 
@@ -14,19 +14,24 @@ import {
 
 import { useCurrent } from "@/features/auth/api/use-current";
 import { useGetAdminStats } from "@/features/admin/api/use-get-admin-stats";
+import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
+import { useInviteModal } from "@/features/workspaces/hooks/use-invite-modal";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 
 const AdminDashboardPage = () => {
   const { data: user, isLoading: isLoadingUser } = useCurrent();
   const { data: stats, isLoading: isLoadingStats } = useGetAdminStats();
+  const { data: workspaces, isLoading: isLoadingWorkspaces } = useGetWorkspaces();
+  const { open } = useInviteModal();
 
-  if (isLoadingUser) {
+  if (isLoadingUser || isLoadingWorkspaces) {
     return <AdminDashboardSkeleton />;
   }
+
+  const workspaceId = workspaces?.documents[0]?.$id;
 
   if (!user) {
     redirect("/sign-in");
@@ -46,16 +51,14 @@ const AdminDashboardPage = () => {
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" asChild>
-            <Link href="/admin/settings">
+            <Link href={workspaceId ? `/workspaces/${workspaceId}/settings` : "/admin/settings"}>
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </Link>
           </Button>
-          <Button asChild className="bg-gradient-to-r from-violet-600 to-indigo-600">
-            <Link href="/admin/users">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Invite Users
-            </Link>
+          <Button onClick={open} className="bg-gradient-to-r from-violet-600 to-indigo-600">
+            <UserPlus className="h-4 w-4 mr-2" />
+            Invite Users
           </Button>
         </div>
       </div>
