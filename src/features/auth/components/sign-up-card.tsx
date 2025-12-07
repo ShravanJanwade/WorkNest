@@ -94,7 +94,7 @@ export const SignUpCard = () => {
             {/* Google Sign Up Button */}
             <Button
               onClick={() => signUpWithGoogle()}
-              className="w-full !mt-4 text-black hover:cursor-pointer hover:text-black/80 hover:scale-105 transition-transform"
+              className="w-full !mt-4 text-black bg-white border-gray-300 hover:bg-gray-50 hover:cursor-pointer hover:text-black/80 hover:scale-105 transition-transform"
               variant="outline"
               disabled={isPending}
             >
@@ -105,7 +105,7 @@ export const SignUpCard = () => {
             {/* GitHub Sign Up Button */}
             <Button
               onClick={() => signUpWithGithub()}
-              className="w-full text-black hover:cursor-pointer hover:text-black/80 hover:scale-105 transition-transform"
+              className="w-full text-black bg-white border-gray-300 hover:bg-gray-50 hover:cursor-pointer hover:text-black/80 hover:scale-105 transition-transform"
               variant="outline"
               disabled={isPending}
             >
