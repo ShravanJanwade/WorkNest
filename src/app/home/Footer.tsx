@@ -16,11 +16,11 @@ export default function Footer() {
           className="text-center md:text-left"
         >
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            &copy; {new Date().getFullYear()} <span className="font-semibold">TaskForge</span>. All
+            &copy; {new Date().getFullYear()} <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">WorkNest</span>. All
             rights reserved.
           </p>
           <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">
-            Built with ❤️ by humans, not AI (but maybe a little help).
+            Empowering teams to build the future.
           </p>
         </motion.div>
 
@@ -50,7 +50,7 @@ export default function Footer() {
           transition={{ delay: 0.4, duration: 0.4 }}
         >
           {[
-            { icon: Github, link: "https://github.com" },
+            { icon: Github, link: "https://github.com/ShravanJanwade/WorkNest" },
             { icon: Linkedin, link: "https://linkedin.com" },
             { icon: Twitter, link: "https://twitter.com" },
           ].map(({ icon: Icon, link }, i) => (
