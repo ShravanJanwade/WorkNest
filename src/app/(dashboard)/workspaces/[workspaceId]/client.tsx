@@ -131,7 +131,7 @@ export const ProjectList = ({ data, total }: ProjectListProps) => {
 
   return (
     <div className="flex flex-col gap-y-4 col-span-1">
-      <div className="bg-white border rounded-lg p-4">
+      <div className="bg-white dark:bg-card border rounded-lg p-4">
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold">Projects ({total})</p>
           <Button variant="secondary" size="icon" onClick={createProject}>
@@ -178,7 +178,7 @@ export const MemberList = ({ data, total }: MemberListProps) => {
 
   return (
     <div className="flex flex-col gap-y-4 col-span-1">
-      <div className="bg-white border rounded-lg p-4">
+      <div className="bg-white dark:bg-card border rounded-lg p-4">
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold">Members ({total})</p>
           <Button variant="secondary" size="icon" asChild>
