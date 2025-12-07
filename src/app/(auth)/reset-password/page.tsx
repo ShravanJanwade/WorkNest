@@ -81,7 +81,6 @@ const ResetPasswordPage = () => {
     }
   };
 
-  // Password strength indicator
   const getPasswordStrength = (pwd: string) => {
     let strength = 0;
     if (pwd.length >= 8) strength++;
@@ -99,7 +98,7 @@ const ResetPasswordPage = () => {
 
   return (
     <div className="w-full h-screen flex flex-col md:flex-row overflow-hidden">
-      {/* Left section (Animation) */}
+ 
       <div className="w-full md:w-1/2 h-[40vh] md:h-full bg-gray-100 relative flex items-center justify-center">
         <motion.div
           initial={{ x: -50, opacity: 0 }}
@@ -125,7 +124,6 @@ const ResetPasswordPage = () => {
         />
       </div>
 
-      {/* Right section (Form) */}
       <motion.div
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
