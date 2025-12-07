@@ -16,7 +16,13 @@ export const useLogin = () => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json }) => {
       const response = await client.api.auth.login.$post({ json });
-      return await response.json();
+      const data = await response.json();
+      
+      if (!response.ok || (data as any).error) {
+        throw new Error((data as any).error || "Invalid email or password");
+      }
+      
+      return data;
     },
     onSuccess: async (data, variables) => {
       if ((data as any).requireMfa) {
@@ -58,8 +64,8 @@ export const useLogin = () => {
 
       queryClient.invalidateQueries({ queryKey: ["current"] });
     },
-    onError: () => {
-      toast.error("Failed to log in.");
+    onError: (error) => {
+      toast.error(error.message || "Failed to log in.");
     },
   });
 

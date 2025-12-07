@@ -11,9 +11,9 @@ import { AnalyticsAssigneeChart } from "./analytics-assignee-chart";
 
 export const AnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType) => {
   return (
-    <div className="flex flex-col gap-y-6">
-      {}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-4 w-full">
+    <div className="flex flex-col gap-y-4 sm:gap-y-6">
+      {/* Analytics Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-4 w-full">
         <AnalyticsCard
           title="Total Tasks"
           value={data.taskCount}
@@ -52,10 +52,10 @@ export const AnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType) => {
 
       <DottedSeparator />
 
-      {}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {}
-        <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+      {/* Charts Grid - Responsive layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* Bar Chart */}
+        <div className="bg-card dark:bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
           <AnalyticsBarChart
             title="Task Status Distribution"
             data={data.tasksByStatus || []}
@@ -63,8 +63,8 @@ export const AnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType) => {
           />
         </div>
 
-        {}
-        <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+        {/* Pie Chart */}
+        <div className="bg-card dark:bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
           <AnalyticsPieChart
             title="Task Priority Distribution"
             data={data.tasksByPriority || []}
@@ -73,9 +73,9 @@ export const AnalyticsDashboard = ({ data }: ProjectAnalyticsResponseType) => {
         </div>
       </div>
 
-      {}
-      <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+      {/* Assignee Chart - Full width on all screens */}
+      <div className="grid grid-cols-1 gap-4 sm:gap-6">
+        <div className="bg-card dark:bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
           <AnalyticsAssigneeChart
             title="Top Assignees"
             data={data.tasksByAssignee || []}

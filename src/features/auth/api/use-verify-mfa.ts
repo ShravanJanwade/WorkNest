@@ -22,9 +22,27 @@ export const useVerifyMfa = () => {
       });
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Verification successful");
-      router.push("/");
+
+      try {
+        const res = await client.api.auth.current.$get();
+        if (res.ok) {
+          const result = await res.json();
+          const userData = result.data;
+
+          if (userData && (userData as any).prefs?.isSuperAdmin) {
+            router.push("/superadmin");
+          } else {
+            router.push("/");
+          }
+        } else {
+          router.push("/");
+        }
+      } catch {
+        router.push("/");
+      }
+
       queryClient.invalidateQueries({ queryKey: ["current"] });
     },
     onError: () => {
@@ -34,3 +52,4 @@ export const useVerifyMfa = () => {
 
   return mutation;
 };
+

@@ -7,6 +7,10 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/sign-in");
 
+  if (user.prefs?.isSuperAdmin) {
+    redirect("/superadmin");
+  }
+
   const workspaces = await getWorkspaces();
 
   if (workspaces.total === 0) {
@@ -15,3 +19,4 @@ export default async function DashboardPage() {
     redirect(`/workspaces/${workspaces.documents[0].$id}`);
   }
 }
+

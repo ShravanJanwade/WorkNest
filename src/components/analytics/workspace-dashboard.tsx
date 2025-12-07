@@ -13,12 +13,12 @@ import { QuoteWidget } from "./quote-widget";
 
 export const WorkspaceDashboard = ({ data }: WorkspaceAnalyticsResponseType) => {
   return (
-    <div className="flex flex-col gap-y-6">
-      {}
+    <div className="flex flex-col gap-y-4 sm:gap-y-6">
+      {/* Quote Widget */}
       <QuoteWidget />
 
-      {}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-4 w-full">
+      {/* Analytics Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-4 w-full">
         <AnalyticsCard
           title="Total Tasks"
           value={data.taskCount}
@@ -57,10 +57,10 @@ export const WorkspaceDashboard = ({ data }: WorkspaceAnalyticsResponseType) => 
 
       <DottedSeparator />
 
-      {}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[400px]">
-        {}
-        <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+      {/* Charts Row 1 */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+        {/* Status Distribution Chart */}
+        <div className="bg-card dark:bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
           <AnalyticsBarChart
             title="Workspace Status Distribution"
             data={data.tasksByStatus || []}
@@ -68,8 +68,8 @@ export const WorkspaceDashboard = ({ data }: WorkspaceAnalyticsResponseType) => 
           />
         </div>
 
-        {}
-        <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+        {/* Priority Chart */}
+        <div className="bg-card dark:bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
           <AnalyticsPieChart
             title="Global Priority Metrics"
             data={data.tasksByPriority || []}
@@ -78,10 +78,10 @@ export const WorkspaceDashboard = ({ data }: WorkspaceAnalyticsResponseType) => 
         </div>
       </div>
 
-      {}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[400px]">
-        {}
-        <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+      {/* Charts Row 2 */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+        {/* Project Chart */}
+        <div className="bg-card dark:bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
           <AnalyticsProjectChart
             title="Tasks by Project"
             data={data.tasksByProject || []}
@@ -89,8 +89,8 @@ export const WorkspaceDashboard = ({ data }: WorkspaceAnalyticsResponseType) => 
           />
         </div>
 
-        {}
-        <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+        {/* Assignee Chart */}
+        <div className="bg-card dark:bg-card border border-border/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
           <AnalyticsAssigneeChart
             title="Top Contributors"
             data={data.tasksByAssignee || []}
