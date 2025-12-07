@@ -7,16 +7,12 @@ interface ResponsiveChartDimensions {
   containerHeight: number;
   isMobile: boolean;
   isTablet: boolean;
-  // Pie/Donut chart dimensions
   pieOuterRadius: number;
   pieInnerRadius: number;
-  // Bar chart dimensions
   barSize: number;
   horizontalBarSize: number;
-  // Axis dimensions
   yAxisWidth: number;
   fontSize: number;
-  // Legend
   legendPosition: "bottom" | "right";
 }
 
@@ -39,7 +35,6 @@ export function useResponsiveChart(containerRef: React.RefObject<HTMLDivElement 
     const isMobile = width < 480;
     const isTablet = width >= 480 && width < 768;
     
-    // Calculate pie chart radius based on smaller dimension
     const minDimension = Math.min(width, height);
     const pieOuterRadius = isMobile 
       ? Math.min(minDimension * 0.35, 70) 
@@ -49,17 +44,13 @@ export function useResponsiveChart(containerRef: React.RefObject<HTMLDivElement 
     
     const pieInnerRadius = pieOuterRadius * 0.55;
 
-    // Bar sizes
     const barSize = isMobile ? 20 : isTablet ? 28 : 36;
     const horizontalBarSize = isMobile ? 14 : isTablet ? 18 : 22;
 
-    // Y-axis width for horizontal bar charts
     const yAxisWidth = isMobile ? 60 : isTablet ? 80 : 100;
 
-    // Font sizes
     const fontSize = isMobile ? 10 : 12;
 
-    // Legend position
     const legendPosition = isMobile ? "bottom" : "right";
 
     return {
@@ -90,7 +81,6 @@ export function useResponsiveChart(containerRef: React.RefObject<HTMLDivElement 
 
     resizeObserver.observe(container);
     
-    // Initial measurement
     const { width, height } = container.getBoundingClientRect();
     setDimensions(calculateDimensions(width, height));
 
@@ -100,7 +90,6 @@ export function useResponsiveChart(containerRef: React.RefObject<HTMLDivElement 
   return dimensions;
 }
 
-// Premium color palette with gradients
 export const PREMIUM_COLORS = {
   primary: ["hsl(220, 70%, 50%)", "hsl(220, 70%, 60%)"],
   secondary: ["hsl(160, 60%, 45%)", "hsl(160, 60%, 55%)"],

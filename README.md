@@ -1,9 +1,9 @@
-   # jira-clone-nextjs
+# WorkNest
 
 <br />
 December, 2025. <br />
 
-Full-stack Jira Clone project built by using Next JS 14, React, TypeScript, Shadcn UI, Tailwind CSS, Hono, and Appwrite.
+Full-stack Jira Clone project built by using Next JS 14, React, TypeScript, Shadcn UI, Tailwind CSS, Hono, backblaze,resend,nodemailer and Appwrite.
 
 ## Features
 
