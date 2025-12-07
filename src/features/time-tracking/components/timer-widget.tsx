@@ -20,7 +20,7 @@ interface TimerWidgetProps {
 
 export const TimerWidget = ({ taskId, taskName, className, compact = false }: TimerWidgetProps) => {
   const [elapsed, setElapsed] = useState<string>("00:00:00");
-  
+
   const { data: activeTimer, isLoading } = useGetActiveTimer();
   const { mutate: startTimer, isPending: isStarting } = useStartTimer();
   const { mutate: stopTimer, isPending: isStopping } = useStopTimer();
@@ -28,7 +28,6 @@ export const TimerWidget = ({ taskId, taskName, className, compact = false }: Ti
   const isActive = activeTimer?.taskId === taskId;
   const hasAnyActiveTimer = !!activeTimer;
 
-  // Update elapsed time
   useEffect(() => {
     if (!isActive || !activeTimer) {
       setElapsed("00:00:00");
@@ -39,13 +38,13 @@ export const TimerWidget = ({ taskId, taskName, className, compact = false }: Ti
       const start = new Date(activeTimer.startTime);
       const now = new Date();
       const diff = now.getTime() - start.getTime();
-      
+
       const hours = Math.floor(diff / 3600000);
       const minutes = Math.floor((diff % 3600000) / 60000);
       const seconds = Math.floor((diff % 60000) / 1000);
-      
+
       setElapsed(
-        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
       );
     };
 
@@ -111,7 +110,7 @@ export const TimerWidget = ({ taskId, taskName, className, compact = false }: Ti
     <div className={cn("flex items-center gap-3 p-3 rounded-lg border bg-white", className)}>
       <div className="flex items-center gap-2 flex-1">
         <Clock className="h-5 w-5 text-gray-500" />
-        
+
         {isActive ? (
           <div className="flex flex-col">
             <span className="text-lg font-mono font-semibold text-gray-900">{elapsed}</span>

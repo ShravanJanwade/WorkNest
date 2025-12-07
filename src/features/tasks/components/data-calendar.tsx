@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import {
-  format,
-  getDay,
-  parse,
-  startOfWeek,
-  addMonths,
-  subMonths,
-} from "date-fns";
+import { format, getDay, parse, startOfWeek, addMonths, subMonths } from "date-fns";
 import { enUS } from "date-fns/locale";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 
@@ -40,22 +33,14 @@ interface CustomToolbarProps {
 const CustomToolbar = ({ date, onNavigate }: CustomToolbarProps) => {
   return (
     <div className="flex mb-4 gap-x-2 items-center w-full lg:w-auto justify-center lg:justify-start">
-      <Button
-        onClick={() => onNavigate("PREV")}
-        variant="secondary"
-        size="icon"
-      >
+      <Button onClick={() => onNavigate("PREV")} variant="secondary" size="icon">
         <ChevronLeftIcon className="size-4" />
       </Button>
       <div className="flex items-center border border-input rounded-md px-3 py-2 h-8 justify-center w-full lg:w-auto">
         <CalendarIcon className="size-4 mr-2" />
         <p className="text-sm">{format(date, "MMMM yyyy")}</p>
       </div>
-      <Button
-        onClick={() => onNavigate("NEXT")}
-        variant="secondary"
-        size="icon"
-      >
+      <Button onClick={() => onNavigate("NEXT")} variant="secondary" size="icon">
         <ChevronRightIcon className="size-4" />
       </Button>
     </div>
@@ -67,9 +52,7 @@ interface DataCalendarProps {
 }
 
 export const DataCalendar = ({ data }: DataCalendarProps) => {
-  const [value, setValue] = useState(
-    data.length > 0 ? new Date(data[0].dueDate) : new Date()
-  );
+  const [value, setValue] = useState(data.length > 0 ? new Date(data[0].dueDate) : new Date());
 
   const events = data.map((task) => ({
     start: new Date(task.dueDate),
@@ -103,8 +86,7 @@ export const DataCalendar = ({ data }: DataCalendarProps) => {
       className="h-full"
       max={new Date(new Date().setFullYear(new Date().getFullYear() + 1))}
       formats={{
-        weekdayFormat: (date, culture, localizer) =>
-          localizer?.format(date, "EEE", culture) ?? "",
+        weekdayFormat: (date, culture, localizer) => localizer?.format(date, "EEE", culture) ?? "",
       }}
       components={{
         eventWrapper: ({ event }) => (
@@ -116,9 +98,8 @@ export const DataCalendar = ({ data }: DataCalendarProps) => {
             status={event.status}
           />
         ),
-        toolbar: () => (
-          <CustomToolbar date={value} onNavigate={handleNavigate} />
-        ),
+
+        toolbar: () => <CustomToolbar date={value} onNavigate={handleNavigate} />,
       }}
     />
   );

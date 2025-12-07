@@ -8,9 +8,8 @@ type ResponseType = InferResponseType<
   (typeof client.api.workspaces)[":workspaceId"]["$patch"],
   200
 >;
-type RequestType = InferRequestType<
-  (typeof client.api.workspaces)[":workspaceId"]["$patch"]
->;
+
+type RequestType = InferRequestType<(typeof client.api.workspaces)[":workspaceId"]["$patch"]>;
 
 export const useUpdateWorkspace = () => {
   const queryClient = useQueryClient();

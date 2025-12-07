@@ -2,18 +2,12 @@ import { useState } from "react";
 
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { Button, type ButtonProps } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const useConfirm = (
   title: string,
   message: string,
-  variant: ButtonProps["variant"] = "primary"
+  variant: ButtonProps["variant"] = "primary",
 ): [() => React.JSX.Element, () => Promise<unknown>] => {
   const [promise, setPromise] = useState<{
     resolve: (value: boolean) => void;
@@ -48,18 +42,10 @@ export const useConfirm = (
             <CardDescription>{message}</CardDescription>
           </CardHeader>
           <div className="pt-4 w-full flex flex-col gap-y-2 lg:flex-row gap-x-2 items-center justify-end">
-            <Button
-              onClick={handleCancel}
-              variant="outline"
-              className="w-full lg:w-auto"
-            >
+            <Button onClick={handleCancel} variant="outline" className="w-full lg:w-auto">
               Cancel
             </Button>
-            <Button
-              onClick={handleConfirm}
-              variant={variant}
-              className="w-full lg:w-auto"
-            >
+            <Button onClick={handleConfirm} variant={variant} className="w-full lg:w-auto">
               Confirm
             </Button>
           </div>

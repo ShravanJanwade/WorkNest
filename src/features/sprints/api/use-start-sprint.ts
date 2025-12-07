@@ -8,9 +8,8 @@ type ResponseType = InferResponseType<
   (typeof client.api.sprints)[":sprintId"]["start"]["$post"],
   200
 >;
-type RequestType = InferRequestType<
-  (typeof client.api.sprints)[":sprintId"]["start"]["$post"]
->;
+
+type RequestType = InferRequestType<(typeof client.api.sprints)[":sprintId"]["start"]["$post"]>;
 
 interface UseStartSprintProps {
   workspaceId: string;

@@ -18,19 +18,17 @@ const app = new Hono()
     const fileId = ID.unique();
     await uploadFile(B2_BUCKET_NAME, fileId, image);
 
-    // Return the stable proxy URL
-    return c.json({ 
-      data: { 
+    return c.json({
+      data: {
         url: `/api/upload/${fileId}`,
-        fileId 
-      } 
+        fileId,
+      },
     });
   })
   .get("/:fileId", sessionMiddleware, async (c) => {
     const { fileId } = c.req.param();
 
     try {
-      // Get a fresh signed URL
       const signedUrl = await getSignedUrl(B2_BUCKET_NAME, fileId);
       return c.redirect(signedUrl);
     } catch (error) {

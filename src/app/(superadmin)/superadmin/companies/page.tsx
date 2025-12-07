@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Building2, 
-  Users, 
+import {
+  Building2,
+  Users,
   Plus,
   Search,
   CheckCircle,
   Clock,
   AlertTriangle,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -42,45 +42,49 @@ import {
 const CompaniesPage = () => {
   const { data: companies, isLoading } = useGetSuperAdminCompanies();
   const { mutate: createCompany, isPending: isCreating } = useCreateCompany();
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  
-  // Form state
+
   const [companyName, setCompanyName] = useState("");
   const [companyDescription, setCompanyDescription] = useState("");
   const [adminName, setAdminName] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
 
-  const filteredCompanies = companies?.documents?.filter((company: any) =>
-    company.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    company.adminEmail?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) ?? [];
+  const filteredCompanies =
+    companies?.documents?.filter(
+      (company: any) =>
+        company.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        company.adminEmail?.toLowerCase().includes(searchQuery.toLowerCase()),
+    ) ?? [];
 
   const handleCreateCompany = () => {
     if (!companyName || !adminName || !adminEmail) return;
-    
-    createCompany({
-      json: {
-        companyName,
-        companyDescription,
-        adminName,
-        adminEmail,
-      }
-    }, {
-      onSuccess: () => {
-        setIsCreateOpen(false);
-        setCompanyName("");
-        setCompanyDescription("");
-        setAdminName("");
-        setAdminEmail("");
-      }
-    });
+
+    createCompany(
+      {
+        json: {
+          companyName,
+          companyDescription,
+          adminName,
+          adminEmail,
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsCreateOpen(false);
+          setCompanyName("");
+          setCompanyDescription("");
+          setAdminName("");
+          setAdminEmail("");
+        },
+      },
+    );
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2 mb-2">
@@ -88,9 +92,7 @@ const CompaniesPage = () => {
             <span className="text-sm font-medium text-violet-600">Company Management</span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900">All Companies</h1>
-          <p className="text-muted-foreground mt-1">
-            View and manage all registered companies
-          </p>
+          <p className="text-muted-foreground mt-1">View and manage all registered companies</p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
@@ -125,9 +127,9 @@ const CompaniesPage = () => {
                   className="border-violet-200 focus-visible:ring-violet-500"
                 />
               </div>
-              
+
               <Separator />
-              
+
               <div className="pt-2">
                 <h4 className="text-sm font-semibold text-violet-700 mb-3 flex items-center gap-2">
                   <Users className="h-4 w-4" />
@@ -155,22 +157,22 @@ const CompaniesPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm">
                 <div className="flex items-start gap-3">
                   <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-blue-800">Password Reset Email</p>
                     <p className="text-blue-700 mt-1">
-                      A password reset email will be sent to the admin email address. 
-                      They can set their password and access the platform.
+                      A password reset email will be sent to the admin email address. They can set
+                      their password and access the platform.
                     </p>
                   </div>
                 </div>
               </div>
-              
-              <Button 
-                onClick={handleCreateCompany} 
+
+              <Button
+                onClick={handleCreateCompany}
                 disabled={isCreating || !companyName || !adminName || !adminEmail}
                 className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
               >
@@ -181,7 +183,7 @@ const CompaniesPage = () => {
         </Dialog>
       </div>
 
-      {/* Search */}
+      {}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
@@ -192,7 +194,7 @@ const CompaniesPage = () => {
         />
       </div>
 
-      {/* Companies Table */}
+      {}
       <Card className="shadow-lg shadow-violet-100/50 border-violet-100">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -214,7 +216,9 @@ const CompaniesPage = () => {
               </div>
               <h3 className="text-lg font-semibold text-gray-900">No companies found</h3>
               <p className="text-muted-foreground mt-1">
-                {searchQuery ? "Try a different search term" : "Create your first company to get started"}
+                {searchQuery
+                  ? "Try a different search term"
+                  : "Create your first company to get started"}
               </p>
             </div>
           ) : (
@@ -249,7 +253,10 @@ const CompaniesPage = () => {
                       <p className="text-gray-700">{company.adminEmail || "N/A"}</p>
                     </TableCell>
                     <TableCell>
-                      <StatusBadge status={company.status} deleteRequested={company.deleteRequested} />
+                      <StatusBadge
+                        status={company.status}
+                        deleteRequested={company.deleteRequested}
+                      />
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(company.$createdAt).toLocaleDateString()}
@@ -265,7 +272,13 @@ const CompaniesPage = () => {
   );
 };
 
-const StatusBadge = ({ status, deleteRequested }: { status: string; deleteRequested?: boolean }) => {
+const StatusBadge = ({
+  status,
+  deleteRequested,
+}: {
+  status: string;
+  deleteRequested?: boolean;
+}) => {
   if (deleteRequested) {
     return (
       <Badge className="bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100">
@@ -274,7 +287,7 @@ const StatusBadge = ({ status, deleteRequested }: { status: string; deleteReques
       </Badge>
     );
   }
-  
+
   switch (status) {
     case "active":
       return (
@@ -283,12 +296,12 @@ const StatusBadge = ({ status, deleteRequested }: { status: string; deleteReques
           Active
         </Badge>
       );
+
     case "deleted":
       return (
-        <Badge className="bg-red-100 text-red-700 border-red-200 hover:bg-red-100">
-          Deleted
-        </Badge>
+        <Badge className="bg-red-100 text-red-700 border-red-200 hover:bg-red-100">Deleted</Badge>
       );
+
     default:
       return <Badge variant="outline">{status}</Badge>;
   }

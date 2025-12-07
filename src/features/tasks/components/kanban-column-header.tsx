@@ -14,19 +14,14 @@ import { TaskStatus } from "../types";
 import { useCreateTaskModal } from "../hooks/use-create-task-modal";
 
 const statusIconMap: Record<TaskStatus, React.ReactNode> = {
-  [TaskStatus.BACKLOG]: (
-    <CircleDashedIcon className="size-[18px] text-pink-400" />
-  ),
+  [TaskStatus.BACKLOG]: <CircleDashedIcon className="size-[18px] text-pink-400" />,
+
   [TaskStatus.TODO]: <CircleIcon className="size-[18px] text-red-400" />,
-  [TaskStatus.IN_PROGRESS]: (
-    <CircleDotDashedIcon className="size-[18px] text-yellow-400" />
-  ),
-  [TaskStatus.IN_REVIEW]: (
-    <CircleDotIcon className="size-[18px] text-blue-400" />
-  ),
-  [TaskStatus.DONE]: (
-    <CircleCheckIcon className="size-[18px] text-emerald-400" />
-  ),
+  [TaskStatus.IN_PROGRESS]: <CircleDotDashedIcon className="size-[18px] text-yellow-400" />,
+
+  [TaskStatus.IN_REVIEW]: <CircleDotIcon className="size-[18px] text-blue-400" />,
+
+  [TaskStatus.DONE]: <CircleCheckIcon className="size-[18px] text-emerald-400" />,
 };
 
 interface KanbanColumnHeaderProps {
@@ -34,10 +29,7 @@ interface KanbanColumnHeaderProps {
   taskCount: number;
 }
 
-export const KanbanColumnHeader = ({
-  board,
-  taskCount,
-}: KanbanColumnHeaderProps) => {
+export const KanbanColumnHeader = ({ board, taskCount }: KanbanColumnHeaderProps) => {
   const { open } = useCreateTaskModal();
 
   const icon = statusIconMap[board];

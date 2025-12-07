@@ -4,13 +4,9 @@ import { toast } from "sonner";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<
-  (typeof client.api.projects)[":projectId"]["$delete"],
-  200
->;
-type RequestType = InferRequestType<
-  (typeof client.api.projects)[":projectId"]["$delete"]
->;
+type ResponseType = InferResponseType<(typeof client.api.projects)[":projectId"]["$delete"], 200>;
+
+type RequestType = InferRequestType<(typeof client.api.projects)[":projectId"]["$delete"]>;
 
 export const useDeleteProject = () => {
   const queryClient = useQueryClient();

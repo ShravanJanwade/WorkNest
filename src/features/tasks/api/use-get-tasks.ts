@@ -24,16 +24,8 @@ export const useGetTasks = ({
   parentId,
 }: UseGetTasksProps) => {
   const query = useQuery({
-    queryKey: [
-      "tasks",
-      workspaceId,
-      projectId,
-      status,
-      assigneeId,
-      dueDate,
-      search,
-      parentId,
-    ],
+    queryKey: ["tasks", workspaceId, projectId, status, assigneeId, dueDate, search, parentId],
+
     queryFn: async () => {
       const response = await client.api.tasks.$get({
         query: {

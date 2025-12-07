@@ -1,5 +1,3 @@
-// src/lib/server/oauth.js
-// Reference: https://appwrite.io/docs/tutorials/nextjs-ssr-auth/step-7
 "use server";
 
 import { createAdminClient } from "@/lib/appwrite";
@@ -11,7 +9,8 @@ import { OAuthProvider } from "node-appwrite";
 async function getOrigin() {
   const headersList = await headers();
   const host = headersList.get("host") || "localhost:3000";
-  const protocol = headersList.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
+  const protocol =
+    headersList.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
   return `${protocol}://${host}`;
 }
 
@@ -23,7 +22,7 @@ export async function signUpWithGithub() {
     const redirectUrl = await account.createOAuth2Token(
       OAuthProvider.Github,
       `${origin}/oauth`,
-      `${origin}/sign-up`
+      `${origin}/sign-up`,
     );
 
     return redirect(redirectUrl);
@@ -41,7 +40,7 @@ export async function signUpWithGoogle() {
     const redirectUrl = await account.createOAuth2Token(
       OAuthProvider.Google,
       `${origin}/oauth`,
-      `${origin}/sign-up`
+      `${origin}/sign-up`,
     );
 
     return redirect(redirectUrl);
@@ -50,6 +49,3 @@ export async function signUpWithGoogle() {
     throw error;
   }
 }
-
-
-

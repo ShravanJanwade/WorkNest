@@ -8,11 +8,7 @@ interface UseGetEpicsProps {
   search?: string;
 }
 
-export const useGetEpics = ({
-  workspaceId,
-  projectId,
-  search,
-}: UseGetEpicsProps) => {
+export const useGetEpics = ({ workspaceId, projectId, search }: UseGetEpicsProps) => {
   const query = useQuery({
     queryKey: ["epics", workspaceId, projectId, search],
     queryFn: async () => {

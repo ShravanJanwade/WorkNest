@@ -26,11 +26,11 @@ interface TimeEntriesListProps {
 const formatDuration = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  
+
   if (hours === 0) {
     return `${mins}m`;
   }
-  
+
   return `${hours}h ${mins}m`;
 };
 
@@ -49,28 +49,29 @@ export const TimeEntriesList = ({ taskId, taskName }: TimeEntriesListProps) => {
 
   return (
     <div className="space-y-4">
-      <ManualTimeEntryModal
-        taskId={taskId}
-        open={isModalOpen}
-        onOpenChange={setIsModalOpen}
-      />
-      
+      <ManualTimeEntryModal taskId={taskId} open={isModalOpen} onOpenChange={setIsModalOpen} />
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-gray-500" />
           <h3 className="font-semibold text-gray-900">Time Tracking</h3>
         </div>
-        
+
         <div className="flex items-center gap-4">
           {data?.stats && (
             <div className="flex items-center gap-4 text-sm hidden sm:flex">
               <div className="text-gray-600">
-                Total: <span className="font-semibold text-gray-900">{formatDuration(data.stats.totalMinutes)}</span>
+                Total:{" "}
+                <span className="font-semibold text-gray-900">
+                  {formatDuration(data.stats.totalMinutes)}
+                </span>
               </div>
               {data.stats.billableMinutes > 0 && (
                 <div className="flex items-center gap-1 text-green-600">
                   <DollarSign className="h-3.5 w-3.5" />
-                  <span className="font-semibold">{formatDuration(data.stats.billableMinutes)}</span>
+                  <span className="font-semibold">
+                    {formatDuration(data.stats.billableMinutes)}
+                  </span>
                 </div>
               )}
             </div>
@@ -84,19 +85,21 @@ export const TimeEntriesList = ({ taskId, taskName }: TimeEntriesListProps) => {
 
       <DottedSeparator />
 
-      {/* Timer Widget */}
+      {}
       <TimerWidget taskId={taskId} taskName={taskName} />
 
       <DottedSeparator />
 
-      {/* Time Entries */}
+      {}
       {isLoading ? (
         <div className="flex items-center justify-center py-8">
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
         </div>
       ) : data?.entries && data.entries.length > 0 ? (
         <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-          <p className="text-sm text-gray-500 mb-3 sticky top-0 bg-white z-10 pb-2">Recent time entries</p>
+          <p className="text-sm text-gray-500 mb-3 sticky top-0 bg-white z-10 pb-2">
+            Recent time entries
+          </p>
           {data.entries.slice(0, 5).map((entry) => (
             <div
               key={entry.$id}
@@ -132,7 +135,7 @@ export const TimeEntriesList = ({ taskId, taskName }: TimeEntriesListProps) => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     className="text-red-600"
                     onClick={() => handleDelete(entry.$id)}
                   >
@@ -154,4 +157,3 @@ export const TimeEntriesList = ({ taskId, taskName }: TimeEntriesListProps) => {
     </div>
   );
 };
-

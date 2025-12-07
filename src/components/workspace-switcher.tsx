@@ -25,12 +25,9 @@ export const WorkspaceSwitcher = () => {
   const { open } = useCreateWorkspaceModal();
   const { savedWorkspaceId, saveWorkspaceId } = useWorkspacePersistence();
 
-  // Auto-navigate to saved workspace if no workspace is selected
   useEffect(() => {
     if (!workspaceId && savedWorkspaceId && workspaces?.documents.length) {
-      const workspaceExists = workspaces.documents.some(
-        (w) => w.$id === savedWorkspaceId
-      );
+      const workspaceExists = workspaces.documents.some((w) => w.$id === savedWorkspaceId);
       if (workspaceExists) {
         router.push(`/workspaces/${savedWorkspaceId}`);
       }
@@ -42,14 +39,12 @@ export const WorkspaceSwitcher = () => {
     router.push(`/workspaces/${id}`);
   };
 
-  // Save current workspace when it changes
   useEffect(() => {
     if (workspaceId) {
       saveWorkspaceId(workspaceId);
     }
   }, [workspaceId, saveWorkspaceId]);
 
-  // Determine the value to display in the select
   const selectValue = workspaceId || savedWorkspaceId || workspaces?.documents[0]?.$id;
 
   return (
@@ -69,10 +64,8 @@ export const WorkspaceSwitcher = () => {
           {workspaces?.documents.map((workspace) => (
             <SelectItem key={workspace.$id} value={workspace.$id}>
               <div className="flex justify-start items-center gap-3 font-medium">
-                <WorkspaceAvatar
-                  name={workspace.name}
-                  image={workspace.imageUrl}
-                />
+                <WorkspaceAvatar name={workspace.name} image={workspace.imageUrl} />
+
                 <span className="truncate">{workspace.name}</span>
               </div>
             </SelectItem>

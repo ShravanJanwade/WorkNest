@@ -5,8 +5,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<(typeof client.api)["time-tracking"][":timeEntryId"]["$delete"]>;
-type RequestType = InferRequestType<(typeof client.api)["time-tracking"][":timeEntryId"]["$delete"]>;
+type ResponseType = InferResponseType<
+  (typeof client.api)["time-tracking"][":timeEntryId"]["$delete"]
+>;
+type RequestType = InferRequestType<
+  (typeof client.api)["time-tracking"][":timeEntryId"]["$delete"]
+>;
 
 export const useDeleteTimeEntry = () => {
   const queryClient = useQueryClient();

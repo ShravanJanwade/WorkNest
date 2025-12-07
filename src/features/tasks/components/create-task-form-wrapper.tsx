@@ -11,10 +11,7 @@ interface CreateTaskFormWrapperProps {
   parentId?: string;
 }
 
-export const CreateTaskFormWrapper = ({
-  onCancel,
-  parentId,
-}: CreateTaskFormWrapperProps) => {
+export const CreateTaskFormWrapper = ({ onCancel, parentId }: CreateTaskFormWrapperProps) => {
   const workspaceId = useWorkspaceId();
 
   const { data: projects, isLoading: isLoadingProjects } = useGetProjects({

@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Trash2, 
-  Building2, 
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertTriangle
-} from "lucide-react";
+import { Trash2, Building2, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 
 import { useGetDeleteRequests } from "@/features/superadmin/api/use-get-delete-requests";
 import { useApproveDelete } from "@/features/superadmin/api/use-approve-delete";
@@ -28,43 +21,44 @@ import {
 const DeleteRequestsPage = () => {
   const { data: requests, isLoading } = useGetDeleteRequests();
   const { mutate: approveDelete, isPending } = useApproveDelete();
-  
+
   const [selectedCompany, setSelectedCompany] = useState<any>(null);
   const [action, setAction] = useState<"approve" | "reject" | null>(null);
 
   const handleAction = (approved: boolean) => {
     if (!selectedCompany) return;
-    
-    approveDelete({
-      json: {
-        companyId: selectedCompany.$id,
-        approved,
-      }
-    }, {
-      onSuccess: () => {
-        setSelectedCompany(null);
-        setAction(null);
-      }
-    });
+
+    approveDelete(
+      {
+        json: {
+          companyId: selectedCompany.$id,
+          approved,
+        },
+      },
+      {
+        onSuccess: () => {
+          setSelectedCompany(null);
+          setAction(null);
+        },
+      },
+    );
   };
 
   const pendingRequests = requests?.documents ?? [];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {}
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Trash2 className="h-5 w-5 text-amber-600" />
           <span className="text-sm font-medium text-amber-600">Pending Actions</span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900">Delete Requests</h1>
-        <p className="text-muted-foreground mt-1">
-          Review and process company deletion requests
-        </p>
+        <p className="text-muted-foreground mt-1">Review and process company deletion requests</p>
       </div>
 
-      {/* Requests */}
+      {}
       <Card className="shadow-lg shadow-violet-100/50 border-violet-100">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -95,7 +89,7 @@ const DeleteRequestsPage = () => {
           ) : (
             <div className="space-y-4">
               {pendingRequests.map((company: any) => (
-                <div 
+                <div
                   key={company.$id}
                   className="p-4 border border-amber-200 bg-amber-50/50 rounded-xl"
                 >
@@ -115,7 +109,9 @@ const DeleteRequestsPage = () => {
                         </div>
                         {company.deleteRequestReason && (
                           <div className="mt-3 p-3 bg-white rounded-lg border">
-                            <p className="text-xs font-medium text-muted-foreground mb-1">Reason:</p>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Reason:
+                            </p>
                             <p className="text-sm text-gray-700">{company.deleteRequestReason}</p>
                           </div>
                         )}
@@ -154,7 +150,7 @@ const DeleteRequestsPage = () => {
         </CardContent>
       </Card>
 
-      {/* Confirmation Dialog */}
+      {}
       <Dialog open={!!selectedCompany} onOpenChange={() => setSelectedCompany(null)}>
         <DialogContent>
           <DialogHeader>
@@ -167,18 +163,13 @@ const DeleteRequestsPage = () => {
               {action === "approve" ? "Confirm Deletion" : "Reject Request"}
             </DialogTitle>
             <DialogDescription>
-              {action === "approve" 
+              {action === "approve"
                 ? `Are you sure you want to permanently delete "${selectedCompany?.name}"? This action cannot be undone.`
-                : `Reject the deletion request for "${selectedCompany?.name}"? The company will remain active.`
-              }
+                : `Reject the deletion request for "${selectedCompany?.name}"? The company will remain active.`}
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3 pt-4">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => setSelectedCompany(null)}
-            >
+            <Button variant="outline" className="flex-1" onClick={() => setSelectedCompany(null)}>
               Cancel
             </Button>
             <Button
@@ -187,7 +178,11 @@ const DeleteRequestsPage = () => {
               onClick={() => handleAction(action === "approve")}
               disabled={isPending}
             >
-              {isPending ? "Processing..." : action === "approve" ? "Delete Company" : "Reject Request"}
+              {isPending
+                ? "Processing..."
+                : action === "approve"
+                  ? "Delete Company"
+                  : "Reject Request"}
             </Button>
           </div>
         </DialogContent>

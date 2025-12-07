@@ -20,4 +20,3 @@ export const inviteUserSchema = z.object({
   role: z.enum(["ADMIN", "MANAGER", "EMPLOYEE"]).default("EMPLOYEE"),
   workspaceId: z.string().min(1, "Workspace ID is required."),
 });
-

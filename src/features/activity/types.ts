@@ -1,6 +1,6 @@
 import { Models } from "node-appwrite";
 
-export type ActivityAction = 
+export type ActivityAction =
   | "created"
   | "updated"
   | "deleted"
@@ -18,7 +18,7 @@ export type ActivityLog = Models.Document & {
   field?: string;
   oldValue?: string;
   newValue?: string;
-  metadata?: string; // JSON string for additional context
+  metadata?: string;
 };
 
 export type ActivityLogWithUser = ActivityLog & {

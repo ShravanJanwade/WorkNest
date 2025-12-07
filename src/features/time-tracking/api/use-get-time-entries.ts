@@ -9,7 +9,12 @@ interface UseGetTimeEntriesProps {
   endDate?: string;
 }
 
-export const useGetTimeEntries = ({ taskId, workspaceId, startDate, endDate }: UseGetTimeEntriesProps = {}) => {
+export const useGetTimeEntries = ({
+  taskId,
+  workspaceId,
+  startDate,
+  endDate,
+}: UseGetTimeEntriesProps = {}) => {
   return useQuery({
     queryKey: ["time-entries", { taskId, workspaceId, startDate, endDate }],
     queryFn: async () => {

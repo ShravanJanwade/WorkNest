@@ -10,21 +10,15 @@ interface WorkspaceAvatarProps {
   className?: string;
 }
 
-export const WorkspaceAvatar = ({
-  image,
-  name,
-  className,
-}: WorkspaceAvatarProps) => {
+export const WorkspaceAvatar = ({ image, name, className }: WorkspaceAvatarProps) => {
   if (image) {
     let imageUrl = image;
     if (!image.startsWith("http") && !image.startsWith("data:")) {
-        imageUrl = `https://f005.backblazeb2.com/file/WorkNest/${image}`;
+      imageUrl = `https://f005.backblazeb2.com/file/WorkNest/${image}`;
     }
 
     return (
-      <div
-        className={cn("relative size-10 rounded-md overflow-hidden", className)}
-      >
+      <div className={cn("relative size-10 rounded-md overflow-hidden", className)}>
         <Image src={imageUrl} alt={name} fill className="object-cover" />
       </div>
     );

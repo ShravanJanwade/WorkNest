@@ -15,14 +15,12 @@ export const metadata: Metadata = {
   description: "Modern project management and team collaboration platform",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(inter.className, "antialiased min-h-screen bg-background text-foreground")}>
+      <body
+        className={cn(inter.className, "antialiased min-h-screen bg-background text-foreground")}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

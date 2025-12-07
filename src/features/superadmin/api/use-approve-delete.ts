@@ -5,8 +5,12 @@ import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/rpc";
 import { toast } from "sonner";
 
-type ResponseType = InferResponseType<typeof client.api.superadmin["delete-requests"]["approve"]["$post"]>;
-type RequestType = InferRequestType<typeof client.api.superadmin["delete-requests"]["approve"]["$post"]>;
+type ResponseType = InferResponseType<
+  (typeof client.api.superadmin)["delete-requests"]["approve"]["$post"]
+>;
+type RequestType = InferRequestType<
+  (typeof client.api.superadmin)["delete-requests"]["approve"]["$post"]
+>;
 
 export const useApproveDelete = () => {
   const queryClient = useQueryClient();

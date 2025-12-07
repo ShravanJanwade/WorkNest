@@ -4,13 +4,9 @@ import { toast } from "sonner";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<
-  (typeof client.api.tasks)[":taskId"]["$delete"],
-  200
->;
-type RequestType = InferRequestType<
-  (typeof client.api.tasks)[":taskId"]["$delete"]
->;
+type ResponseType = InferResponseType<(typeof client.api.tasks)[":taskId"]["$delete"], 200>;
+
+type RequestType = InferRequestType<(typeof client.api.tasks)[":taskId"]["$delete"]>;
 
 export const useDeleteTask = () => {
   const queryClient = useQueryClient();

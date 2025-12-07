@@ -30,7 +30,7 @@ interface CommentItemProps {
 export const CommentItem = ({ comment, taskId, isReply = false }: CommentItemProps) => {
   const [isReplying, setIsReplying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  
+
   const { data: currentUser } = useCurrent();
   const { mutate: deleteComment, isPending: isDeleting } = useDeleteComment({ taskId });
 
@@ -50,28 +50,22 @@ export const CommentItem = ({ comment, taskId, isReply = false }: CommentItemPro
   return (
     <div className={`group ${isReply ? "ml-8 mt-3" : ""}`}>
       <div className="flex gap-3">
-        {isReply && (
-          <CornerDownRight className="h-4 w-4 text-gray-400 mt-2 flex-shrink-0" />
-        )}
+        {isReply && <CornerDownRight className="h-4 w-4 text-gray-400 mt-2 flex-shrink-0" />}
         <Avatar className="h-8 w-8 flex-shrink-0">
           <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-500 text-white text-xs">
             {initials}
           </AvatarFallback>
         </Avatar>
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-sm text-gray-900">
-              {comment.author.name}
-            </span>
+            <span className="font-semibold text-sm text-gray-900">{comment.author.name}</span>
             <span className="text-xs text-gray-500">
               {formatDistanceToNow(new Date(comment.$createdAt), { addSuffix: true })}
             </span>
-            {comment.isEdited && (
-              <span className="text-xs text-gray-400">(edited)</span>
-            )}
+            {comment.isEdited && <span className="text-xs text-gray-400">(edited)</span>}
           </div>
-          
+
           {isEditing ? (
             <CommentInput
               taskId={taskId}
@@ -82,16 +76,13 @@ export const CommentItem = ({ comment, taskId, isReply = false }: CommentItemPro
             />
           ) : (
             <div className="mt-1 text-sm text-gray-700 prose prose-sm max-w-none [&>p]:mb-1 [&>ul]:list-disc [&>ul]:pl-4 [&>ol]:list-decimal [&>ol]:pl-4">
-              <ReactMarkdown 
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeSanitize]}
-              >
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
                 {comment.content}
               </ReactMarkdown>
             </div>
           )}
-          
-          {/* Actions */}
+
+          {}
           <div className="mt-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
             {!isReply && (
               <Button
@@ -104,7 +95,7 @@ export const CommentItem = ({ comment, taskId, isReply = false }: CommentItemPro
                 Reply
               </Button>
             )}
-            
+
             {isAuthor && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -121,7 +112,7 @@ export const CommentItem = ({ comment, taskId, isReply = false }: CommentItemPro
                     <Edit className="h-4 w-4 mr-2" />
                     Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={handleDelete}
                     disabled={isDeleting}
                     className="text-red-600 focus:text-red-600"
@@ -135,8 +126,8 @@ export const CommentItem = ({ comment, taskId, isReply = false }: CommentItemPro
           </div>
         </div>
       </div>
-      
-      {/* Reply input */}
+
+      {}
       {isReplying && (
         <div className="ml-11 mt-3">
           <CommentInput
@@ -147,17 +138,12 @@ export const CommentItem = ({ comment, taskId, isReply = false }: CommentItemPro
           />
         </div>
       )}
-      
-      {/* Nested replies */}
+
+      {}
       {comment.replies && comment.replies.length > 0 && (
         <div className="mt-2">
           {comment.replies.map((reply) => (
-            <CommentItem
-              key={reply.$id}
-              comment={reply}
-              taskId={taskId}
-              isReply
-            />
+            <CommentItem key={reply.$id} comment={reply} taskId={taskId} isReply />
           ))}
         </div>
       )}

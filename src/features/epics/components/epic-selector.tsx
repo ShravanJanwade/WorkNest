@@ -18,12 +18,7 @@ interface EpicSelectorProps {
   disabled?: boolean;
 }
 
-export const EpicSelector = ({
-  projectId,
-  value,
-  onChange,
-  disabled,
-}: EpicSelectorProps) => {
+export const EpicSelector = ({ projectId, value, onChange, disabled }: EpicSelectorProps) => {
   const workspaceId = useWorkspaceId();
   const { data: epics, isLoading } = useGetEpics({ workspaceId, projectId });
 

@@ -7,20 +7,17 @@ export async function GET() {
         "Cache-Control": "no-cache",
       },
       next: {
-        revalidate: 0
-      }
+        revalidate: 0,
+      },
     });
 
     if (!response.ok) {
-        throw new Error("Failed to fetch quote");
+      throw new Error("Failed to fetch quote");
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch quote" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch quote" }, { status: 500 });
   }
 }

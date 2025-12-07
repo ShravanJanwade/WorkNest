@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Building2, 
-  Users, 
+import {
+  Building2,
+  Users,
   Plus,
   Search,
   ExternalLink,
@@ -12,7 +12,7 @@ import {
   Clock,
   TrendingUp,
   ArrowUpRight,
-  Sparkles
+  Sparkles,
 } from "lucide-react";
 
 import { useGetSuperAdminStats } from "@/features/superadmin/api/use-get-stats";
@@ -46,45 +46,49 @@ const SuperAdminDashboard = () => {
   const { data: stats, isLoading: isLoadingStats } = useGetSuperAdminStats();
   const { data: companies, isLoading: isLoadingCompanies } = useGetSuperAdminCompanies();
   const { mutate: createCompany, isPending: isCreating } = useCreateCompany();
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  
-  // Form state
+
   const [companyName, setCompanyName] = useState("");
   const [companyDescription, setCompanyDescription] = useState("");
   const [adminName, setAdminName] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
 
-  const filteredCompanies = companies?.documents?.filter((company: any) =>
-    company.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    company.adminEmail?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) ?? [];
+  const filteredCompanies =
+    companies?.documents?.filter(
+      (company: any) =>
+        company.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        company.adminEmail?.toLowerCase().includes(searchQuery.toLowerCase()),
+    ) ?? [];
 
   const handleCreateCompany = () => {
     if (!companyName || !adminName || !adminEmail) return;
-    
-    createCompany({
-      json: {
-        companyName,
-        companyDescription,
-        adminName,
-        adminEmail,
-      }
-    }, {
-      onSuccess: () => {
-        setIsCreateOpen(false);
-        setCompanyName("");
-        setCompanyDescription("");
-        setAdminName("");
-        setAdminEmail("");
-      }
-    });
+
+    createCompany(
+      {
+        json: {
+          companyName,
+          companyDescription,
+          adminName,
+          adminEmail,
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsCreateOpen(false);
+          setCompanyName("");
+          setCompanyDescription("");
+          setAdminName("");
+          setAdminEmail("");
+        },
+      },
+    );
   };
 
   return (
     <div className="space-y-8">
-      {/* Welcome Header */}
+      {}
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2 mb-2">
@@ -129,9 +133,9 @@ const SuperAdminDashboard = () => {
                   className="border-violet-200 focus-visible:ring-violet-500"
                 />
               </div>
-              
+
               <Separator />
-              
+
               <div className="pt-2">
                 <h4 className="text-sm font-semibold text-violet-700 mb-3 flex items-center gap-2">
                   <Users className="h-4 w-4" />
@@ -159,22 +163,22 @@ const SuperAdminDashboard = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-amber-800">Temporary Password</p>
                     <p className="text-amber-700 mt-1">
-                      A temporary password will be generated and logged to the server console. 
-                      Share these credentials securely with the admin.
+                      A temporary password will be generated and logged to the server console. Share
+                      these credentials securely with the admin.
                     </p>
                   </div>
                 </div>
               </div>
-              
-              <Button 
-                onClick={handleCreateCompany} 
+
+              <Button
+                onClick={handleCreateCompany}
                 disabled={isCreating || !companyName || !adminName || !adminEmail}
                 className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
               >
@@ -185,7 +189,7 @@ const SuperAdminDashboard = () => {
         </Dialog>
       </div>
 
-      {/* Stats Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatsCard
           title="Total Companies"
@@ -196,6 +200,7 @@ const SuperAdminDashboard = () => {
           trend="+12%"
           isLoading={isLoadingStats}
         />
+
         <StatsCard
           title="Active Companies"
           value={stats?.activeCompanies ?? 0}
@@ -205,18 +210,21 @@ const SuperAdminDashboard = () => {
           trend="+8%"
           isLoading={isLoadingStats}
         />
+
         <StatsCard
           title="Pending Deletions"
           value={stats?.pendingDeletes ?? 0}
           icon={<Clock className="h-6 w-6" />}
           iconBg="bg-amber-100"
           iconColor="text-amber-600"
-          trend={stats?.pendingDeletes && stats.pendingDeletes > 0 ? "Requires action" : "All clear"}
+          trend={
+            stats?.pendingDeletes && stats.pendingDeletes > 0 ? "Requires action" : "All clear"
+          }
           isLoading={isLoadingStats}
         />
       </div>
 
-      {/* Companies Table */}
+      {}
       <Card className="shadow-lg shadow-violet-100/50 border-violet-100">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -225,9 +233,7 @@ const SuperAdminDashboard = () => {
                 <Building2 className="h-5 w-5 text-violet-600" />
                 Companies
               </CardTitle>
-              <CardDescription>
-                Manage all registered companies on the platform
-              </CardDescription>
+              <CardDescription>Manage all registered companies on the platform</CardDescription>
             </div>
             <div className="relative w-72">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -256,7 +262,7 @@ const SuperAdminDashboard = () => {
               <p className="text-muted-foreground mt-1">
                 Get started by creating your first company
               </p>
-              <Button 
+              <Button
                 onClick={() => setIsCreateOpen(true)}
                 className="mt-4 bg-gradient-to-r from-violet-600 to-indigo-600"
               >
@@ -296,7 +302,10 @@ const SuperAdminDashboard = () => {
                       <p className="text-gray-700">{company.adminEmail || "N/A"}</p>
                     </TableCell>
                     <TableCell>
-                      <StatusBadge status={company.status} deleteRequested={company.deleteRequested} />
+                      <StatusBadge
+                        status={company.status}
+                        deleteRequested={company.deleteRequested}
+                      />
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(company.$createdAt).toLocaleDateString()}
@@ -344,15 +353,19 @@ const StatsCard = ({
             {trend}
           </div>
         </div>
-        <div className={`p-3 rounded-xl ${iconBg} ${iconColor}`}>
-          {icon}
-        </div>
+        <div className={`p-3 rounded-xl ${iconBg} ${iconColor}`}>{icon}</div>
       </div>
     </CardContent>
   </Card>
 );
 
-const StatusBadge = ({ status, deleteRequested }: { status: string; deleteRequested?: boolean }) => {
+const StatusBadge = ({
+  status,
+  deleteRequested,
+}: {
+  status: string;
+  deleteRequested?: boolean;
+}) => {
   if (deleteRequested) {
     return (
       <Badge className="bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100">
@@ -361,7 +374,7 @@ const StatusBadge = ({ status, deleteRequested }: { status: string; deleteReques
       </Badge>
     );
   }
-  
+
   switch (status) {
     case "active":
       return (
@@ -370,12 +383,12 @@ const StatusBadge = ({ status, deleteRequested }: { status: string; deleteReques
           Active
         </Badge>
       );
+
     case "deleted":
       return (
-        <Badge className="bg-red-100 text-red-700 border-red-200 hover:bg-red-100">
-          Deleted
-        </Badge>
+        <Badge className="bg-red-100 text-red-700 border-red-200 hover:bg-red-100">Deleted</Badge>
       );
+
     default:
       return <Badge variant="outline">{status}</Badge>;
   }

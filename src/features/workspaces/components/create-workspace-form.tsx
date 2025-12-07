@@ -56,7 +56,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
           form.reset();
           router.push(`/workspaces/${data.$id}`);
         },
-      }
+      },
     );
   };
 
@@ -70,9 +70,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
-        <CardTitle className="text-xl font-bold">
-          Create a new workspace
-        </CardTitle>
+        <CardTitle className="text-xl font-bold">Create a new workspace</CardTitle>
       </CardHeader>
       <div className="px-7">
         <DottedSeparator />
@@ -94,6 +92,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="image"
@@ -133,6 +132,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
                           onChange={handleImageChange}
                           disabled={isPending}
                         />
+
                         {field.value ? (
                           <Button
                             variant="destructive"

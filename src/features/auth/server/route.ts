@@ -18,7 +18,6 @@ const app = new Hono()
   .get("/current", sessionMiddleware, async (c) => {
     const user = c.get("user");
 
-    // Generate signed URL for profile image if it exists and is a fileId
     if (
       user.prefs?.imageUrl &&
       !user.prefs.imageUrl.startsWith("data:image") &&
@@ -33,7 +32,6 @@ const app = new Hono()
 
     return c.json({ data: user });
   })
-
   .post(
     "/image-url",
     sessionMiddleware,
@@ -48,55 +46,41 @@ const app = new Hono()
         console.error("Error generating signed URL:", error);
         return c.json({ error: "Failed to generate signed URL" }, 500);
       }
-    }
+    },
   )
-
   .post("/login", zValidator("json", loginSchema), async (c) => {
     const { email, password } = c.req.valid("json");
 
     const { account, users } = await createAdminClient();
 
     try {
-      // 1. Verify credentials first by creating a temporary session
-      // We'll use createEmailPasswordSession. If it fails, password is wrong.
       const session = await account.createEmailPasswordSession(email, password);
 
-      // 2. Get User ID from the session we just created
       const userId = session.userId;
 
-      // 3. Get User Preferences to check MFA status
       const userPrefs = await users.getPrefs(userId);
 
       if (userPrefs.mfaEnabled) {
-        // MFA IS ENABLED
-
-        // Generate OTP
         const otpCode = generateOtp();
-        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 mins
+        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-        // Store OTP in Prefs (Secure enough for this context as only server is writing/reading initially)
-        // But wait, if we update prefs, the user object updates.
         await users.updatePrefs(userId, {
           ...userPrefs,
           mfaSecret: otpCode,
-          mfaExpiry: otpExpiry
+          mfaExpiry: otpExpiry,
         });
 
-        // Send Email
         await sendMfaEmail(email, otpCode);
 
-        // Delete the session we just created because we don't want to log them in yet!
-        // We must use 'users' service because 'account' service requires the user's session context, which the Admin Client doesn't have set.
         await users.deleteSession(userId, session.$id);
 
         return c.json({
           requireMfa: true,
           userId: userId,
-          email: email // Send back to client to show "Sent to x***@..."
+          email: email,
         });
       }
 
-      // MFA NOT ENABLED - Set Cookie and Finish
       setCookie(c, AUTH_COOKIE, session.secret, {
         path: "/",
         httpOnly: true,
@@ -106,120 +90,50 @@ const app = new Hono()
       });
 
       return c.json({ success: true });
-
     } catch (error) {
       console.error("Login Error", error);
       return c.json({ error: "Invalid email or password" }, 401);
     }
   })
+  .post(
+    "/verify-mfa",
+    zValidator(
+      "json",
+      z.object({
+        userId: z.string(),
+        code: z.string(),
+        email: z.string().email(),
+        password: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { userId, code, email, password } = c.req.valid("json");
+      const { users, account } = await createAdminClient();
 
-  .post("/verify-mfa", zValidator("json", z.object({
-    userId: z.string(),
-    code: z.string(),
-    email: z.string().email(),
-    password: z.string(), // We need password to recreate session since we deleted it
-  })), async (c) => {
-    const { userId, code, email, password } = c.req.valid("json");
-    const { users, account } = await createAdminClient();
-
-    try {
-      const prefs = await users.getPrefs(userId);
-
-      if (!prefs.mfaSecret || !prefs.mfaExpiry) {
-        return c.json({ error: "MFA session invalid" }, 400);
-      }
-
-      const now = new Date();
-      const expiry = new Date(prefs.mfaExpiry);
-
-      if (now > expiry) {
-        return c.json({ error: "Code expired" }, 400);
-      }
-
-      if (prefs.mfaSecret !== code) {
-        return c.json({ error: "Invalid code" }, 400);
-      }
-
-      // Code Valid! Clear it.
-      await users.updatePrefs(userId, {
-        ...prefs,
-        mfaSecret: null,
-        mfaExpiry: null
-      });
-
-      // Create Session
-      const session = await account.createEmailPasswordSession(email, password);
-
-      setCookie(c, AUTH_COOKIE, session.secret, {
-        path: "/",
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-        maxAge: 60 * 60 * 24 * 30,
-      });
-
-      return c.json({ success: true });
-
-    } catch (error) {
-      console.error("MFA Verify Error", error);
-      return c.json({ error: "Verification failed" }, 500);
-    }
-  })
-
-  .post("/resend-verification", sessionMiddleware, async (c) => {
-      const user = c.get("user");
-      const { users } = await createAdminClient();
-      
       try {
-          if (user.emailVerification) {
-              return c.json({ error: "Email already verified" }, 400);
-          }
-          
-          // Generate Token
-          const verificationToken = generateOtp() + ID.unique();
-          
-          // Save token in prefs
-          const currentPrefs = await users.getPrefs(user.$id);
-          
-          await users.updatePrefs(user.$id, {
-              ...currentPrefs,
-              verificationToken: verificationToken,
-              verificationStatus: "pending"
-          });
-          
-          
-          // Send Email
-          console.log("Attempting to send verification email to:", user.email);
-          console.log("Token:", verificationToken);
-          await sendVerificationEmail(user.email, verificationToken, user.$id);
-          console.log("Email send function completed");
-          
-          return c.json({ success: true });
-      } catch (error) {
-          console.error("Resend Verification Error", error);
-          return c.json({ error: "Failed to resend verification email" }, 500);
-      }
-  })
+        const prefs = await users.getPrefs(userId);
 
-  .post("/register", zValidator("json", registerSchema), async (c) => {
-    const { name, email, password } = c.req.valid("json");
+        if (!prefs.mfaSecret || !prefs.mfaExpiry) {
+          return c.json({ error: "MFA session invalid" }, 400);
+        }
 
-    const { account, users } = await createAdminClient();
-    try {
-        const user = await account.create(ID.unique(), email, password, name);
-        
-        // Generate Token
-        const verificationToken = generateOtp() + ID.unique(); 
-        
-        // Save token in prefs
-        await users.updatePrefs(user.$id, {
-            verificationToken: verificationToken,
-            verificationStatus: "pending"
+        const now = new Date();
+        const expiry = new Date(prefs.mfaExpiry);
+
+        if (now > expiry) {
+          return c.json({ error: "Code expired" }, 400);
+        }
+
+        if (prefs.mfaSecret !== code) {
+          return c.json({ error: "Invalid code" }, 400);
+        }
+
+        await users.updatePrefs(userId, {
+          ...prefs,
+          mfaSecret: null,
+          mfaExpiry: null,
         });
-        
-        // Send Email
-        await sendVerificationEmail(email, verificationToken, user.$id);
-        
+
         const session = await account.createEmailPasswordSession(email, password);
 
         setCookie(c, AUTH_COOKIE, session.secret, {
@@ -229,46 +143,111 @@ const app = new Hono()
           sameSite: "strict",
           maxAge: 60 * 60 * 24 * 30,
         });
-        
-        return c.json({ success: true, requireVerification: true });
-    
+
+        return c.json({ success: true });
+      } catch (error) {
+        console.error("MFA Verify Error", error);
+        return c.json({ error: "Verification failed" }, 500);
+      }
+    },
+  )
+  .post("/resend-verification", sessionMiddleware, async (c) => {
+    const user = c.get("user");
+    const { users } = await createAdminClient();
+
+    try {
+      if (user.emailVerification) {
+        return c.json({ error: "Email already verified" }, 400);
+      }
+
+      const verificationToken = generateOtp() + ID.unique();
+
+      const currentPrefs = await users.getPrefs(user.$id);
+
+      await users.updatePrefs(user.$id, {
+        ...currentPrefs,
+        verificationToken: verificationToken,
+        verificationStatus: "pending",
+      });
+
+      console.log("Attempting to send verification email to:", user.email);
+      console.log("Token:", verificationToken);
+      await sendVerificationEmail(user.email, verificationToken, user.$id);
+      console.log("Email send function completed");
+
+      return c.json({ success: true });
     } catch (error) {
-        console.error("Register Error", error);
-        return c.json({ error: "Registration failed" }, 500);
+      console.error("Resend Verification Error", error);
+      return c.json({ error: "Failed to resend verification email" }, 500);
     }
   })
+  .post("/register", zValidator("json", registerSchema), async (c) => {
+    const { name, email, password } = c.req.valid("json");
 
-  .post("/verify-email", zValidator("json", z.object({
-      userId: z.string(),
-      secret: z.string(),
-  })), async (c) => {
+    const { account, users } = await createAdminClient();
+    try {
+      const user = await account.create(ID.unique(), email, password, name);
+
+      const verificationToken = generateOtp() + ID.unique();
+
+      await users.updatePrefs(user.$id, {
+        verificationToken: verificationToken,
+        verificationStatus: "pending",
+      });
+
+      await sendVerificationEmail(email, verificationToken, user.$id);
+
+      const session = await account.createEmailPasswordSession(email, password);
+
+      setCookie(c, AUTH_COOKIE, session.secret, {
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 30,
+      });
+
+      return c.json({ success: true, requireVerification: true });
+    } catch (error) {
+      console.error("Register Error", error);
+      return c.json({ error: "Registration failed" }, 500);
+    }
+  })
+  .post(
+    "/verify-email",
+    zValidator(
+      "json",
+      z.object({
+        userId: z.string(),
+        secret: z.string(),
+      }),
+    ),
+    async (c) => {
       const { userId, secret } = c.req.valid("json");
       const { users } = await createAdminClient();
-      
-      try {
-          const prefs = await users.getPrefs(userId);
-          
-          if (prefs.verificationToken === secret) {
-              // Update Email Verification Status
-              await users.updateEmailVerification(userId, true);
-              
-              // Cleanup Prefs
-              await users.updatePrefs(userId, {
-                  ...prefs,
-                  verificationToken: null,
-                  verificationStatus: "verified"
-              });
-              
-              return c.json({ success: true });
-          } else {
-              return c.json({ error: "Invalid token" }, 400);
-          }
-      } catch (error) {
-          console.error("Verification Error", error);
-          return c.json({ error: "Verification failed" }, 500);
-      }
-  })
 
+      try {
+        const prefs = await users.getPrefs(userId);
+
+        if (prefs.verificationToken === secret) {
+          await users.updateEmailVerification(userId, true);
+
+          await users.updatePrefs(userId, {
+            ...prefs,
+            verificationToken: null,
+            verificationStatus: "verified",
+          });
+
+          return c.json({ success: true });
+        } else {
+          return c.json({ error: "Invalid token" }, 400);
+        }
+      } catch (error) {
+        console.error("Verification Error", error);
+        return c.json({ error: "Verification failed" }, 500);
+      }
+    },
+  )
   .post("/logout", sessionMiddleware, async (c) => {
     const account = c.get("account");
 
@@ -277,52 +256,43 @@ const app = new Hono()
 
     return c.json({ success: true });
   })
+  .patch("/update", sessionMiddleware, zValidator("form", updateProfileSchema), async (c) => {
+    const account = c.get("account");
+    const { name, image, password, dob, address, profession, company, reportingManager } =
+      c.req.valid("form");
 
-  .patch(
-    "/update",
-    sessionMiddleware,
-    zValidator("form", updateProfileSchema),
-    async (c) => {
-      const account = c.get("account");
-      const { name, image, password, dob, address, profession, company, reportingManager } = c.req.valid("form");
+    let uploadedImageUrl: string | undefined;
 
-      let uploadedImageUrl: string | undefined;
+    if (image instanceof File) {
+      const fileId = ID.unique();
 
-      if (image instanceof File) {
-        const fileId = ID.unique();
-        // Upload file to B2, store the fileId (not signed URL)
-        uploadedImageUrl = await uploadFile(B2_BUCKET_NAME, fileId, image);
-      } else if (typeof image === "string" && image) {
-        uploadedImageUrl = image;
-      }
-
-      // Update Name
-      if (name) {
-        await account.updateName(name);
-      }
-
-      // Update Password if provided
-      if (password && password.length >= 8) {
-        await account.updatePassword(password);
-      }
-
-      // Update Preferences (Extended Profile)
-      const currentPrefs = await account.getPrefs();
-
-      await account.updatePrefs({
-        ...currentPrefs,
-        imageUrl: uploadedImageUrl || currentPrefs.imageUrl,
-        dob: dob || currentPrefs.dob,
-        address: address || currentPrefs.address,
-        profession: profession || currentPrefs.profession,
-        company: company || currentPrefs.company,
-        reportingManager: reportingManager || currentPrefs.reportingManager,
-      });
-
-      return c.json({ success: true });
+      uploadedImageUrl = await uploadFile(B2_BUCKET_NAME, fileId, image);
+    } else if (typeof image === "string" && image) {
+      uploadedImageUrl = image;
     }
-  )
 
+    if (name) {
+      await account.updateName(name);
+    }
+
+    if (password && password.length >= 8) {
+      await account.updatePassword(password);
+    }
+
+    const currentPrefs = await account.getPrefs();
+
+    await account.updatePrefs({
+      ...currentPrefs,
+      imageUrl: uploadedImageUrl || currentPrefs.imageUrl,
+      dob: dob || currentPrefs.dob,
+      address: address || currentPrefs.address,
+      profession: profession || currentPrefs.profession,
+      company: company || currentPrefs.company,
+      reportingManager: reportingManager || currentPrefs.reportingManager,
+    });
+
+    return c.json({ success: true });
+  })
   .post(
     "/update-mfa",
     sessionMiddleware,
@@ -334,13 +304,12 @@ const app = new Hono()
       const prefs = await account.getPrefs();
       await account.updatePrefs({
         ...prefs,
-        mfaEnabled: enabled
+        mfaEnabled: enabled,
       });
 
       return c.json({ success: true });
-    }
+    },
   )
-
   .post(
     "/change-password",
     sessionMiddleware,
@@ -350,17 +319,14 @@ const app = new Hono()
       const account = c.get("account");
       const { oldPassword, newPassword } = c.req.valid("json");
 
-      // Update to new password
       try {
         await account.updatePassword(newPassword, oldPassword);
         return c.json({ success: true });
       } catch (error) {
         return c.json({ error: "Failed to update password." }, 500);
       }
-    }
+    },
   )
-
-  // Forgot Password - Send recovery email
   .post(
     "/forgot-password",
     zValidator("json", z.object({ email: z.string().email() })),
@@ -370,8 +336,6 @@ const app = new Hono()
       try {
         const { account } = await createAdminClient();
 
-        // Create password recovery
-        // The URL should point to your reset-password page
         const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`;
 
         await account.createRecovery(email, resetUrl);
@@ -379,20 +343,24 @@ const app = new Hono()
         return c.json({ success: true, message: "Password reset email sent." });
       } catch (error) {
         console.error("Forgot password error:", error);
-        // Don't reveal if email exists or not for security
-        return c.json({ success: true, message: "If an account exists, a reset email has been sent." });
-      }
-    }
-  )
 
-  // Reset Password - Complete recovery
+        return c.json({
+          success: true,
+          message: "If an account exists, a reset email has been sent.",
+        });
+      }
+    },
+  )
   .post(
     "/reset-password",
-    zValidator("json", z.object({
-      userId: z.string(),
-      secret: z.string(),
-      password: z.string().min(8),
-    })),
+    zValidator(
+      "json",
+      z.object({
+        userId: z.string(),
+        secret: z.string(),
+        password: z.string().min(8),
+      }),
+    ),
     async (c) => {
       const { userId, secret, password } = c.req.valid("json");
 
@@ -406,7 +374,7 @@ const app = new Hono()
         console.error("Reset password error:", error);
         return c.json({ error: "Failed to reset password. Link may be expired." }, 400);
       }
-    }
+    },
   );
 
 export default app;

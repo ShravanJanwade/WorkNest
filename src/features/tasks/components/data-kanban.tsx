@@ -1,10 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  type DropResult,
-} from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
 
 import { KanbanCard } from "./kanban-card";
 import { KanbanColumnHeader } from "./kanban-column-header";
@@ -19,15 +14,11 @@ const boards: TaskStatus[] = [
   TaskStatus.DONE,
 ];
 
-type TasksState = {
-  [key in TaskStatus]: Task[];
-};
+type TasksState = { [key in TaskStatus]: Task[] };
 
 interface DataKanbanProps {
   data: Task[];
-  onChange: (
-    tasks: { $id: string; status: TaskStatus; position: number }[]
-  ) => void;
+  onChange: (tasks: { $id: string; status: TaskStatus; position: number }[]) => void;
 }
 
 export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
@@ -45,9 +36,7 @@ export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
     });
 
     Object.keys(initialTasks).forEach((status) => {
-      initialTasks[status as TaskStatus].sort(
-        (a, b) => a.position - b.position
-      );
+      initialTasks[status as TaskStatus].sort((a, b) => a.position - b.position);
     });
 
     return initialTasks;
@@ -90,41 +79,31 @@ export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
       setTasks((prevTasks) => {
         const newTasks = { ...prevTasks };
 
-        // Safely remove the task from the source column
         const sourceColumn = [...newTasks[sourceStatus]];
         const [movedTask] = sourceColumn.splice(source.index, 1);
 
-        // If there's no moved task (shouldn't happen, but just in case), return the previous state
         if (!movedTask) {
           console.error("No task found at the source index");
           return prevTasks;
         }
 
-        // Create a new task object with potentially updated status
         const updatedMovedTask =
-          sourceStatus !== destStatus
-            ? { ...movedTask, status: destStatus }
-            : movedTask;
+          sourceStatus !== destStatus ? { ...movedTask, status: destStatus } : movedTask;
 
-        // Update the source column
         newTasks[sourceStatus] = sourceColumn;
 
-        // Add the task to the destination column
         const destColumn = [...newTasks[destStatus]];
         destColumn.splice(destination.index, 0, updatedMovedTask);
         newTasks[destStatus] = destColumn;
 
-        // Prepare minimal update payloads
         updatesPayload = [];
 
-        // Always update the moved task
         updatesPayload.push({
           $id: updatedMovedTask.$id,
           status: destStatus,
           position: Math.min((destination.index + 1) * 1000, 1_000_000),
         });
 
-        // Update positions for affected tasks in the destination column
         newTasks[destStatus].forEach((task, index) => {
           if (task && task.$id !== updatedMovedTask.$id) {
             const newPosition = Math.min((index + 1) * 1000, 1_000_000);
@@ -138,7 +117,6 @@ export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
           }
         });
 
-        // If the task moved between columns, update positions in the source column
         if (sourceStatus !== destStatus) {
           newTasks[sourceStatus].forEach((task, index) => {
             if (task) {
@@ -159,7 +137,7 @@ export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
 
       onChange(updatesPayload);
     },
-    [onChange]
+    [onChange],
   );
 
   return (
@@ -167,14 +145,9 @@ export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
       <div className="flex overflow-x-auto">
         {boards.map((board) => {
           return (
-            <div
-              key={board}
-              className="flex-1 mx-2 bg-muted p-1.5 rounded-md min-w-[200px]"
-            >
-              <KanbanColumnHeader
-                board={board}
-                taskCount={tasks[board].length}
-              />
+            <div key={board} className="flex-1 mx-2 bg-muted p-1.5 rounded-md min-w-[200px]">
+              <KanbanColumnHeader board={board} taskCount={tasks[board].length} />
+
               <Droppable droppableId={board}>
                 {(provided) => (
                   <div
@@ -183,11 +156,7 @@ export const DataKanban = ({ data, onChange }: DataKanbanProps) => {
                     className="min-h-[200px] py-1.5"
                   >
                     {tasks[board].map((task, index) => (
-                      <Draggable
-                        key={task.$id}
-                        draggableId={task.$id}
-                        index={index}
-                      >
+                      <Draggable key={task.$id} draggableId={task.$id} index={index}>
                         {(provided) => (
                           <div
                             {...provided.draggableProps}

@@ -21,9 +21,7 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
     <div className="bg-white dark:bg-card p-2.5 mb-1.5 rounded shadow-sm space-y-3 hover:shadow-md transition-shadow border border-transparent hover:border-gray-200 dark:hover:border-border">
       <div className="flex items-start justify-between gap-x-2">
         <div className="flex items-center gap-x-2">
-          {task.priority && (
-            <PriorityIcon priority={task.priority as TaskPriority} />
-          )}
+          {task.priority && <PriorityIcon priority={task.priority as TaskPriority} />}
           <p className="text-sm line-clamp-2 font-medium text-foreground">{task.name}</p>
         </div>
         <TaskActions id={task.$id} projectId={task.projectId}>
@@ -32,10 +30,8 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
       </div>
       <DottedSeparator />
       <div className="flex items-center gap-x-1.5">
-        <MemberAvatar
-          name={task.assignee.name}
-          fallbackClassName="text-[10px]"
-        />
+        <MemberAvatar name={task.assignee.name} fallbackClassName="text-[10px]" />
+
         <div className="size-1 rounded-full bg-neutral-300" />
         <TaskDate value={task.dueDate} className="text-xs" />
       </div>
@@ -45,6 +41,7 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
           image={task.project.imageUrl}
           fallbackClassName="text-[10px]"
         />
+
         <span className="text-xs font-medium text-foreground">{task.project.name}</span>
       </div>
       <div className="flex items-center justify-end">

@@ -20,4 +20,3 @@ export const useCurrent = () => {
 
   return query;
 };
-

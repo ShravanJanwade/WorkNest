@@ -27,9 +27,8 @@ const SuperAdminSetupPage = () => {
       const res = await client.api.superadmin.check.$get();
       const data = await res.json();
       setExists(data.exists);
-      
+
       if (data.exists) {
-        // Super admin exists, redirect to login
         toast.info("Super Admin exists. Please log in.");
       }
     } catch (err) {
@@ -44,10 +43,10 @@ const SuperAdminSetupPage = () => {
     try {
       setIsInitializing(true);
       setError(null);
-      
+
       const res = await client.api.superadmin.init.$post();
       const data = await res.json();
-      
+
       if ((data as any).success) {
         setCredentials((data as any).credentials);
         setExists(true);
@@ -91,8 +90,8 @@ const SuperAdminSetupPage = () => {
           </div>
           <CardTitle className="text-2xl text-white">Super Admin Setup</CardTitle>
           <CardDescription className="text-white/60">
-            {exists 
-              ? "Super Admin account is ready" 
+            {exists
+              ? "Super Admin account is ready"
               : "Initialize the Super Admin account for WorkNest"}
           </CardDescription>
         </CardHeader>
@@ -107,10 +106,12 @@ const SuperAdminSetupPage = () => {
             <>
               <div className="p-4 bg-amber-500/20 border border-amber-500/30 rounded-lg text-amber-200 text-sm">
                 <p className="font-medium mb-1">⚠️ First Time Setup</p>
-                <p>This will create a Super Admin account with default credentials. 
-                   Make sure to change the password after first login.</p>
+                <p>
+                  This will create a Super Admin account with default credentials. Make sure to
+                  change the password after first login.
+                </p>
               </div>
-              <Button 
+              <Button
                 onClick={initializeSuperAdmin}
                 disabled={isInitializing}
                 className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
@@ -140,8 +141,8 @@ const SuperAdminSetupPage = () => {
                       <p className="text-xs text-white/60">Email</p>
                       <p className="text-white font-mono text-sm">{credentials.email}</p>
                     </div>
-                    <Button 
-                      size="icon" 
+                    <Button
+                      size="icon"
                       variant="ghost"
                       onClick={() => copyToClipboard(credentials.email)}
                       className="text-white/60 hover:text-white"
@@ -154,8 +155,8 @@ const SuperAdminSetupPage = () => {
                       <p className="text-xs text-white/60">Password</p>
                       <p className="text-white font-mono text-sm">{credentials.password}</p>
                     </div>
-                    <Button 
-                      size="icon" 
+                    <Button
+                      size="icon"
                       variant="ghost"
                       onClick={() => copyToClipboard(credentials.password)}
                       className="text-white/60 hover:text-white"
@@ -172,7 +173,7 @@ const SuperAdminSetupPage = () => {
           )}
 
           {exists && (
-            <Button 
+            <Button
               onClick={() => router.push("/sign-in")}
               className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
             >

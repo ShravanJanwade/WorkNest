@@ -24,7 +24,7 @@ interface TimesheetViewProps {
 
 export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
-    startOfWeek(new Date(), { weekStartsOn: 1 }) // Monday start
+    startOfWeek(new Date(), { weekStartsOn: 1 }),
   );
 
   const currentWeekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
@@ -35,13 +35,13 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
     endDate: currentWeekEnd.toISOString(),
   });
 
-  const weekDays = Array.from({ length: 7 }).map((_, i) =>
-    addDays(currentWeekStart, i)
-  );
+  const weekDays = Array.from({ length: 7 }).map((_, i) => addDays(currentWeekStart, i));
 
-  // Group entries by task
-  const entriesByTask: Record<string, { taskName: string; projectId: string; entries: TimeEntry[] }> = {};
-  
+  const entriesByTask: Record<
+    string,
+    { taskName: string; projectId: string; entries: TimeEntry[] }
+  > = {};
+
   data?.entries.forEach((entry) => {
     if (!entriesByTask[entry.taskId]) {
       entriesByTask[entry.taskId] = {
@@ -62,7 +62,7 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
 
   const getDailyTotal = (entries: TimeEntry[], date: Date) => {
     const dayEntries = entries.filter(
-      (e) => format(new Date(e.startTime), "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+      (e) => format(new Date(e.startTime), "yyyy-MM-dd") === format(date, "yyyy-MM-dd"),
     );
     return dayEntries.reduce((sum, e) => sum + (e.duration || 0), 0);
   };
@@ -73,7 +73,7 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
 
   const grandTotal = Object.values(entriesByTask).reduce(
     (sum, taskGroup) => sum + getWeeklyTotal(taskGroup.entries),
-    0
+    0,
   );
 
   return (
@@ -129,7 +129,10 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
               <TableBody>
                 {Object.keys(entriesByTask).length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="h-24 text-center text-gray-500 dark:text-gray-400">
+                    <TableCell
+                      colSpan={9}
+                      className="h-24 text-center text-gray-500 dark:text-gray-400"
+                    >
                       No time entries for this week.
                     </TableCell>
                   </TableRow>
@@ -145,7 +148,13 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
                         const total = getDailyTotal(entries, day);
                         return (
                           <TableCell key={day.toString()} className="text-center text-sm">
-                            <span className={total > 0 ? "font-medium text-gray-900 dark:text-foreground" : "text-gray-300 dark:text-gray-600"}>
+                            <span
+                              className={
+                                total > 0
+                                  ? "font-medium text-gray-900 dark:text-foreground"
+                                  : "text-gray-300 dark:text-gray-600"
+                              }
+                            >
                               {formatDuration(total)}
                             </span>
                           </TableCell>
@@ -163,7 +172,7 @@ export const TimesheetView = ({ workspaceId }: TimesheetViewProps) => {
                     {weekDays.map((day) => {
                       const dayTotal = Object.values(entriesByTask).reduce(
                         (sum, { entries }) => sum + getDailyTotal(entries, day),
-                        0
+                        0,
                       );
                       return (
                         <TableCell key={day.toString()} className="text-center">

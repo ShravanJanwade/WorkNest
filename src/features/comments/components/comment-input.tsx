@@ -35,8 +35,8 @@ export const CommentInput = ({
   const { mutateAsync: uploadImage, isPending: isUploading } = useUploadImage();
 
   const handleImageUpload = async (file: File) => {
-     const response = await uploadImage({ image: file });
-     return response.data.url;
+    const response = await uploadImage({ image: file });
+    return response.data.url;
   };
 
   const handleSubmit = () => {
@@ -55,7 +55,7 @@ export const CommentInput = ({
           setContent("");
           onCancel?.();
         },
-      }
+      },
     );
   };
 
@@ -84,7 +84,7 @@ export const CommentInput = ({
           </AvatarFallback>
         </Avatar>
       )}
-      
+
       <div className="flex-1 space-y-2">
         <Editor
           value={content}
@@ -94,20 +94,13 @@ export const CommentInput = ({
           disabled={isPending || isUploading}
           onImageUpload={handleImageUpload}
         />
-        
+
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">
-            Press Ctrl+Enter to submit
-          </span>
-          
+          <span className="text-xs text-gray-500">Press Ctrl+Enter to submit</span>
+
           <div className="flex gap-2">
             {onCancel && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onCancel}
-                disabled={isPending}
-              >
+              <Button variant="ghost" size="sm" onClick={onCancel} disabled={isPending}>
                 Cancel
               </Button>
             )}

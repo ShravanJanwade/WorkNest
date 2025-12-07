@@ -8,9 +8,8 @@ type ResponseType = InferResponseType<
   (typeof client.api.sprints)[":sprintId"]["complete"]["$post"],
   200
 >;
-type RequestType = InferRequestType<
-  (typeof client.api.sprints)[":sprintId"]["complete"]["$post"]
->;
+
+type RequestType = InferRequestType<(typeof client.api.sprints)[":sprintId"]["complete"]["$post"]>;
 
 interface UseCompleteSprintProps {
   workspaceId: string;

@@ -7,21 +7,16 @@ interface UseGetWorkspaceAnalyticsProps {
   workspaceId: string;
 }
 
-// This type is inferred globally, but we might need to manually extend it if Hono inference is tricky across files.
 export type WorkspaceAnalyticsResponseType = InferResponseType<
   (typeof client.api.workspaces)[":workspaceId"]["analytics"]["$get"],
   200
 >;
 
-export const useGetWorkspaceAnalytics = ({
-  workspaceId,
-}: UseGetWorkspaceAnalyticsProps) => {
+export const useGetWorkspaceAnalytics = ({ workspaceId }: UseGetWorkspaceAnalyticsProps) => {
   const query = useQuery({
     queryKey: ["workspace-analytics", workspaceId],
     queryFn: async () => {
-      const response = await client.api.workspaces[":workspaceId"][
-        "analytics"
-      ].$get({
+      const response = await client.api.workspaces[":workspaceId"]["analytics"].$get({
         param: { workspaceId },
       });
 

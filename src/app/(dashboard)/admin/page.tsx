@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { 
-  Users, 
-  Building2, 
-  FolderKanban, 
-  Shield, 
+import {
+  Users,
+  Building2,
+  FolderKanban,
+  Shield,
   TrendingUp,
   UserPlus,
   Settings,
-  BarChart3
+  BarChart3,
 } from "lucide-react";
 
 import { useCurrent } from "@/features/auth/api/use-current";
@@ -39,7 +39,7 @@ const AdminDashboardPage = () => {
 
   return (
     <div className="flex flex-col gap-y-6 p-6">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
@@ -65,7 +65,7 @@ const AdminDashboardPage = () => {
 
       <Separator />
 
-      {/* Stats Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
           title="Total Workspaces"
@@ -73,18 +73,21 @@ const AdminDashboardPage = () => {
           icon={<FolderKanban className="h-5 w-5 text-violet-600" />}
           isLoading={isLoadingStats}
         />
+
         <StatsCard
           title="Total Members"
           value={stats?.totalMembers ?? 0}
           icon={<Users className="h-5 w-5 text-blue-600" />}
           isLoading={isLoadingStats}
         />
+
         <StatsCard
           title="Administrators"
           value={stats?.roleDistribution?.admins ?? 0}
           icon={<Shield className="h-5 w-5 text-red-600" />}
           isLoading={isLoadingStats}
         />
+
         <StatsCard
           title="Managers"
           value={stats?.roleDistribution?.managers ?? 0}
@@ -93,9 +96,9 @@ const AdminDashboardPage = () => {
         />
       </div>
 
-      {/* Quick Actions */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
-        {/* Company Profile Card */}
+        {}
         <Card className="border-2 hover:border-violet-200 transition-colors">
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -104,22 +107,18 @@ const AdminDashboardPage = () => {
               </div>
               <div>
                 <CardTitle>Company Profile</CardTitle>
-                <CardDescription>
-                  Manage your company information and branding
-                </CardDescription>
+                <CardDescription>Manage your company information and branding</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <Button variant="outline" className="w-full" asChild>
-              <Link href="/admin/company">
-                Edit Company Profile
-              </Link>
+              <Link href="/admin/company">Edit Company Profile</Link>
             </Button>
           </CardContent>
         </Card>
 
-        {/* User Management Card */}
+        {}
         <Card className="border-2 hover:border-blue-200 transition-colors">
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -128,22 +127,18 @@ const AdminDashboardPage = () => {
               </div>
               <div>
                 <CardTitle>User Management</CardTitle>
-                <CardDescription>
-                  Invite users, manage roles, and control access
-                </CardDescription>
+                <CardDescription>Invite users, manage roles, and control access</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <Button variant="outline" className="w-full" asChild>
-              <Link href="/admin/users">
-                Manage Users
-              </Link>
+              <Link href="/admin/users">Manage Users</Link>
             </Button>
           </CardContent>
         </Card>
 
-        {/* Analytics Card */}
+        {}
         <Card className="border-2 hover:border-green-200 transition-colors">
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -152,22 +147,18 @@ const AdminDashboardPage = () => {
               </div>
               <div>
                 <CardTitle>Global Analytics</CardTitle>
-                <CardDescription>
-                  View organization-wide performance metrics
-                </CardDescription>
+                <CardDescription>View organization-wide performance metrics</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <Button variant="outline" className="w-full" asChild>
-              <Link href="/admin/analytics">
-                View Analytics
-              </Link>
+              <Link href="/admin/analytics">View Analytics</Link>
             </Button>
           </CardContent>
         </Card>
 
-        {/* Role Distribution Card */}
+        {}
         <Card className="border-2 hover:border-amber-200 transition-colors">
           <CardHeader>
             <CardTitle className="text-lg">Role Distribution</CardTitle>
@@ -177,20 +168,22 @@ const AdminDashboardPage = () => {
               <Skeleton className="h-20 w-full" />
             ) : (
               <div className="space-y-3">
-                <RoleBar 
-                  label="Administrators" 
+                <RoleBar
+                  label="Administrators"
                   count={stats?.roleDistribution?.admins ?? 0}
                   total={stats?.totalMembers ?? 1}
                   color="bg-red-500"
                 />
-                <RoleBar 
-                  label="Managers" 
+
+                <RoleBar
+                  label="Managers"
                   count={stats?.roleDistribution?.managers ?? 0}
                   total={stats?.totalMembers ?? 1}
                   color="bg-blue-500"
                 />
-                <RoleBar 
-                  label="Employees" 
+
+                <RoleBar
+                  label="Employees"
                   count={stats?.roleDistribution?.employees ?? 0}
                   total={stats?.totalMembers ?? 1}
                   color="bg-green-500"
@@ -244,15 +237,17 @@ const RoleBar = ({
   color: string;
 }) => {
   const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
-  
+
   return (
     <div>
       <div className="flex justify-between text-sm mb-1">
         <span>{label}</span>
-        <span className="text-muted-foreground">{count} ({percentage}%)</span>
+        <span className="text-muted-foreground">
+          {count} ({percentage}%)
+        </span>
       </div>
       <div className="h-2 bg-muted rounded-full overflow-hidden">
-        <div 
+        <div
           className={`h-full ${color} transition-all duration-500`}
           style={{ width: `${percentage}%` }}
         />

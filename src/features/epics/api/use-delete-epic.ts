@@ -4,13 +4,9 @@ import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<
-  (typeof client.api.epics)[":epicId"]["$delete"],
-  200
->;
-type RequestType = InferRequestType<
-  (typeof client.api.epics)[":epicId"]["$delete"]
->;
+type ResponseType = InferResponseType<(typeof client.api.epics)[":epicId"]["$delete"], 200>;
+
+type RequestType = InferRequestType<(typeof client.api.epics)[":epicId"]["$delete"]>;
 
 export const useDeleteEpic = () => {
   const queryClient = useQueryClient();

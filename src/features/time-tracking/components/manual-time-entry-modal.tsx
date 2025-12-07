@@ -11,8 +11,21 @@ import { createTimeEntrySchema } from "../schemas";
 
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,32 +40,29 @@ interface ManualTimeEntryModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-// Form schema with UI-specific fields (hours/minutes)
-const formSchema = z.object({
-  date: z.date({
-    required_error: "Date is required",
-  }),
-  hours: z.string().transform((v) => (v === "" ? "0" : v)),
-  minutes: z.string().transform((v) => (v === "" ? "0" : v)),
-  description: z.string().optional(),
-  billable: z.boolean().default(true),
-}).refine(
-  (data) => {
-    const h = parseInt(data.hours || "0");
-    const m = parseInt(data.minutes || "0");
-    return h > 0 || m > 0;
-  },
-  {
-    message: "Duration must be greater than 0",
-    path: ["minutes"],
-  }
-);
+const formSchema = z
+  .object({
+    date: z.date({
+      required_error: "Date is required",
+    }),
+    hours: z.string().transform((v) => (v === "" ? "0" : v)),
+    minutes: z.string().transform((v) => (v === "" ? "0" : v)),
+    description: z.string().optional(),
+    billable: z.boolean().default(true),
+  })
+  .refine(
+    (data) => {
+      const h = parseInt(data.hours || "0");
+      const m = parseInt(data.minutes || "0");
+      return h > 0 || m > 0;
+    },
+    {
+      message: "Duration must be greater than 0",
+      path: ["minutes"],
+    },
+  );
 
-export const ManualTimeEntryModal = ({
-  taskId,
-  open,
-  onOpenChange,
-}: ManualTimeEntryModalProps) => {
+export const ManualTimeEntryModal = ({ taskId, open, onOpenChange }: ManualTimeEntryModalProps) => {
   const { mutate, isPending } = useCreateTimeEntry();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -71,7 +81,6 @@ export const ManualTimeEntryModal = ({
     const minutes = parseInt(values.minutes || "0");
     const totalMinutes = hours * 60 + minutes;
 
-    // fix the date to midday to avoid timezone shifts for now, or just use as is
     const startTime = values.date.toISOString();
 
     mutate(
@@ -89,7 +98,7 @@ export const ManualTimeEntryModal = ({
           form.reset();
           onOpenChange(false);
         },
-      }
+      },
     );
   };
 
@@ -118,14 +127,10 @@ export const ManualTimeEntryModal = ({
                             variant={"outline"}
                             className={cn(
                               "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
@@ -135,9 +140,7 @@ export const ManualTimeEntryModal = ({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           initialFocus
                         />
                       </PopoverContent>
@@ -155,18 +158,13 @@ export const ManualTimeEntryModal = ({
                     <FormItem className="flex-1">
                       <FormLabel>Hours</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          min="0"
-                          step="1"
-                          placeholder="0"
-                          {...field}
-                        />
+                        <Input type="number" min="0" step="1" placeholder="0" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="minutes"
@@ -174,14 +172,7 @@ export const ManualTimeEntryModal = ({
                     <FormItem className="flex-1">
                       <FormLabel>Minutes</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          min="0"
-                          max="59"
-                          step="1"
-                          placeholder="0"
-                          {...field}
-                        />
+                        <Input type="number" min="0" max="59" step="1" placeholder="0" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -213,10 +204,7 @@ export const ManualTimeEntryModal = ({
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                     <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel>Billable</FormLabel>

@@ -54,11 +54,8 @@ export const columns: ColumnDef<Task>[] = [
 
       return (
         <div className="flex items-center gap-x-2 text-sm font-medium">
-          <ProjectAvatar
-            className="size-6"
-            name={project.name}
-            image={project.imageUrl}
-          />
+          <ProjectAvatar className="size-6" name={project.name} image={project.imageUrl} />
+
           <p className="line-clamp-1">{project.name}</p>
         </div>
       );
@@ -82,11 +79,8 @@ export const columns: ColumnDef<Task>[] = [
 
       return (
         <div className="flex items-center gap-x-2 text-sm font-medium">
-          <MemberAvatar
-            className="size-6"
-            fallbackClassName="text-xs"
-            name={assignee.name}
-          />
+          <MemberAvatar className="size-6" fallbackClassName="text-xs" name={assignee.name} />
+
           <p className="line-clamp-1">{assignee.name}</p>
         </div>
       );
@@ -129,13 +123,7 @@ export const columns: ColumnDef<Task>[] = [
       const projectId = row.original.projectId;
       const status = row.original.status;
 
-      return (
-        <StatusDropdown
-          id={id}
-          status={status}
-          projectId={projectId}
-        />
-      );
+      return <StatusDropdown id={id} status={status} projectId={projectId} />;
     },
   },
   {
@@ -154,7 +142,7 @@ export const columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const priority = row.original.priority;
       if (!priority) return <span className="text-muted-foreground">-</span>;
-      
+
       const priorityColors: Record<string, string> = {
         HIGHEST: "bg-red-100 text-red-700 border-red-300",
         HIGH: "bg-orange-100 text-orange-700 border-orange-300",
@@ -164,7 +152,9 @@ export const columns: ColumnDef<Task>[] = [
       };
 
       return (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${priorityColors[priority] || ""}`}>
+        <span
+          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${priorityColors[priority] || ""}`}
+        >
           {snakeCaseToTitleCase(priority)}
         </span>
       );

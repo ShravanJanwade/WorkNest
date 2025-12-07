@@ -28,7 +28,6 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
   const { mutate: logout } = useLogout();
   const [isRedirecting, setIsRedirecting] = useState(false);
 
-  // Handle redirects with useEffect to avoid render-time navigation
   useEffect(() => {
     if (!isLoading && !isRedirecting) {
       if (!user) {
@@ -54,7 +53,6 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
     );
   }
 
-  // Don't render if no user or not super admin (redirect will happen via useEffect)
   if (!user || !user.prefs?.isSuperAdmin) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50">
@@ -67,7 +65,7 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50">
-      {/* Header */}
+      {}
       <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -83,8 +81,8 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
                   <p className="text-xs text-muted-foreground">Super Admin Console</p>
                 </div>
               </div>
-              
-              {/* Navigation */}
+
+              {}
               <nav className="hidden md:flex items-center gap-1 ml-8">
                 {navItems.map((item) => {
                   const isActive = pathname === item.href;
@@ -95,9 +93,9 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
                         size="sm"
                         className={cn(
                           "gap-2 transition-all",
-                          isActive 
-                            ? "bg-violet-100 text-violet-700 hover:bg-violet-100" 
-                            : "text-muted-foreground hover:text-foreground"
+                          isActive
+                            ? "bg-violet-100 text-violet-700 hover:bg-violet-100"
+                            : "text-muted-foreground hover:text-foreground",
                         )}
                       >
                         <item.icon className="h-4 w-4" />
@@ -114,8 +112,8 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
                 <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
                 <span className="text-sm font-medium text-violet-700">{user.email}</span>
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => {
                   logout();
@@ -131,12 +129,10 @@ const SuperAdminLayout = ({ children }: SuperAdminLayoutProps) => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+      {}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
 
-      {/* Footer */}
+      {}
       <footer className="border-t bg-white/50 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <p className="text-center text-sm text-muted-foreground">

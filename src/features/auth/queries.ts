@@ -7,8 +7,7 @@ export const getCurrent = async () => {
     const { account } = await createSessionClient();
 
     const user = await account.get();
-    
-    // Generate signed URL for profile image if it exists and is a fileId
+
     if (
       user.prefs?.imageUrl &&
       !user.prefs.imageUrl.startsWith("data:image") &&
@@ -20,7 +19,7 @@ export const getCurrent = async () => {
         console.error("Error generating signed URL for profile image:", error);
       }
     }
-    
+
     return user;
   } catch {
     return null;

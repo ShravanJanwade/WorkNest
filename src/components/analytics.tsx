@@ -15,6 +15,7 @@ export const Analytics = ({ data }: ProjectAnalyticsResponseType) => {
             variant={data.taskDifference > 0 ? "up" : "down"}
             increaseValue={data.taskDifference}
           />
+
           <DottedSeparator direction="vertical" />
         </div>
 
@@ -25,6 +26,7 @@ export const Analytics = ({ data }: ProjectAnalyticsResponseType) => {
             variant={data.assignedTaskDifference > 0 ? "up" : "down"}
             increaseValue={data.assignedTaskDifference}
           />
+
           <DottedSeparator direction="vertical" />
         </div>
         <div className="flex items-center flex-1">
@@ -34,6 +36,7 @@ export const Analytics = ({ data }: ProjectAnalyticsResponseType) => {
             variant={data.completedTaskDifference > 0 ? "up" : "down"}
             increaseValue={data.completedTaskDifference}
           />
+
           <DottedSeparator direction="vertical" />
         </div>
         <div className="flex items-center flex-1">
@@ -43,6 +46,7 @@ export const Analytics = ({ data }: ProjectAnalyticsResponseType) => {
             variant={data.overdueTaskDifference > 0 ? "up" : "down"}
             increaseValue={data.overdueTaskDifference}
           />
+
           <DottedSeparator direction="vertical" />
         </div>
         <div className="flex items-center flex-1">

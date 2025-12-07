@@ -43,9 +43,7 @@ export const EpicClient = () => {
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-y-2">
           <h1 className="text-2xl font-bold">Epics</h1>
-          <p className="text-muted-foreground">
-            Manage epics for your project
-          </p>
+          <p className="text-muted-foreground">Manage epics for your project</p>
         </div>
         <Button onClick={open} size="sm">
           <Plus className="size-4 mr-2" />
@@ -65,24 +63,25 @@ export const EpicClient = () => {
               <div className="flex items-start justify-between">
                 <p className="text-lg font-bold">{epic.name}</p>
                 <div className="text-sm text-muted-foreground">
-                 {epic.startDate ? format(new Date(epic.startDate), "MMM d") : "No start"} - {epic.endDate ? format(new Date(epic.endDate), "MMM d") : "No end"}
+                  {epic.startDate ? format(new Date(epic.startDate), "MMM d") : "No start"} -{" "}
+                  {epic.endDate ? format(new Date(epic.endDate), "MMM d") : "No end"}
                 </div>
               </div>
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {epic.description || "No description"}
               </p>
               <div className="flex items-center justify-end mt-2">
-                 <Button
-                    variant="destructive"
-                    size="xs"
-                    disabled={isDeletingEpic}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(epic.$id);
-                    }}
-                  >
-                    Delete
-                  </Button>
+                <Button
+                  variant="destructive"
+                  size="xs"
+                  disabled={isDeletingEpic}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(epic.$id);
+                  }}
+                >
+                  Delete
+                </Button>
               </div>
             </CardContent>
           </Card>

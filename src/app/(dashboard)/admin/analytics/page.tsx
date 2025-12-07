@@ -1,15 +1,15 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Users, 
+import {
+  BarChart3,
+  TrendingUp,
+  Users,
   FolderKanban,
   ArrowLeft,
   CheckCircle,
   Clock,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -32,13 +32,14 @@ const AdminAnalyticsPage = () => {
     redirect("/sign-in");
   }
 
-  const totalRoles = (stats?.roleDistribution?.admins ?? 0) + 
-                     (stats?.roleDistribution?.managers ?? 0) + 
-                     (stats?.roleDistribution?.employees ?? 0);
+  const totalRoles =
+    (stats?.roleDistribution?.admins ?? 0) +
+    (stats?.roleDistribution?.managers ?? 0) +
+    (stats?.roleDistribution?.employees ?? 0);
 
   return (
     <div className="flex flex-col gap-y-6 p-6">
-      {/* Header */}
+      {}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/admin">
@@ -59,7 +60,7 @@ const AdminAnalyticsPage = () => {
 
       <Separator />
 
-      {/* Overview Stats */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-gradient-to-br from-violet-50 to-indigo-50 border-violet-200">
           <CardContent className="pt-6">
@@ -116,7 +117,7 @@ const AdminAnalyticsPage = () => {
         </Card>
       </div>
 
-      {/* Role Distribution */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -124,9 +125,7 @@ const AdminAnalyticsPage = () => {
               <BarChart3 className="h-5 w-5 text-muted-foreground" />
               Role Distribution
             </CardTitle>
-            <CardDescription>
-              Breakdown of team members by role
-            </CardDescription>
+            <CardDescription>Breakdown of team members by role</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoadingStats ? (
@@ -137,24 +136,26 @@ const AdminAnalyticsPage = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                <RoleRow 
-                  label="Administrators" 
+                <RoleRow
+                  label="Administrators"
                   count={stats?.roleDistribution?.admins ?? 0}
                   icon={<AlertTriangle className="h-4 w-4" />}
                   color="bg-red-500"
                   bgColor="bg-red-50"
                   textColor="text-red-700"
                 />
-                <RoleRow 
-                  label="Managers" 
+
+                <RoleRow
+                  label="Managers"
                   count={stats?.roleDistribution?.managers ?? 0}
                   icon={<Clock className="h-4 w-4" />}
                   color="bg-blue-500"
                   bgColor="bg-blue-50"
                   textColor="text-blue-700"
                 />
-                <RoleRow 
-                  label="Employees" 
+
+                <RoleRow
+                  label="Employees"
                   count={stats?.roleDistribution?.employees ?? 0}
                   icon={<CheckCircle className="h-4 w-4" />}
                   color="bg-green-500"
@@ -169,32 +170,40 @@ const AdminAnalyticsPage = () => {
         <Card>
           <CardHeader>
             <CardTitle>Organization Health</CardTitle>
-            <CardDescription>
-              Key metrics to monitor your organization's health
-            </CardDescription>
+            <CardDescription>Key metrics to monitor your organization's health</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoadingStats ? (
               <Skeleton className="h-32 w-full" />
             ) : (
               <div className="space-y-4">
-                <HealthMetric 
-                  label="Members per Workspace" 
-                  value={stats?.workspaceCount 
-                    ? (stats.totalMembers / stats.workspaceCount).toFixed(1) 
-                    : "0"}
+                <HealthMetric
+                  label="Members per Workspace"
+                  value={
+                    stats?.workspaceCount
+                      ? (stats.totalMembers / stats.workspaceCount).toFixed(1)
+                      : "0"
+                  }
                   status="good"
                 />
-                <HealthMetric 
-                  label="Admin Coverage" 
+
+                <HealthMetric
+                  label="Admin Coverage"
                   value={`${stats?.roleDistribution?.admins ?? 0} admins`}
-                  status={stats?.roleDistribution?.admins && stats.roleDistribution.admins >= 1 ? "good" : "warning"}
+                  status={
+                    stats?.roleDistribution?.admins && stats.roleDistribution.admins >= 1
+                      ? "good"
+                      : "warning"
+                  }
                 />
-                <HealthMetric 
-                  label="Manager to Employee Ratio" 
-                  value={stats?.roleDistribution?.employees 
-                    ? `1:${Math.round((stats.roleDistribution.employees) / Math.max(stats.roleDistribution.managers ?? 1, 1))}`
-                    : "N/A"}
+
+                <HealthMetric
+                  label="Manager to Employee Ratio"
+                  value={
+                    stats?.roleDistribution?.employees
+                      ? `1:${Math.round(stats.roleDistribution.employees / Math.max(stats.roleDistribution.managers ?? 1, 1))}`
+                      : "N/A"
+                  }
                   status="neutral"
                 />
               </div>
@@ -206,16 +215,16 @@ const AdminAnalyticsPage = () => {
   );
 };
 
-const RoleRow = ({ 
-  label, 
-  count, 
-  icon, 
-  color, 
-  bgColor, 
-  textColor 
-}: { 
-  label: string; 
-  count: number; 
+const RoleRow = ({
+  label,
+  count,
+  icon,
+  color,
+  bgColor,
+  textColor,
+}: {
+  label: string;
+  count: number;
   icon: React.ReactNode;
   color: string;
   bgColor: string;
@@ -223,28 +232,26 @@ const RoleRow = ({
 }) => (
   <div className={`flex items-center justify-between p-4 rounded-lg ${bgColor}`}>
     <div className="flex items-center gap-3">
-      <div className={`p-2 rounded-full ${color} text-white`}>
-        {icon}
-      </div>
+      <div className={`p-2 rounded-full ${color} text-white`}>{icon}</div>
       <span className={`font-medium ${textColor}`}>{label}</span>
     </div>
     <span className={`text-2xl font-bold ${textColor}`}>{count}</span>
   </div>
 );
 
-const HealthMetric = ({ 
-  label, 
-  value, 
-  status 
-}: { 
-  label: string; 
-  value: string; 
+const HealthMetric = ({
+  label,
+  value,
+  status,
+}: {
+  label: string;
+  value: string;
   status: "good" | "warning" | "neutral";
 }) => {
   const statusColors = {
     good: "text-green-600",
     warning: "text-amber-600",
-    neutral: "text-blue-600"
+    neutral: "text-blue-600",
   };
 
   return (

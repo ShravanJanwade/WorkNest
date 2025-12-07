@@ -5,7 +5,7 @@ export type TimeEntry = Models.Document & {
   userId: string;
   startTime: string;
   endTime?: string;
-  duration?: number; // in minutes
+  duration?: number;
   description?: string;
   billable?: boolean;
 };
@@ -21,7 +21,6 @@ export type TimeEntryWithTask = TimeEntry & {
   };
 };
 
-// For aggregated time data
 export type TimeStats = {
   totalMinutes: number;
   billableMinutes: number;

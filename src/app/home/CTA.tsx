@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function CallToAction() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-white via-gray-50 to-white py-24">
-      {/* Subtle decorative blurred circle */}
+      {}
       <div className="absolute -top-20 -left-20 h-96 w-96 bg-purple-400/20 rounded-full blur-3xl opacity-40 animate-pulse hidden md:block" />
       <div className="absolute -bottom-10 -right-10 h-80 w-80 bg-indigo-400/20 rounded-full blur-2xl opacity-50 hidden md:block" />
 
@@ -27,7 +27,8 @@ export default function CallToAction() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-          Join 10,000+ modern teams transforming productivity with <span className="font-semibold text-indigo-600">TaskForge</span>. No credit card required.
+          Join 10,000+ modern teams transforming productivity with{" "}
+          <span className="font-semibold text-indigo-600">TaskForge</span>. No credit card required.
         </motion.p>
 
         <motion.div
@@ -46,7 +47,7 @@ export default function CallToAction() {
           </Link>
         </motion.div>
 
-        {/* Optional: Add secondary micro-callout or badge */}
+        {}
         <div className="mt-6 text-sm text-gray-500">
           <span className="inline-block bg-gray-100 px-3 py-1 rounded-full">
             ⭐ Rated 4.9/5 by productivity leaders worldwide

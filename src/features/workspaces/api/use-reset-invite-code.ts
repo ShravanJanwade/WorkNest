@@ -8,6 +8,7 @@ type ResponseType = InferResponseType<
   (typeof client.api.workspaces)[":workspaceId"]["reset-invite-code"]["$post"],
   200
 >;
+
 type RequestType = InferRequestType<
   (typeof client.api.workspaces)[":workspaceId"]["reset-invite-code"]["$post"]
 >;
@@ -17,9 +18,7 @@ export const useResetInviteCode = () => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param }) => {
-      const response = await client.api.workspaces[":workspaceId"][
-        "reset-invite-code"
-      ].$post({
+      const response = await client.api.workspaces[":workspaceId"]["reset-invite-code"].$post({
         param,
       });
 

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -10,17 +10,18 @@ export default function ContactForm() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 2500); // fake loading
+    setTimeout(() => setSubmitted(false), 2500);
   };
 
   return (
     <section className="relative py-28 bg-gradient-to-tr from-blue-600 via-indigo-700 to-purple-800 overflow-hidden text-white">
-      {/* Sparkles & Visual Background */}
+      {}
       <motion.div
         animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.02, 1] }}
         transition={{ repeat: Infinity, duration: 10 }}
         className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-purple-400/30 blur-3xl"
       />
+
       <div className="container mx-auto px-6 text-center relative z-10">
         <h2 className="text-5xl font-extrabold tracking-tight mb-4 drop-shadow-[0_1px_8px_rgba(255,255,255,0.2)]">
           Let's Connect <span className="inline-block animate-bounce">👋</span>
@@ -61,7 +62,7 @@ export default function ContactForm() {
           </motion.button>
         </motion.form>
 
-        {/* Easter Egg: Sparkles at Bottom */}
+        {}
         <div className="mt-16 flex justify-center items-center gap-2 text-white/50 text-sm animate-pulse">
           <Sparkles className="w-4 h-4 text-yellow-300" />
           <span>Made with magic ✨ & passion 💜</span>
@@ -71,7 +72,6 @@ export default function ContactForm() {
   );
 }
 
-// Floating Input Component
 function FloatingInput({ label, name, type }: { label: string; name: string; type: string }) {
   return (
     <div className="relative">
@@ -82,6 +82,7 @@ function FloatingInput({ label, name, type }: { label: string; name: string; typ
         placeholder=" "
         className="peer w-full rounded-md bg-white/20 px-4 pt-6 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
+
       <label
         htmlFor={name}
         className="absolute left-4 top-2 text-sm text-white/80 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/50 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white"
@@ -92,7 +93,6 @@ function FloatingInput({ label, name, type }: { label: string; name: string; typ
   );
 }
 
-// Floating Textarea Component
 function FloatingTextarea({ label, name }: { label: string; name: string }) {
   return (
     <div className="relative">
@@ -103,6 +103,7 @@ function FloatingTextarea({ label, name }: { label: string; name: string }) {
         placeholder=" "
         className="peer w-full rounded-md bg-white/20 px-4 pt-6 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
+
       <label
         htmlFor={name}
         className="absolute left-4 top-2 text-sm text-white/80 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/50 peer-focus:top-2 peer-focus:text-sm peer-focus:text-white"

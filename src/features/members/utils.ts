@@ -8,11 +8,7 @@ interface GetMemberProps {
   userId: string;
 }
 
-export const getMember = async ({
-  databases,
-  workspaceId,
-  userId,
-}: GetMemberProps) => {
+export const getMember = async ({ databases, workspaceId, userId }: GetMemberProps) => {
   console.log("Shravan ", DATABASE_ID, MEMBERS_ID);
   const members = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
     Query.equal("workspaceId", workspaceId),

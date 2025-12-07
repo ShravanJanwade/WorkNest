@@ -27,9 +27,7 @@ interface TaskViewSwitcherProps {
   hideProjectFilter?: boolean;
 }
 
-export const TaskViewSwitcher = ({
-  hideProjectFilter,
-}: TaskViewSwitcherProps) => {
+export const TaskViewSwitcher = ({ hideProjectFilter }: TaskViewSwitcherProps) => {
   const [{ status, assigneeId, projectId, dueDate }] = useTaskFilters();
   const [view, setView] = useQueryState("task-view", { defaultValue: "table" });
   const { mutate: bulkUpdate } = useBulkUpdateTasks();
@@ -48,17 +46,13 @@ export const TaskViewSwitcher = ({
     (tasks: { $id: string; status: TaskStatus; position: number }[]) => {
       bulkUpdate({ json: { tasks } });
     },
-    [bulkUpdate]
+    [bulkUpdate],
   );
 
   const { open } = useCreateTaskModal();
 
   return (
-    <Tabs
-      defaultValue={view}
-      onValueChange={setView}
-      className="flex-1 w-full border rounded-lg"
-    >
+    <Tabs defaultValue={view} onValueChange={setView} className="flex-1 w-full border rounded-lg">
       <div className="h-full flex flex-col overflow-auto p-4">
         <div className="flex flex-col gap-y-2 lg:flex-row justify-between items-center">
           <TabsList className="w-full lg:w-auto">
@@ -90,10 +84,7 @@ export const TaskViewSwitcher = ({
               <DataTable columns={columns} data={tasks?.documents ?? []} />
             </TabsContent>
             <TabsContent value="kanban" className="mt-0">
-              <DataKanban
-                data={tasks?.documents ?? []}
-                onChange={onKanbanChange}
-              />
+              <DataKanban data={tasks?.documents ?? []} onChange={onKanbanChange} />
             </TabsContent>
             <TabsContent value="calendar" className="mt-0 h-full pb-4">
               <DataCalendar data={tasks?.documents ?? []} />

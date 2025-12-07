@@ -66,11 +66,8 @@ const ForgotPasswordPage = () => {
             href="/"
             className="flex items-center gap-3 rounded-full bg-slate-900/80 px-3 py-2 text-sm backdrop-blur-md transition hover:bg-slate-800/90 md:gap-4 md:px-4 md:py-2.5"
           >
-            <img
-              src="/Logo.png"
-              alt="WorkNest Logo"
-              className="h-8 w-8 md:h-10 md:w-10"
-            />
+            <img src="/Logo.png" alt="WorkNest Logo" className="h-8 w-8 md:h-10 md:w-10" />
+
             <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-lg font-black tracking-[0.25em] text-transparent md:text-2xl">
               WORKNEST
             </span>
@@ -109,8 +106,8 @@ const ForgotPasswordPage = () => {
                 </CardTitle>
                 <CardDescription className="text-sm text-slate-300">
                   We&apos;ve sent a secure password reset link to{" "}
-                  <span className="font-semibold text-slate-50">{email}</span>.
-                  Follow the instructions there to create a new password.
+                  <span className="font-semibold text-slate-50">{email}</span>. Follow the
+                  instructions there to create a new password.
                 </CardDescription>
               </>
             ) : (
@@ -122,8 +119,8 @@ const ForgotPasswordPage = () => {
                   Forgot your password?
                 </CardTitle>
                 <CardDescription className="text-sm text-slate-300">
-                  Enter the email associated with your account and we&apos;ll
-                  send you a link to reset your password securely.
+                  Enter the email associated with your account and we&apos;ll send you a link to
+                  reset your password securely.
                 </CardDescription>
               </>
             )}
@@ -152,10 +149,7 @@ const ForgotPasswordPage = () => {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2 text-left">
-                  <label
-                    htmlFor="email"
-                    className="text-sm font-medium text-slate-200"
-                  >
+                  <label htmlFor="email" className="text-sm font-medium text-slate-200">
                     Email address
                   </label>
                   <Input
@@ -168,6 +162,7 @@ const ForgotPasswordPage = () => {
                     required
                     className="h-10 border-slate-700 bg-slate-900/60 text-slate-50 placeholder:text-slate-500 focus-visible:ring-sky-500"
                   />
+
                   <p className="text-xs text-slate-400">
                     We&apos;ll send a one-time reset link to this email.
                   </p>

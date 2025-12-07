@@ -5,13 +5,9 @@ import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<
-  (typeof client.api.tasks)["bulk-update"]["$post"],
-  200
->;
-type RequestType = InferRequestType<
-  (typeof client.api.tasks)["bulk-update"]["$post"]
->;
+type ResponseType = InferResponseType<(typeof client.api.tasks)["bulk-update"]["$post"], 200>;
+
+type RequestType = InferRequestType<(typeof client.api.tasks)["bulk-update"]["$post"]>;
 
 export const useBulkUpdateTasks = () => {
   const queryClient = useQueryClient();

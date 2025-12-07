@@ -20,7 +20,7 @@ const app = new Hono()
         workspaceId: z.string(),
         projectId: z.string(),
         search: z.string().optional(),
-      })
+      }),
     ),
     async (c) => {
       const { workspaceId, projectId, search } = c.req.valid("query");
@@ -47,52 +47,37 @@ const app = new Hono()
         query.push(Query.search("name", search));
       }
 
-      const epics = await databases.listDocuments<Epic>(
-        DATABASE_ID,
-        EPICS_ID,
-        query
-      );
+      const epics = await databases.listDocuments<Epic>(DATABASE_ID, EPICS_ID, query);
 
       return c.json({ data: epics });
-    }
+    },
   )
-  .post(
-    "/",
-    sessionMiddleware,
-    zValidator("json", createEpicSchema),
-    async (c) => {
-      const { name, description, workspaceId, projectId, startDate, endDate } =
-        c.req.valid("json");
-      const databases = c.get("databases");
-      const user = c.get("user");
+  .post("/", sessionMiddleware, zValidator("json", createEpicSchema), async (c) => {
+    const { name, description, workspaceId, projectId, startDate, endDate } = c.req.valid("json");
+    const databases = c.get("databases");
+    const user = c.get("user");
 
-      const member = await getMember({
-        databases,
-        workspaceId,
-        userId: user.$id,
-      });
+    const member = await getMember({
+      databases,
+      workspaceId,
+      userId: user.$id,
+    });
 
-      if (!member) {
-        return c.json({ error: "Unauthorized" }, 401);
-      }
-
-      const epic = await databases.createDocument(
-        DATABASE_ID,
-        EPICS_ID,
-        ID.unique(),
-        {
-          name,
-          description,
-          workspaceId,
-          projectId,
-          startDate,
-          endDate,
-        }
-      );
-
-      return c.json({ data: epic });
+    if (!member) {
+      return c.json({ error: "Unauthorized" }, 401);
     }
-  )
+
+    const epic = await databases.createDocument(DATABASE_ID, EPICS_ID, ID.unique(), {
+      name,
+      description,
+      workspaceId,
+      projectId,
+      startDate,
+      endDate,
+    });
+
+    return c.json({ data: epic });
+  })
   .patch(
     "/:epicId",
     sessionMiddleware,
@@ -103,11 +88,7 @@ const app = new Hono()
       const databases = c.get("databases");
       const user = c.get("user");
 
-      const existingEpic = await databases.getDocument<Epic>(
-        DATABASE_ID,
-        EPICS_ID,
-        epicId
-      );
+      const existingEpic = await databases.getDocument<Epic>(DATABASE_ID, EPICS_ID, epicId);
 
       const member = await getMember({
         databases,
@@ -119,31 +100,22 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const epic = await databases.updateDocument(
-        DATABASE_ID,
-        EPICS_ID,
-        epicId,
-        {
-          name,
-          description,
-          startDate,
-          endDate,
-        }
-      );
+      const epic = await databases.updateDocument(DATABASE_ID, EPICS_ID, epicId, {
+        name,
+        description,
+        startDate,
+        endDate,
+      });
 
       return c.json({ data: epic });
-    }
+    },
   )
   .delete("/:epicId", sessionMiddleware, async (c) => {
     const { epicId } = c.req.param();
     const databases = c.get("databases");
     const user = c.get("user");
 
-    const existingEpic = await databases.getDocument<Epic>(
-      DATABASE_ID,
-      EPICS_ID,
-      epicId
-    );
+    const existingEpic = await databases.getDocument<Epic>(DATABASE_ID, EPICS_ID, epicId);
 
     const member = await getMember({
       databases,

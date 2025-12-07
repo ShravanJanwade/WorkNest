@@ -25,7 +25,7 @@ import loginAnimation from "@/assets/signup.json";
 const ResetPasswordPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +45,7 @@ const ResetPasswordPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -66,7 +66,7 @@ const ResetPasswordPage = () => {
       const response = await client.api.auth["reset-password"].$post({
         json: { userId, secret, password },
       });
-      
+
       if (response.ok) {
         setIsSuccess(true);
         toast.success("Password reset successfully!");
@@ -93,12 +93,18 @@ const ResetPasswordPage = () => {
   };
 
   const strength = getPasswordStrength(password);
-  const strengthColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-lime-500", "bg-green-500", "bg-emerald-500"];
+  const strengthColors = [
+    "bg-red-500",
+    "bg-orange-500",
+    "bg-yellow-500",
+    "bg-lime-500",
+    "bg-green-500",
+    "bg-emerald-500",
+  ];
   const strengthLabels = ["Very Weak", "Weak", "Fair", "Good", "Strong", "Very Strong"];
 
   return (
     <div className="w-full h-screen flex flex-col md:flex-row overflow-hidden">
- 
       <div className="w-full md:w-1/2 h-[40vh] md:h-full bg-gray-100 relative flex items-center justify-center">
         <motion.div
           initial={{ x: -50, opacity: 0 }}
@@ -107,11 +113,8 @@ const ResetPasswordPage = () => {
           className="absolute top-4 left-4 md:top-6 md:left-6"
         >
           <Link href="/" className="flex items-center gap-3 md:gap-4">
-            <img
-              src="/Logo.png"
-              alt="WorkNest Logo"
-              className="w-8 h-8 md:w-10 md:h-10"
-            />
+            <img src="/Logo.png" alt="WorkNest Logo" className="w-8 h-8 md:w-10 md:h-10" />
+
             <span className="text-xl md:text-3xl font-black tracking-widest text-blue-400 drop-shadow-[0_2px_6px_rgba(255,255,255,0.25)] hover:text-blue-500 transition">
               WorkNest
             </span>
@@ -141,7 +144,8 @@ const ResetPasswordPage = () => {
                   Password Reset!
                 </CardTitle>
                 <CardDescription>
-                  Your password has been successfully reset. You can now sign in with your new password.
+                  Your password has been successfully reset. You can now sign in with your new
+                  password.
                 </CardDescription>
               </>
             ) : error ? (
@@ -152,9 +156,7 @@ const ResetPasswordPage = () => {
                 <CardTitle className="text-xl md:text-2xl font-semibold text-black">
                   Invalid Link
                 </CardTitle>
-                <CardDescription className="text-red-600">
-                  {error}
-                </CardDescription>
+                <CardDescription className="text-red-600">{error}</CardDescription>
               </>
             ) : (
               <>
@@ -164,9 +166,7 @@ const ResetPasswordPage = () => {
                 <CardTitle className="text-xl md:text-2xl font-semibold text-black">
                   Reset Password
                 </CardTitle>
-                <CardDescription>
-                  Enter your new password below.
-                </CardDescription>
+                <CardDescription>Enter your new password below.</CardDescription>
               </>
             )}
           </CardHeader>
@@ -181,9 +181,7 @@ const ResetPasswordPage = () => {
               </Button>
             ) : error ? (
               <Button className="w-full" asChild>
-                <Link href="/forgot-password">
-                  Request New Reset Link
-                </Link>
+                <Link href="/forgot-password">Request New Reset Link</Link>
               </Button>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -202,6 +200,7 @@ const ResetPasswordPage = () => {
                       required
                       minLength={8}
                     />
+
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
@@ -226,7 +225,7 @@ const ResetPasswordPage = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="space-y-2">
                   <label htmlFor="confirmPassword" className="text-sm font-medium">
                     Confirm Password
@@ -241,12 +240,17 @@ const ResetPasswordPage = () => {
                       disabled={isLoading}
                       required
                     />
+
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                     >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                   {confirmPassword && password !== confirmPassword && (
@@ -257,7 +261,9 @@ const ResetPasswordPage = () => {
                 <Button
                   type="submit"
                   className="w-full"
-                  disabled={isLoading || !password || !confirmPassword || password !== confirmPassword}
+                  disabled={
+                    isLoading || !password || !confirmPassword || password !== confirmPassword
+                  }
                 >
                   {isLoading ? "Resetting..." : "Reset Password"}
                 </Button>
@@ -268,10 +274,7 @@ const ResetPasswordPage = () => {
           {!isSuccess && !error && (
             <CardFooter className="text-sm text-center text-muted-foreground flex justify-center">
               Remember your password?{" "}
-              <Link
-                href="/sign-in"
-                className="text-blue-600 underline ml-1 hover:text-blue-700"
-              >
+              <Link href="/sign-in" className="text-blue-600 underline ml-1 hover:text-blue-700">
                 Sign In
               </Link>
             </CardFooter>

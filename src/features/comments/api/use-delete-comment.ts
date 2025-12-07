@@ -4,13 +4,9 @@ import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<
-  (typeof client.api.comments)[":commentId"]["$delete"],
-  200
->;
-type RequestType = InferRequestType<
-  (typeof client.api.comments)[":commentId"]["$delete"]
->;
+type ResponseType = InferResponseType<(typeof client.api.comments)[":commentId"]["$delete"], 200>;
+
+type RequestType = InferRequestType<(typeof client.api.comments)[":commentId"]["$delete"]>;
 
 interface UseDeleteCommentProps {
   taskId: string;

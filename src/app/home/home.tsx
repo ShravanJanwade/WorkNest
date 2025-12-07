@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import ContactForm from "./Contact";
 import Footer from "./Footer";
@@ -10,16 +10,16 @@ import Hero from "./Hero";
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden scroll-smooth">
-      <Hero/>
-      <FeaturesUltra/>
-    
-      {/* Animated Logos Section */}
-      <TrustedBySection/>
-    <CallToAction/>
+      <Hero />
+      <FeaturesUltra />
 
-      {/* Contact Section */}
-      <ContactForm/>
-        <Footer/>
+      {}
+      <TrustedBySection />
+      <CallToAction />
+
+      {}
+      <ContactForm />
+      <Footer />
     </div>
   );
 }

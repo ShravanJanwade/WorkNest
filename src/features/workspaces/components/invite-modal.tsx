@@ -39,9 +39,7 @@ export const InviteModal = () => {
         <Card className="w-full h-auto border-none shadow-none">
           <CardHeader className="p-7">
             <CardTitle>Invite Members</CardTitle>
-            <CardDescription>
-              Use the copy link to add members to your workspace.
-            </CardDescription>
+            <CardDescription>Use the copy link to add members to your workspace.</CardDescription>
           </CardHeader>
           <CardContent className="p-7">
             <div className="flex flex-col gap-y-4">

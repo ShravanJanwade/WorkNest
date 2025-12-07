@@ -3,9 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/rpc";
 
-// Manual Type def
 type RequestType = {
-    enabled: boolean;
+  enabled: boolean;
 };
 
 export const useUpdateMfa = () => {
@@ -13,9 +12,8 @@ export const useUpdateMfa = () => {
 
   const mutation = useMutation<any, Error, RequestType>({
     mutationFn: async ({ enabled }) => {
-      // @ts-ignore
-      const response = await client.api.auth["update-mfa"].$post({ 
-          json: { enabled } 
+      const response = await client.api.auth["update-mfa"].$post({
+        json: { enabled },
       });
       return await response.json();
     },

@@ -1,19 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
 import { client } from "@/lib/rpc";
 
-type ResponseType = { 
-  data: { 
-    url: string; 
-    fileId: string; 
-  } 
+type ResponseType = {
+  data: {
+    url: string;
+    fileId: string;
+  };
 };
 
 export const useUploadImage = () => {
-  const mutation = useMutation<
-    ResponseType,
-    Error,
-    { image: File }
-  >({
+  const mutation = useMutation<ResponseType, Error, { image: File }>({
     mutationFn: async ({ image }) => {
       const response = await client.api.upload.$post({
         form: { image },

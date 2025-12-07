@@ -9,11 +9,7 @@ interface ResponsiveModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const ResponsiveModal = ({
-  children,
-  open,
-  onOpenChange,
-}: ResponsiveModalProps) => {
+export const ResponsiveModal = ({ children, open, onOpenChange }: ResponsiveModalProps) => {
   const isDesktop = useMedia("(min-width: 1024px)", true);
 
   if (isDesktop) {
@@ -29,9 +25,7 @@ export const ResponsiveModal = ({
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent>
-        <div className="overflow-y-auto hide-scrollbar max-h-[85vh]">
-          {children}
-        </div>
+        <div className="overflow-y-auto hide-scrollbar max-h-[85vh]">{children}</div>
       </DrawerContent>
     </Drawer>
   );

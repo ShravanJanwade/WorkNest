@@ -15,15 +15,15 @@ interface EditorProps {
   onImageUpload?: (file: File) => Promise<string>;
 }
 
-export const Editor = ({ 
-  value, 
-  onChange, 
-  placeholder, 
+export const Editor = ({
+  value,
+  onChange,
+  placeholder,
   className,
   preview = "edit",
   height = 200,
   disabled,
-  onImageUpload
+  onImageUpload,
 }: EditorProps) => {
   const { theme } = useTheme();
 
@@ -52,8 +52,12 @@ export const Editor = ({
   };
 
   return (
-    <div 
-      className={cn("w-full border rounded-md overflow-hidden", className, disabled && "opacity-50 pointer-events-none")}
+    <div
+      className={cn(
+        "w-full border rounded-md overflow-hidden",
+        className,
+        disabled && "opacity-50 pointer-events-none",
+      )}
       onPaste={handlePaste}
     >
       <MDEditor
@@ -62,7 +66,7 @@ export const Editor = ({
         height={height}
         preview={preview}
         textareaProps={{
-          placeholder: placeholder
+          placeholder: placeholder,
         }}
         data-color-mode={theme === "dark" ? "dark" : "light"}
         className="!border-none !shadow-none"
@@ -70,4 +74,3 @@ export const Editor = ({
     </div>
   );
 };
-

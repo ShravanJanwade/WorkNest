@@ -4,8 +4,8 @@ import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<typeof client.api["time-tracking"]["start"]["$post"], 200>;
-type RequestType = InferRequestType<typeof client.api["time-tracking"]["start"]["$post"]>;
+type ResponseType = InferResponseType<(typeof client.api)["time-tracking"]["start"]["$post"], 200>;
+type RequestType = InferRequestType<(typeof client.api)["time-tracking"]["start"]["$post"]>;
 
 export const useStartTimer = () => {
   const queryClient = useQueryClient();

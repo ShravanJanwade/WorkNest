@@ -4,13 +4,9 @@ import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<
-  (typeof client.api.projects)[":projectId"]["$patch"],
-  200
->;
-type RequestType = InferRequestType<
-  (typeof client.api.projects)[":projectId"]["$patch"]
->;
+type ResponseType = InferResponseType<(typeof client.api.projects)[":projectId"]["$patch"], 200>;
+
+type RequestType = InferRequestType<(typeof client.api.projects)[":projectId"]["$patch"]>;
 
 export const useUpdateProject = () => {
   const queryClient = useQueryClient();

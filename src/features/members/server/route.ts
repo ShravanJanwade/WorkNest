@@ -32,25 +32,17 @@ const app = new Hono()
       }
 
       if (!MEMBERS_ID) {
-        return c.json(
-          { error: "server misconfigured: MEMBERS_ID missing" },
-          500
-        );
+        return c.json({ error: "server misconfigured: MEMBERS_ID missing" }, 500);
       }
 
       let members;
       try {
-        members = await databases.listDocuments<Member>(
-          DATABASE_ID,
-          MEMBERS_ID,
-          [Query.equal("workspaceId", workspaceId)]
-        );
+        members = await databases.listDocuments<Member>(DATABASE_ID, MEMBERS_ID, [
+          Query.equal("workspaceId", workspaceId),
+        ]);
       } catch (err) {
         console.error("[members route] listDocuments ERROR:", err);
-        return c.json(
-          { error: "failed to list members", details: String(err) },
-          500
-        );
+        return c.json({ error: "failed to list members", details: String(err) }, 500);
       }
 
       const populatedMembers = await Promise.all(
@@ -63,38 +55,29 @@ const app = new Hono()
               email: user.email,
             };
           } catch (err) {
-            console.warn(
-              "[members route] users.get failed for userId=",
-              member.userId
-            );
+            console.warn("[members route] users.get failed for userId=", member.userId);
             return {
               ...member,
               name: member.userId,
               email: "",
             };
           }
-        })
+        }),
       );
 
       return c.json({ data: { ...members, documents: populatedMembers } });
-    }
+    },
   )
   .delete("/:memberId", sessionMiddleware, async (c) => {
     const { memberId } = c.req.param();
     const user = c.get("user");
     const databases = c.get("databases");
 
-    const memberToDelete = await databases.getDocument(
-      DATABASE_ID,
-      MEMBERS_ID,
-      memberId
-    );
+    const memberToDelete = await databases.getDocument(DATABASE_ID, MEMBERS_ID, memberId);
 
-    const allMembersInWorkspace = await databases.listDocuments(
-      DATABASE_ID,
-      MEMBERS_ID,
-      [Query.equal("workspaceId", memberToDelete.workspaceId)]
-    );
+    const allMembersInWorkspace = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
+      Query.equal("workspaceId", memberToDelete.workspaceId),
+    ]);
 
     const member = await getMember({
       databases,
@@ -106,7 +89,6 @@ const app = new Hono()
       return c.json({ error: "Unauthorized" }, 401);
     }
 
-    // Only admin can delete members (except self-removal)
     if (member.$id !== memberToDelete.$id && member.role !== MemberRole.ADMIN) {
       return c.json({ error: "Only admins can remove other members" }, 403);
     }
@@ -115,14 +97,10 @@ const app = new Hono()
       return c.json({ error: "Cannot delete the only member." }, 400);
     }
 
-    // Prevent deleting the last admin
     const adminsInWorkspace = allMembersInWorkspace.documents.filter(
-      (m) => m.role === MemberRole.ADMIN
+      (m) => m.role === MemberRole.ADMIN,
     );
-    if (
-      memberToDelete.role === MemberRole.ADMIN &&
-      adminsInWorkspace.length === 1
-    ) {
+    if (memberToDelete.role === MemberRole.ADMIN && adminsInWorkspace.length === 1) {
       return c.json({ error: "Cannot delete the only admin." }, 400);
     }
 
@@ -140,17 +118,11 @@ const app = new Hono()
       const user = c.get("user");
       const databases = c.get("databases");
 
-      const memberToUpdate = await databases.getDocument(
-        DATABASE_ID,
-        MEMBERS_ID,
-        memberId
-      );
+      const memberToUpdate = await databases.getDocument(DATABASE_ID, MEMBERS_ID, memberId);
 
-      const allMembersInWorkspace = await databases.listDocuments(
-        DATABASE_ID,
-        MEMBERS_ID,
-        [Query.equal("workspaceId", memberToUpdate.workspaceId)]
-      );
+      const allMembersInWorkspace = await databases.listDocuments(DATABASE_ID, MEMBERS_ID, [
+        Query.equal("workspaceId", memberToUpdate.workspaceId),
+      ]);
 
       const member = await getMember({
         databases,
@@ -162,14 +134,12 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      // Only ADMIN can change roles
       if (member.role !== MemberRole.ADMIN) {
         return c.json({ error: "Only admins can change member roles" }, 403);
       }
 
-      // Prevent demoting the last admin
       const adminsInWorkspace = allMembersInWorkspace.documents.filter(
-        (m) => m.role === MemberRole.ADMIN
+        (m) => m.role === MemberRole.ADMIN,
       );
       if (
         memberToUpdate.role === MemberRole.ADMIN &&
@@ -184,8 +154,7 @@ const app = new Hono()
       });
 
       return c.json({ data: { $id: memberToUpdate.$id, role } });
-    }
+    },
   );
 
 export default app;
-

@@ -50,14 +50,10 @@ export const EditTaskForm = ({
   const { mutate, isPending } = useUpdateTask();
 
   const form = useForm<z.infer<typeof createTaskSchema>>({
-    resolver: zodResolver(
-      createTaskSchema.omit({ workspaceId: true, description: true })
-    ),
+    resolver: zodResolver(createTaskSchema.omit({ workspaceId: true, description: true })),
     defaultValues: {
       ...initialValues,
-      dueDate: initialValues.dueDate
-        ? new Date(initialValues.dueDate)
-        : undefined,
+      dueDate: initialValues.dueDate ? new Date(initialValues.dueDate) : undefined,
     },
   });
 
@@ -72,7 +68,7 @@ export const EditTaskForm = ({
           form.reset();
           onCancel?.();
         },
-      }
+      },
     );
   };
 
@@ -86,7 +82,9 @@ export const EditTaskForm = ({
       </div>
       <CardContent className="p-7">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit, (errors) => console.log("Form errors:", errors))}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit, (errors) => console.log("Form errors:", errors))}
+          >
             <div className="flex flex-col gap-y-4">
               <FormField
                 control={form.control}
@@ -101,6 +99,7 @@ export const EditTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="dueDate"
@@ -114,16 +113,14 @@ export const EditTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="assigneeId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assignee</FormLabel>
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select assignee" />
@@ -134,10 +131,8 @@ export const EditTaskForm = ({
                         {memberOptions.map((member) => (
                           <SelectItem key={member.id} value={member.id}>
                             <div className="flex items-center gap-x-2">
-                              <MemberAvatar
-                                className="size-6"
-                                name={member.name}
-                              />
+                              <MemberAvatar className="size-6" name={member.name} />
+
                               {member.name}
                             </div>
                           </SelectItem>
@@ -147,16 +142,14 @@ export const EditTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assignee</FormLabel>
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select status" />
@@ -164,15 +157,9 @@ export const EditTaskForm = ({
                       </FormControl>
                       <FormMessage />
                       <SelectContent>
-                        <SelectItem value={TaskStatus.BACKLOG}>
-                          Backlog
-                        </SelectItem>
-                        <SelectItem value={TaskStatus.IN_PROGRESS}>
-                          In Progress
-                        </SelectItem>
-                        <SelectItem value={TaskStatus.IN_REVIEW}>
-                          In Review
-                        </SelectItem>
+                        <SelectItem value={TaskStatus.BACKLOG}>Backlog</SelectItem>
+                        <SelectItem value={TaskStatus.IN_PROGRESS}>In Progress</SelectItem>
+                        <SelectItem value={TaskStatus.IN_REVIEW}>In Review</SelectItem>
                         <SelectItem value={TaskStatus.TODO}>Todo</SelectItem>
                         <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
                       </SelectContent>
@@ -180,6 +167,7 @@ export const EditTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="priority"
@@ -197,16 +185,14 @@ export const EditTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="projectId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Project</FormLabel>
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select project" />
@@ -222,6 +208,7 @@ export const EditTaskForm = ({
                                 name={project.name}
                                 image={project.imageUrl}
                               />
+
                               {project.name}
                             </div>
                           </SelectItem>

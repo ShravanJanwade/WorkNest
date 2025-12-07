@@ -22,10 +22,7 @@ import { DottedSeparator } from "@/components/dotted-separator";
 import { useGetActivity } from "../api/use-get-activity";
 import { ActivityLogWithUser, ActivityAction } from "../types";
 
-const actionConfig: Record<
-  ActivityAction,
-  { icon: any; label: string; color: string }
-> = {
+const actionConfig: Record<ActivityAction, { icon: any; label: string; color: string }> = {
   created: {
     icon: Plus,
     label: "created this task",
@@ -115,9 +112,9 @@ export const ActivityTimeline = ({ taskId }: ActivityTimelineProps) => {
         </div>
       ) : data?.documents && data.documents.length > 0 ? (
         <div className="relative">
-          {/* Timeline line */}
+          {}
           <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
-          
+
           <div className="space-y-4 max-h-[350px] overflow-y-auto pr-2">
             {data.documents.map((activity, index) => {
               const { icon: Icon, color, description } = getActionDetails(activity);
@@ -130,17 +127,17 @@ export const ActivityTimeline = ({ taskId }: ActivityTimelineProps) => {
 
               return (
                 <div key={activity.$id} className="flex gap-3 relative">
-                  {/* Icon */}
+                  {}
                   <div
                     className={cn(
                       "flex items-center justify-center w-8 h-8 rounded-full z-10 shrink-0",
-                      color
+                      color,
                     )}
                   >
                     <Icon className="h-4 w-4" />
                   </div>
 
-                  {/* Content */}
+                  {}
                   <div className="flex-1 pt-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Avatar className="h-5 w-5">

@@ -14,7 +14,6 @@ import { createCommentSchema, updateCommentSchema } from "../schemas";
 import { Comment, CommentWithAuthor } from "../types";
 
 const app = new Hono()
-  // Get all comments for a task
   .get(
     "/",
     sessionMiddleware,
@@ -22,7 +21,7 @@ const app = new Hono()
       "query",
       z.object({
         taskId: z.string(),
-      })
+      }),
     ),
     async (c) => {
       try {
@@ -30,7 +29,6 @@ const app = new Hono()
         const user = c.get("user");
         const { taskId } = c.req.valid("query");
 
-        // Check if COMMENTS_ID is configured
         if (!COMMENTS_ID) {
           return c.json({
             data: {
@@ -40,14 +38,9 @@ const app = new Hono()
           });
         }
 
-        // Get the task to verify workspace access
         let task: Task;
         try {
-          task = await databases.getDocument<Task>(
-            DATABASE_ID,
-            TASKS_ID,
-            taskId
-          );
+          task = await databases.getDocument<Task>(DATABASE_ID, TASKS_ID, taskId);
         } catch {
           return c.json({ error: "Task not found" }, 404);
         }
@@ -62,20 +55,13 @@ const app = new Hono()
           return c.json({ error: "Unauthorized" }, 401);
         }
 
-        // Get all comments for this task
-        const comments = await databases.listDocuments<Comment>(
-          DATABASE_ID,
-          COMMENTS_ID,
-          [
-            Query.equal("taskId", taskId),
-            Query.orderDesc("$createdAt"),
-          ]
-        );
+        const comments = await databases.listDocuments<Comment>(DATABASE_ID, COMMENTS_ID, [
+          Query.equal("taskId", taskId),
+          Query.orderDesc("$createdAt"),
+        ]);
 
-        // Get unique author IDs
         const authorIds = Array.from(new Set(comments.documents.map((c) => c.authorId)));
 
-        // Fetch author details
         const { users } = await createAdminClient();
         const authorPromises = authorIds.map(async (authorId) => {
           try {
@@ -97,18 +83,16 @@ const app = new Hono()
         const authors = await Promise.all(authorPromises);
         const authorMap = new Map(authors.map((a) => [a.$id, a]));
 
-        // Build comment tree (top-level comments with nested replies)
         const commentMap = new Map<string, CommentWithAuthor>();
         const topLevelComments: CommentWithAuthor[] = [];
 
-        // First pass: create all comment objects
         comments.documents.forEach((comment) => {
           const author = authorMap.get(comment.authorId) || {
             $id: comment.authorId,
             name: "Unknown",
             email: "",
           };
-          
+
           commentMap.set(comment.$id, {
             ...comment,
             author,
@@ -116,10 +100,9 @@ const app = new Hono()
           });
         });
 
-        // Second pass: build the tree structure
         comments.documents.forEach((comment) => {
           const commentWithAuthor = commentMap.get(comment.$id)!;
-          
+
           if (comment.parentId) {
             const parent = commentMap.get(comment.parentId);
             if (parent) {
@@ -131,12 +114,10 @@ const app = new Hono()
           }
         });
 
-        // Sort replies by creation date (oldest first for conversation flow)
         topLevelComments.forEach((comment) => {
           if (comment.replies) {
             comment.replies.sort(
-              (a, b) =>
-                new Date(a.$createdAt).getTime() - new Date(b.$createdAt).getTime()
+              (a, b) => new Date(a.$createdAt).getTime() - new Date(b.$createdAt).getTime(),
             );
           }
         });
@@ -156,111 +137,82 @@ const app = new Hono()
           },
         });
       }
-    }
+    },
   )
-  // Create a new comment
-  .post(
-    "/",
-    sessionMiddleware,
-    zValidator("json", createCommentSchema),
-    async (c) => {
-      try {
-        const databases = c.get("databases");
-        const user = c.get("user");
-        const { taskId, content, parentId, mentions } = c.req.valid("json");
+  .post("/", sessionMiddleware, zValidator("json", createCommentSchema), async (c) => {
+    try {
+      const databases = c.get("databases");
+      const user = c.get("user");
+      const { taskId, content, parentId, mentions } = c.req.valid("json");
 
-        if (!COMMENTS_ID) {
-          return c.json({ error: "Comments not configured" }, 500);
-        }
-
-        // Get the task to verify workspace access
-        let task: Task;
-        try {
-          task = await databases.getDocument<Task>(
-            DATABASE_ID,
-            TASKS_ID,
-            taskId
-          );
-        } catch {
-          return c.json({ error: "Task not found" }, 404);
-        }
-
-        const member = await getMember({
-          databases,
-          workspaceId: task.workspaceId,
-          userId: user.$id,
-        });
-
-        if (!member) {
-          return c.json({ error: "Unauthorized" }, 401);
-        }
-
-        const comment = await databases.createDocument(
-          DATABASE_ID,
-          COMMENTS_ID,
-          ID.unique(),
-          {
-            taskId,
-            authorId: user.$id,
-            content,
-            parentId: parentId || null,
-            mentions: mentions || [],
-            isEdited: false,
-          }
-        );
-
-        return c.json({ data: comment });
-      } catch (error) {
-        console.error("Comment POST error:", error);
-        return c.json({ error: "Failed to create comment" }, 500);
+      if (!COMMENTS_ID) {
+        return c.json({ error: "Comments not configured" }, 500);
       }
-    }
-  )
-  // Update a comment
-  .patch(
-    "/:commentId",
-    sessionMiddleware,
-    zValidator("json", updateCommentSchema),
-    async (c) => {
+
+      let task: Task;
       try {
-        const databases = c.get("databases");
-        const user = c.get("user");
-        const { commentId } = c.req.param();
-        const { content } = c.req.valid("json");
-
-        if (!COMMENTS_ID) {
-          return c.json({ error: "Comments not configured" }, 500);
-        }
-
-        const existingComment = await databases.getDocument<Comment>(
-          DATABASE_ID,
-          COMMENTS_ID,
-          commentId
-        );
-
-        // Only the author can edit their comment
-        if (existingComment.authorId !== user.$id) {
-          return c.json({ error: "Unauthorized" }, 401);
-        }
-
-        const comment = await databases.updateDocument(
-          DATABASE_ID,
-          COMMENTS_ID,
-          commentId,
-          {
-            content,
-            isEdited: true,
-          }
-        );
-
-        return c.json({ data: comment });
-      } catch (error) {
-        console.error("Comment PATCH error:", error);
-        return c.json({ error: "Failed to update comment" }, 500);
+        task = await databases.getDocument<Task>(DATABASE_ID, TASKS_ID, taskId);
+      } catch {
+        return c.json({ error: "Task not found" }, 404);
       }
+
+      const member = await getMember({
+        databases,
+        workspaceId: task.workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const comment = await databases.createDocument(DATABASE_ID, COMMENTS_ID, ID.unique(), {
+        taskId,
+        authorId: user.$id,
+        content,
+        parentId: parentId || null,
+        mentions: mentions || [],
+        isEdited: false,
+      });
+
+      return c.json({ data: comment });
+    } catch (error) {
+      console.error("Comment POST error:", error);
+      return c.json({ error: "Failed to create comment" }, 500);
     }
-  )
-  // Delete a comment
+  })
+  .patch("/:commentId", sessionMiddleware, zValidator("json", updateCommentSchema), async (c) => {
+    try {
+      const databases = c.get("databases");
+      const user = c.get("user");
+      const { commentId } = c.req.param();
+      const { content } = c.req.valid("json");
+
+      if (!COMMENTS_ID) {
+        return c.json({ error: "Comments not configured" }, 500);
+      }
+
+      const existingComment = await databases.getDocument<Comment>(
+        DATABASE_ID,
+        COMMENTS_ID,
+        commentId,
+      );
+
+      if (existingComment.authorId !== user.$id) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const comment = await databases.updateDocument(DATABASE_ID, COMMENTS_ID, commentId, {
+        content,
+        isEdited: true,
+      });
+
+      return c.json({ data: comment });
+    } catch (error) {
+      console.error("Comment PATCH error:", error);
+      return c.json({ error: "Failed to update comment" }, 500);
+    }
+  })
   .delete("/:commentId", sessionMiddleware, async (c) => {
     try {
       const databases = c.get("databases");
@@ -274,15 +226,10 @@ const app = new Hono()
       const existingComment = await databases.getDocument<Comment>(
         DATABASE_ID,
         COMMENTS_ID,
-        commentId
+        commentId,
       );
 
-      // Get the task for workspace verification
-      const task = await databases.getDocument<Task>(
-        DATABASE_ID,
-        TASKS_ID,
-        existingComment.taskId
-      );
+      const task = await databases.getDocument<Task>(DATABASE_ID, TASKS_ID, existingComment.taskId);
 
       const member = await getMember({
         databases,
@@ -290,7 +237,6 @@ const app = new Hono()
         userId: user.$id,
       });
 
-      // Only author or admin can delete
       const isAuthor = existingComment.authorId === user.$id;
       const isAdmin = member?.role === "ADMIN";
 
@@ -298,22 +244,16 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      // Delete all replies first
       try {
-        const replies = await databases.listDocuments<Comment>(
-          DATABASE_ID,
-          COMMENTS_ID,
-          [Query.equal("parentId", commentId)]
-        );
+        const replies = await databases.listDocuments<Comment>(DATABASE_ID, COMMENTS_ID, [
+          Query.equal("parentId", commentId),
+        ]);
 
         for (const reply of replies.documents) {
           await databases.deleteDocument(DATABASE_ID, COMMENTS_ID, reply.$id);
         }
-      } catch {
-        // Replies deletion failed, continue anyway
-      }
+      } catch {}
 
-      // Delete the comment
       await databases.deleteDocument(DATABASE_ID, COMMENTS_ID, commentId);
 
       return c.json({ data: { $id: commentId } });

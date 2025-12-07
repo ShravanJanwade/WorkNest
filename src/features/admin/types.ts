@@ -6,7 +6,7 @@ export type Company = Models.Document & {
   description?: string;
   adminUserId: string;
   adminEmail?: string;
-  settings?: string; // JSON string for company settings
+  settings?: string;
   status: CompanyStatus;
   deleteRequested?: boolean;
   deleteRequestedAt?: string;
@@ -30,7 +30,6 @@ export const DEFAULT_COMPANY_SETTINGS: CompanySettings = {
   enforceTimeTracking: false,
 };
 
-// Super Admin specific types
 export interface SuperAdminUser {
   $id: string;
   email: string;
@@ -38,8 +37,6 @@ export interface SuperAdminUser {
   isSuperAdmin: boolean;
 }
 
-// Super Admin credentials (change in production!)
 export const SUPER_ADMIN_EMAIL = "superadmin@worknest.com";
 export const SUPER_ADMIN_PASSWORD = "SuperAdmin@123!";
 export const SUPER_ADMIN_NAME = "Super Admin";
-

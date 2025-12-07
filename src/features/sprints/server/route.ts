@@ -14,7 +14,6 @@ import { createSprintSchema, updateSprintSchema } from "../schemas";
 import { Sprint, SprintWithStats } from "../types";
 
 const app = new Hono()
-  // Get all sprints for a project
   .get(
     "/",
     sessionMiddleware,
@@ -24,7 +23,7 @@ const app = new Hono()
         workspaceId: z.string(),
         projectId: z.string().optional(),
         status: z.enum(["planned", "active", "completed"]).optional(),
-      })
+      }),
     ),
     async (c) => {
       try {
@@ -32,7 +31,6 @@ const app = new Hono()
         const user = c.get("user");
         const { workspaceId, projectId, status } = c.req.valid("query");
 
-        // Check if SPRINTS_ID is configured
         if (!SPRINTS_ID) {
           return c.json({
             data: {
@@ -65,29 +63,20 @@ const app = new Hono()
           queries.push(Query.equal("status", status));
         }
 
-        const sprints = await databases.listDocuments<Sprint>(
-          DATABASE_ID,
-          SPRINTS_ID,
-          queries
-        );
+        const sprints = await databases.listDocuments<Sprint>(DATABASE_ID, SPRINTS_ID, queries);
 
-        // Calculate stats for each sprint
         const sprintsWithStats: SprintWithStats[] = await Promise.all(
           sprints.documents.map(async (sprint) => {
             try {
-              const tasks = await databases.listDocuments<Task>(
-                DATABASE_ID,
-                TASKS_ID,
-                [
-                  Query.equal("sprintId", sprint.$id),
-                ]
-              );
+              const tasks = await databases.listDocuments<Task>(DATABASE_ID, TASKS_ID, [
+                Query.equal("sprintId", sprint.$id),
+              ]);
 
               const completedTasks = tasks.documents.filter(
-                (t) => t.status === TaskStatus.DONE
+                (t) => t.status === TaskStatus.DONE,
               ).length;
               const inProgressTasks = tasks.documents.filter(
-                (t) => t.status === TaskStatus.IN_PROGRESS || t.status === TaskStatus.IN_REVIEW
+                (t) => t.status === TaskStatus.IN_PROGRESS || t.status === TaskStatus.IN_REVIEW,
               ).length;
 
               return {
@@ -110,7 +99,7 @@ const app = new Hono()
                 },
               };
             }
-          })
+          }),
         );
 
         return c.json({
@@ -128,9 +117,8 @@ const app = new Hono()
           },
         });
       }
-    }
+    },
   )
-  // Get a single sprint
   .get("/:sprintId", sessionMiddleware, async (c) => {
     try {
       const databases = c.get("databases");
@@ -141,11 +129,7 @@ const app = new Hono()
         return c.json({ error: "Sprints not configured" }, 500);
       }
 
-      const sprint = await databases.getDocument<Sprint>(
-        DATABASE_ID,
-        SPRINTS_ID,
-        sprintId
-      );
+      const sprint = await databases.getDocument<Sprint>(DATABASE_ID, SPRINTS_ID, sprintId);
 
       const member = await getMember({
         databases,
@@ -157,23 +141,16 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      // Get tasks for this sprint
       let tasks = { documents: [] as Task[], total: 0 };
       try {
-        tasks = await databases.listDocuments<Task>(
-          DATABASE_ID,
-          TASKS_ID,
-          [Query.equal("sprintId", sprintId)]
-        );
-      } catch {
-        // Tasks query failed
-      }
+        tasks = await databases.listDocuments<Task>(DATABASE_ID, TASKS_ID, [
+          Query.equal("sprintId", sprintId),
+        ]);
+      } catch {}
 
-      const completedTasks = tasks.documents.filter(
-        (t) => t.status === TaskStatus.DONE
-      ).length;
+      const completedTasks = tasks.documents.filter((t) => t.status === TaskStatus.DONE).length;
       const inProgressTasks = tasks.documents.filter(
-        (t) => t.status === TaskStatus.IN_PROGRESS || t.status === TaskStatus.IN_REVIEW
+        (t) => t.status === TaskStatus.IN_PROGRESS || t.status === TaskStatus.IN_REVIEW,
       ).length;
 
       return c.json({
@@ -193,111 +170,84 @@ const app = new Hono()
       return c.json({ error: "Failed to fetch sprint" }, 500);
     }
   })
-  // Create a new sprint
-  .post(
-    "/",
-    sessionMiddleware,
-    zValidator("json", createSprintSchema),
-    async (c) => {
-      try {
-        const databases = c.get("databases");
-        const user = c.get("user");
-        const { workspaceId, projectId, name, goal, startDate, endDate } = c.req.valid("json");
+  .post("/", sessionMiddleware, zValidator("json", createSprintSchema), async (c) => {
+    try {
+      const databases = c.get("databases");
+      const user = c.get("user");
+      const { workspaceId, projectId, name, goal, startDate, endDate } = c.req.valid("json");
 
-        if (!SPRINTS_ID) {
-          return c.json({ error: "Sprints not configured" }, 500);
-        }
-
-        const member = await getMember({
-          databases,
-          workspaceId,
-          userId: user.$id,
-        });
-
-        if (!member) {
-          return c.json({ error: "Unauthorized" }, 401);
-        }
-
-        // Verify project exists
-        try {
-          await databases.getDocument<Project>(
-            DATABASE_ID,
-            PROJECTS_ID,
-            projectId
-          );
-        } catch {
-          return c.json({ error: "Project not found" }, 404);
-        }
-
-        const sprint = await databases.createDocument(
-          DATABASE_ID,
-          SPRINTS_ID,
-          ID.unique(),
-          {
-            workspaceId,
-            projectId,
-            name,
-            goal: goal || null,
-            startDate,
-            endDate,
-            status: "planned",
-          }
-        );
-
-        return c.json({ data: sprint });
-      } catch (error) {
-        console.error("Sprint POST error:", error);
-        return c.json({ error: "Failed to create sprint" }, 500);
+      if (!SPRINTS_ID) {
+        return c.json({ error: "Sprints not configured" }, 500);
       }
-    }
-  )
-  // Update a sprint
-  .patch(
-    "/:sprintId",
-    sessionMiddleware,
-    zValidator("json", updateSprintSchema),
-    async (c) => {
-      try {
-        const databases = c.get("databases");
-        const user = c.get("user");
-        const { sprintId } = c.req.param();
-        const updates = c.req.valid("json");
 
-        if (!SPRINTS_ID) {
-          return c.json({ error: "Sprints not configured" }, 500);
-        }
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
 
-        const sprint = await databases.getDocument<Sprint>(
-          DATABASE_ID,
-          SPRINTS_ID,
-          sprintId
-        );
-
-        const member = await getMember({
-          databases,
-          workspaceId: sprint.workspaceId,
-          userId: user.$id,
-        });
-
-        if (!member) {
-          return c.json({ error: "Unauthorized" }, 401);
-        }
-
-        const updatedSprint = await databases.updateDocument(
-          DATABASE_ID,
-          SPRINTS_ID,
-          sprintId,
-          updates
-        );
-
-        return c.json({ data: updatedSprint });
-      } catch (error) {
-        console.error("Sprint PATCH error:", error);
-        return c.json({ error: "Failed to update sprint" }, 500);
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
       }
+
+      try {
+        await databases.getDocument<Project>(DATABASE_ID, PROJECTS_ID, projectId);
+      } catch {
+        return c.json({ error: "Project not found" }, 404);
+      }
+
+      const sprint = await databases.createDocument(DATABASE_ID, SPRINTS_ID, ID.unique(), {
+        workspaceId,
+        projectId,
+        name,
+        goal: goal || null,
+        startDate,
+        endDate,
+        status: "planned",
+      });
+
+      return c.json({ data: sprint });
+    } catch (error) {
+      console.error("Sprint POST error:", error);
+      return c.json({ error: "Failed to create sprint" }, 500);
     }
-  )
-  // Start a sprint
+  })
+  .patch("/:sprintId", sessionMiddleware, zValidator("json", updateSprintSchema), async (c) => {
+    try {
+      const databases = c.get("databases");
+      const user = c.get("user");
+      const { sprintId } = c.req.param();
+      const updates = c.req.valid("json");
+
+      if (!SPRINTS_ID) {
+        return c.json({ error: "Sprints not configured" }, 500);
+      }
+
+      const sprint = await databases.getDocument<Sprint>(DATABASE_ID, SPRINTS_ID, sprintId);
+
+      const member = await getMember({
+        databases,
+        workspaceId: sprint.workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const updatedSprint = await databases.updateDocument(
+        DATABASE_ID,
+        SPRINTS_ID,
+        sprintId,
+        updates,
+      );
+
+      return c.json({ data: updatedSprint });
+    } catch (error) {
+      console.error("Sprint PATCH error:", error);
+      return c.json({ error: "Failed to update sprint" }, 500);
+    }
+  })
   .post("/:sprintId/start", sessionMiddleware, async (c) => {
     try {
       const databases = c.get("databases");
@@ -308,11 +258,7 @@ const app = new Hono()
         return c.json({ error: "Sprints not configured" }, 500);
       }
 
-      const sprint = await databases.getDocument<Sprint>(
-        DATABASE_ID,
-        SPRINTS_ID,
-        sprintId
-      );
+      const sprint = await databases.getDocument<Sprint>(DATABASE_ID, SPRINTS_ID, sprintId);
 
       const member = await getMember({
         databases,
@@ -324,35 +270,22 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      // Set any other active sprints to completed
       try {
-        const activeSprints = await databases.listDocuments<Sprint>(
-          DATABASE_ID,
-          SPRINTS_ID,
-          [
-            Query.equal("projectId", sprint.projectId),
-            Query.equal("status", "active"),
-          ]
-        );
+        const activeSprints = await databases.listDocuments<Sprint>(DATABASE_ID, SPRINTS_ID, [
+          Query.equal("projectId", sprint.projectId),
+          Query.equal("status", "active"),
+        ]);
 
         for (const activeSprint of activeSprints.documents) {
-          await databases.updateDocument(
-            DATABASE_ID,
-            SPRINTS_ID,
-            activeSprint.$id,
-            { status: "completed" }
-          );
+          await databases.updateDocument(DATABASE_ID, SPRINTS_ID, activeSprint.$id, {
+            status: "completed",
+          });
         }
-      } catch {
-        // Continue even if this fails
-      }
+      } catch {}
 
-      const updatedSprint = await databases.updateDocument(
-        DATABASE_ID,
-        SPRINTS_ID,
-        sprintId,
-        { status: "active" }
-      );
+      const updatedSprint = await databases.updateDocument(DATABASE_ID, SPRINTS_ID, sprintId, {
+        status: "active",
+      });
 
       return c.json({ data: updatedSprint });
     } catch (error) {
@@ -360,7 +293,6 @@ const app = new Hono()
       return c.json({ error: "Failed to start sprint" }, 500);
     }
   })
-  // Complete a sprint
   .post("/:sprintId/complete", sessionMiddleware, async (c) => {
     try {
       const databases = c.get("databases");
@@ -371,11 +303,7 @@ const app = new Hono()
         return c.json({ error: "Sprints not configured" }, 500);
       }
 
-      const sprint = await databases.getDocument<Sprint>(
-        DATABASE_ID,
-        SPRINTS_ID,
-        sprintId
-      );
+      const sprint = await databases.getDocument<Sprint>(DATABASE_ID, SPRINTS_ID, sprintId);
 
       const member = await getMember({
         databases,
@@ -387,12 +315,9 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const updatedSprint = await databases.updateDocument(
-        DATABASE_ID,
-        SPRINTS_ID,
-        sprintId,
-        { status: "completed" }
-      );
+      const updatedSprint = await databases.updateDocument(DATABASE_ID, SPRINTS_ID, sprintId, {
+        status: "completed",
+      });
 
       return c.json({ data: updatedSprint });
     } catch (error) {
@@ -400,7 +325,6 @@ const app = new Hono()
       return c.json({ error: "Failed to complete sprint" }, 500);
     }
   })
-  // Delete a sprint
   .delete("/:sprintId", sessionMiddleware, async (c) => {
     try {
       const databases = c.get("databases");
@@ -411,11 +335,7 @@ const app = new Hono()
         return c.json({ error: "Sprints not configured" }, 500);
       }
 
-      const sprint = await databases.getDocument<Sprint>(
-        DATABASE_ID,
-        SPRINTS_ID,
-        sprintId
-      );
+      const sprint = await databases.getDocument<Sprint>(DATABASE_ID, SPRINTS_ID, sprintId);
 
       const member = await getMember({
         databases,
@@ -427,25 +347,15 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      // Remove sprintId from all tasks in this sprint
       try {
-        const tasks = await databases.listDocuments<Task>(
-          DATABASE_ID,
-          TASKS_ID,
-          [Query.equal("sprintId", sprintId)]
-        );
+        const tasks = await databases.listDocuments<Task>(DATABASE_ID, TASKS_ID, [
+          Query.equal("sprintId", sprintId),
+        ]);
 
         for (const task of tasks.documents) {
-          await databases.updateDocument(
-            DATABASE_ID,
-            TASKS_ID,
-            task.$id,
-            { sprintId: null }
-          );
+          await databases.updateDocument(DATABASE_ID, TASKS_ID, task.$id, { sprintId: null });
         }
-      } catch {
-        // Continue even if this fails
-      }
+      } catch {}
 
       await databases.deleteDocument(DATABASE_ID, SPRINTS_ID, sprintId);
 

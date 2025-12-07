@@ -5,8 +5,8 @@ import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/rpc";
 import { toast } from "sonner";
 
-type ResponseType = InferResponseType<typeof client.api.admin["request-delete"]["$post"]>;
-type RequestType = InferRequestType<typeof client.api.admin["request-delete"]["$post"]>;
+type ResponseType = InferResponseType<(typeof client.api.admin)["request-delete"]["$post"]>;
+type RequestType = InferRequestType<(typeof client.api.admin)["request-delete"]["$post"]>;
 
 export const useRequestDelete = () => {
   const queryClient = useQueryClient();

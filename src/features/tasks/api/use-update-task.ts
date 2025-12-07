@@ -4,13 +4,9 @@ import { toast } from "sonner";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<
-  (typeof client.api.tasks)[":taskId"]["$patch"],
-  200
->;
-type RequestType = InferRequestType<
-  (typeof client.api.tasks)[":taskId"]["$patch"]
->;
+type ResponseType = InferResponseType<(typeof client.api.tasks)[":taskId"]["$patch"], 200>;
+
+type RequestType = InferRequestType<(typeof client.api.tasks)[":taskId"]["$patch"]>;
 
 export const useUpdateTask = () => {
   const queryClient = useQueryClient();

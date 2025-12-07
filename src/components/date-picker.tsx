@@ -7,11 +7,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface DatePickerProps {
   value: Date | undefined;
@@ -37,7 +33,7 @@ export const DatePicker = ({
           className={cn(
             "w-full justify-start text-left font-normal px-3",
             !value && "text-muted-foreground",
-            className
+            className,
           )}
         >
           <CalendarIcon className="mr-2 size-4" />
@@ -50,7 +46,7 @@ export const DatePicker = ({
           selected={value}
           onSelect={(date) => {
             onChange(date as Date);
-            setOpen(false); // Close popover after selection
+            setOpen(false);
           }}
           initialFocus
         />
@@ -58,4 +54,3 @@ export const DatePicker = ({
     </Popover>
   );
 };
-

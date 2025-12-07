@@ -5,11 +5,7 @@ import { Play, Square, Timer } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import { useGetActiveTimer } from "../api/use-get-active-timer";
 import { useStopTimer } from "../api/use-stop-timer";
@@ -21,7 +17,6 @@ export const GlobalTimerIndicator = () => {
 
   const isActive = !!activeTimer;
 
-  // Update elapsed time
   useEffect(() => {
     if (!isActive || !activeTimer) {
       setElapsed("00:00:00");
@@ -32,13 +27,13 @@ export const GlobalTimerIndicator = () => {
       const start = new Date(activeTimer.startTime);
       const now = new Date();
       const diff = now.getTime() - start.getTime();
-      
+
       const hours = Math.floor(diff / 3600000);
       const minutes = Math.floor((diff % 3600000) / 60000);
       const seconds = Math.floor((diff % 60000) / 1000);
-      
+
       setElapsed(
-        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
       );
     };
 
@@ -75,18 +70,18 @@ export const GlobalTimerIndicator = () => {
             <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
             <span className="font-semibold text-gray-900">Timer Running</span>
           </div>
-          
+
           <div className="text-center">
             <span className="text-3xl font-mono font-bold text-gray-900">{elapsed}</span>
           </div>
-          
+
           {activeTimer?.task && (
             <div className="p-3 rounded-lg bg-gray-50">
               <p className="text-xs text-gray-500 mb-1">Working on:</p>
               <p className="font-medium text-gray-900 truncate">{activeTimer.task.name}</p>
             </div>
           )}
-          
+
           <div className="flex gap-2">
             <Button
               variant="destructive"

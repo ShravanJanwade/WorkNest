@@ -23,16 +23,13 @@ export const AIDescriptionGenerator = ({
   const [isFinished, setIsFinished] = useState(false);
   const streamingTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Character-by-character streaming effect
   useEffect(() => {
     if (!generatedDescription) return;
 
     if (displayedDescription.length < generatedDescription.length) {
       streamingTimeoutRef.current = setTimeout(() => {
-        setDisplayedDescription(
-          generatedDescription.slice(0, displayedDescription.length + 1)
-        );
-      }, 15); // Adjust speed here (lower = faster)
+        setDisplayedDescription(generatedDescription.slice(0, displayedDescription.length + 1));
+      }, 15);
     } else if (displayedDescription.length === generatedDescription.length) {
       setIsFinished(true);
     }
@@ -92,7 +89,7 @@ export const AIDescriptionGenerator = ({
 
   return (
     <div className="w-full space-y-4">
-      {/* Generate Button */}
+      {}
       {!generatedDescription && (
         <Button
           onClick={generateDescription}
@@ -113,7 +110,7 @@ export const AIDescriptionGenerator = ({
         </Button>
       )}
 
-      {/* Loading Skeleton */}
+      {}
       {isGenerating && !generatedDescription && (
         <div className="space-y-3 p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-2">
@@ -137,7 +134,7 @@ export const AIDescriptionGenerator = ({
         </div>
       )}
 
-      {/* Generated Content */}
+      {}
       {displayedDescription && (
         <div className="space-y-4">
           <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm">
@@ -158,7 +155,7 @@ export const AIDescriptionGenerator = ({
 
           <DottedSeparator />
 
-          {/* Action Buttons */}
+          {}
           <div className="flex gap-2">
             <Button
               onClick={handleCopy}
@@ -186,7 +183,7 @@ export const AIDescriptionGenerator = ({
             </Button>
           </div>
 
-          {/* Reset Option */}
+          {}
           {isFinished && (
             <Button
               onClick={() => {

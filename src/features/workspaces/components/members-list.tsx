@@ -32,15 +32,13 @@ export const MembersList = () => {
   const [ConfirmDialog, confirm] = useConfirm(
     "Remove member",
     "This member will be removed from the workspace.",
-    "destructive"
+    "destructive",
   );
 
   const { data: user } = useCurrent();
   const { data } = useGetMembers({ workspaceId });
-  const { mutate: deleteMember, isPending: isDeletingMember } =
-    useDeleteMember();
-  const { mutate: updateMember, isPending: isUpdatingMember } =
-    useUpdateMember();
+  const { mutate: deleteMember, isPending: isDeletingMember } = useDeleteMember();
+  const { mutate: updateMember, isPending: isUpdatingMember } = useUpdateMember();
 
   const currentMember = data?.documents.find((m) => m.userId === user?.$id);
   const isAdmin = currentMember?.role === MemberRole.ADMIN;
@@ -48,7 +46,6 @@ export const MembersList = () => {
   const handleUpdateMember = (memberId: string, role: MemberRole) => {
     updateMember({ json: { role }, param: { memberId } });
   };
-   // ... (existing helper functions)
 
   return (
     <Card className="size-full border-none shadow-none">
@@ -69,11 +66,8 @@ export const MembersList = () => {
         {data?.documents.map((member, index) => (
           <Fragment key={member.$id}>
             <div className="flex items-center gap-2">
-              <MemberAvatar
-                className="size-10"
-                fallbackClassName="text-lg"
-                name={member.name}
-              />
+              <MemberAvatar className="size-10" fallbackClassName="text-lg" name={member.name} />
+
               <div className="flex flex-col">
                 <p className="text-sm font-medium">{member.name}</p>
                 <p className="text-xs text-muted-foreground">{member.email}</p>
@@ -81,8 +75,8 @@ export const MembersList = () => {
               <Badge className={`ml-2 ${getRoleColor(member.role as MemberRole)}`}>
                 {getRoleLabel(member.role as MemberRole)}
               </Badge>
-              
-              {/* Only Admins can manage other members */}
+
+              {}
               {isAdmin && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -93,9 +87,7 @@ export const MembersList = () => {
                   <DropdownMenuContent side="bottom" align="end">
                     <DropdownMenuItem
                       className="font-medium"
-                      onClick={() =>
-                        handleUpdateMember(member.$id, MemberRole.ADMIN)
-                      }
+                      onClick={() => handleUpdateMember(member.$id, MemberRole.ADMIN)}
                       disabled={isUpdatingMember}
                     >
                       <Shield className="size-4 mr-2 text-red-600" />
@@ -103,9 +95,7 @@ export const MembersList = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="font-medium"
-                      onClick={() =>
-                        handleUpdateMember(member.$id, MemberRole.MANAGER)
-                      }
+                      onClick={() => handleUpdateMember(member.$id, MemberRole.MANAGER)}
                       disabled={isUpdatingMember}
                     >
                       <UserCog className="size-4 mr-2 text-blue-600" />
@@ -113,22 +103,18 @@ export const MembersList = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="font-medium"
-                      onClick={() =>
-                        handleUpdateMember(member.$id, MemberRole.EMPLOYEE)
-                      }
+                      onClick={() => handleUpdateMember(member.$id, MemberRole.EMPLOYEE)}
                       disabled={isUpdatingMember}
                     >
                       <Briefcase className="size-4 mr-2 text-green-600" />
                       Set as Employee
                     </DropdownMenuItem>
-                    
-                    {/* Prevent self-deletion */}
+
+                    {}
                     {member.userId !== user?.$id && (
                       <DropdownMenuItem
                         className="font-medium text-amber-700"
-                        onClick={() =>
-                          handleDeleteMember(member.$id)
-                        }
+                        onClick={() => handleDeleteMember(member.$id)}
                         disabled={isDeletingMember}
                       >
                         <RemoveIcon memberName={member.name} />
@@ -138,9 +124,7 @@ export const MembersList = () => {
                 </DropdownMenu>
               )}
             </div>
-            {index < data.documents.length - 1 && (
-              <Separator className="my-2.5" />
-            )}
+            {index < data.documents.length - 1 && <Separator className="my-2.5" />}
           </Fragment>
         ))}
       </CardContent>
@@ -148,8 +132,4 @@ export const MembersList = () => {
   );
 };
 
-const RemoveIcon = ({ memberName }: { memberName: string }) => (
-    <>
-        Remove {memberName}
-    </>
-);
+const RemoveIcon = ({ memberName }: { memberName: string }) => <>Remove {memberName}</>;

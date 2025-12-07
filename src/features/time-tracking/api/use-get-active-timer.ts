@@ -15,6 +15,6 @@ export const useGetActiveTimer = () => {
       const { data } = await response.json();
       return data;
     },
-    refetchInterval: 1000, // Refresh every second for live timer
+    refetchInterval: 1000,
   });
 };

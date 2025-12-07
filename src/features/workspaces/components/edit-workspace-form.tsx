@@ -36,27 +36,22 @@ interface EditWorkspaceFormProps {
   initialValues: Workspace;
 }
 
-export const EditWorkspaceForm = ({
-  onCancel,
-  initialValues,
-}: EditWorkspaceFormProps) => {
+export const EditWorkspaceForm = ({ onCancel, initialValues }: EditWorkspaceFormProps) => {
   const router = useRouter();
   const { mutate, isPending } = useUpdateWorkspace();
-  const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } =
-    useDeleteWorkspace();
-  const { mutate: resetInviteCode, isPending: isResettingInviteCode } =
-    useResetInviteCode();
+  const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } = useDeleteWorkspace();
+  const { mutate: resetInviteCode, isPending: isResettingInviteCode } = useResetInviteCode();
 
   const [DeleteDialog, confirmDelete] = useConfirm(
     "Delete Workspace",
     "This action cannot be undone.",
-    "destructive"
+    "destructive",
   );
 
   const [ResetDialog, confirmReset] = useConfirm(
     "Reset Invite Link",
     "This will invalidate the current invite link",
-    "destructive"
+    "destructive",
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +75,7 @@ export const EditWorkspaceForm = ({
         onSuccess: () => {
           window.location.href = "/";
         },
-      }
+      },
     );
   };
 
@@ -125,18 +120,12 @@ export const EditWorkspaceForm = ({
           <Button
             size="sm"
             variant="secondary"
-            onClick={
-              onCancel
-                ? onCancel
-                : () => router.push(`/workspaces/${initialValues.$id}`)
-            }
+            onClick={onCancel ? onCancel : () => router.push(`/workspaces/${initialValues.$id}`)}
           >
             <ArrowLeftIcon className="size-4" />
             Back
           </Button>
-          <CardTitle className="text-xl font-bold">
-            {initialValues.name}
-          </CardTitle>
+          <CardTitle className="text-xl font-bold">{initialValues.name}</CardTitle>
         </CardHeader>
         <div className="px-7">
           <DottedSeparator />
@@ -158,6 +147,7 @@ export const EditWorkspaceForm = ({
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="image"
@@ -197,6 +187,7 @@ export const EditWorkspaceForm = ({
                             onChange={handleImageChange}
                             disabled={isPending}
                           />
+
                           {field.value ? (
                             <Button
                               variant="destructive"
@@ -261,11 +252,7 @@ export const EditWorkspaceForm = ({
             <div className="mt-4">
               <div className="flex items-center gap-x-2">
                 <Input disabled value={fullInviteLink} />
-                <Button
-                  onClick={handleCopyInviteLink}
-                  variant="secondary"
-                  className="size-12"
-                >
+                <Button onClick={handleCopyInviteLink} variant="secondary" className="size-12">
                   <CopyIcon className="size-5" />
                 </Button>
               </div>
@@ -289,8 +276,7 @@ export const EditWorkspaceForm = ({
           <div className="flex flex-col">
             <h3 className="font-bold">Danger Zone</h3>
             <p className="text-sm text-muted-foreground">
-              Deleting a workspace is a irreversible and will remove all
-              associated data.
+              Deleting a workspace is a irreversible and will remove all associated data.
             </p>
             <DottedSeparator className="py-7" />
             <Button

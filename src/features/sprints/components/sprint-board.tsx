@@ -64,7 +64,7 @@ export const SprintBoard = ({ workspaceId, projectId }: SprintBoardProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Active Sprint */}
+      {}
       {activeSprint && (
         <div>
           <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
@@ -82,7 +82,7 @@ export const SprintBoard = ({ workspaceId, projectId }: SprintBoardProps) => {
 
       <DottedSeparator />
 
-      {/* Planned Sprints */}
+      {}
       <div>
         <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
           <Calendar className="h-5 w-5 text-blue-600" />
@@ -106,7 +106,7 @@ export const SprintBoard = ({ workspaceId, projectId }: SprintBoardProps) => {
 
       <DottedSeparator />
 
-      {/* Completed Sprints */}
+      {}
       <div>
         <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
           <CheckCircle className="h-5 w-5 text-gray-500" />
@@ -143,9 +143,10 @@ const SprintCard = ({
   isActive,
   isCompleted,
 }: SprintCardProps) => {
-  const progress = sprint.stats.totalTasks > 0
-    ? Math.round((sprint.stats.completedTasks / sprint.stats.totalTasks) * 100)
-    : 0;
+  const progress =
+    sprint.stats.totalTasks > 0
+      ? Math.round((sprint.stats.completedTasks / sprint.stats.totalTasks) * 100)
+      : 0;
 
   const daysRemaining = differenceInDays(new Date(sprint.endDate), new Date());
 
@@ -156,11 +157,13 @@ const SprintCard = ({
   };
 
   return (
-    <Card className={cn(
-      "transition-all",
-      isActive && "border-green-300 shadow-md",
-      isCompleted && "opacity-75"
-    )}>
+    <Card
+      className={cn(
+        "transition-all",
+        isActive && "border-green-300 shadow-md",
+        isCompleted && "opacity-75",
+      )}
+    >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -207,23 +210,22 @@ const SprintCard = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {/* Date range */}
+          {}
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-500">
               {format(new Date(sprint.startDate), "MMM d")} -{" "}
               {format(new Date(sprint.endDate), "MMM d, yyyy")}
             </span>
             {isActive && daysRemaining >= 0 && (
-              <span className={cn(
-                "font-medium",
-                daysRemaining <= 3 ? "text-red-600" : "text-gray-600"
-              )}>
+              <span
+                className={cn("font-medium", daysRemaining <= 3 ? "text-red-600" : "text-gray-600")}
+              >
                 {daysRemaining} days remaining
               </span>
             )}
           </div>
 
-          {/* Progress */}
+          {}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Progress</span>
@@ -232,28 +234,22 @@ const SprintCard = ({
             <Progress value={progress} className="h-2" />
           </div>
 
-          {/* Stats */}
+          {}
           <div className="grid grid-cols-4 gap-2 pt-2">
             <div className="text-center">
               <p className="text-lg font-semibold">{sprint.stats.totalTasks}</p>
               <p className="text-xs text-gray-500">Total</p>
             </div>
             <div className="text-center">
-              <p className="text-lg font-semibold text-green-600">
-                {sprint.stats.completedTasks}
-              </p>
+              <p className="text-lg font-semibold text-green-600">{sprint.stats.completedTasks}</p>
               <p className="text-xs text-gray-500">Done</p>
             </div>
             <div className="text-center">
-              <p className="text-lg font-semibold text-blue-600">
-                {sprint.stats.inProgressTasks}
-              </p>
+              <p className="text-lg font-semibold text-blue-600">{sprint.stats.inProgressTasks}</p>
               <p className="text-xs text-gray-500">In Progress</p>
             </div>
             <div className="text-center">
-              <p className="text-lg font-semibold text-gray-600">
-                {sprint.stats.remainingTasks}
-              </p>
+              <p className="text-lg font-semibold text-gray-600">{sprint.stats.remainingTasks}</p>
               <p className="text-xs text-gray-500">Remaining</p>
             </div>
           </div>

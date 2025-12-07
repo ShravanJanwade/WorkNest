@@ -58,7 +58,7 @@ export const CreateTaskForm = ({
       workspaceId,
       priority: TaskPriority.MEDIUM,
       status: TaskStatus.TODO,
-      parentId, // Undefined if not passed, which is fine
+      parentId,
     },
   });
 
@@ -70,7 +70,7 @@ export const CreateTaskForm = ({
           form.reset();
           onCancel?.();
         },
-      }
+      },
     );
   };
 
@@ -84,10 +84,12 @@ export const CreateTaskForm = ({
       </div>
       <CardContent className="p-7">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
-            console.error("Form errors:", errors);
-            toast.error("Missing required fields. Please check the form.");
-          })}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit, (errors) => {
+              console.error("Form errors:", errors);
+              toast.error("Missing required fields. Please check the form.");
+            })}
+          >
             <div className="flex flex-col gap-y-4">
               <FormField
                 control={form.control}
@@ -102,6 +104,7 @@ export const CreateTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="dueDate"
@@ -115,16 +118,14 @@ export const CreateTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="assigneeId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assignee</FormLabel>
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select assignee" />
@@ -135,10 +136,8 @@ export const CreateTaskForm = ({
                         {memberOptions.map((member) => (
                           <SelectItem key={member.id} value={member.id}>
                             <div className="flex items-center gap-x-2">
-                              <MemberAvatar
-                                className="size-6"
-                                name={member.name}
-                              />
+                              <MemberAvatar className="size-6" name={member.name} />
+
                               {member.name}
                             </div>
                           </SelectItem>
@@ -148,16 +147,14 @@ export const CreateTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select status" />
@@ -165,15 +162,9 @@ export const CreateTaskForm = ({
                       </FormControl>
                       <FormMessage />
                       <SelectContent>
-                        <SelectItem value={TaskStatus.BACKLOG}>
-                          Backlog
-                        </SelectItem>
-                        <SelectItem value={TaskStatus.IN_PROGRESS}>
-                          In Progress
-                        </SelectItem>
-                        <SelectItem value={TaskStatus.IN_REVIEW}>
-                          In Review
-                        </SelectItem>
+                        <SelectItem value={TaskStatus.BACKLOG}>Backlog</SelectItem>
+                        <SelectItem value={TaskStatus.IN_PROGRESS}>In Progress</SelectItem>
+                        <SelectItem value={TaskStatus.IN_REVIEW}>In Review</SelectItem>
                         <SelectItem value={TaskStatus.TODO}>Todo</SelectItem>
                         <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
                       </SelectContent>
@@ -181,6 +172,7 @@ export const CreateTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="priority"
@@ -198,16 +190,14 @@ export const CreateTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="projectId"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Project</FormLabel>
-                    <Select
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select project" />
@@ -223,6 +213,7 @@ export const CreateTaskForm = ({
                                 name={project.name}
                                 image={project.imageUrl}
                               />
+
                               {project.name}
                             </div>
                           </SelectItem>
@@ -232,6 +223,7 @@ export const CreateTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="epicId"
@@ -250,6 +242,7 @@ export const CreateTaskForm = ({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="storyPoints"
@@ -262,11 +255,7 @@ export const CreateTaskForm = ({
                         placeholder="0"
                         {...field}
                         onChange={(e) =>
-                          field.onChange(
-                            e.target.value === ""
-                              ? undefined
-                              : Number(e.target.value)
-                          )
+                          field.onChange(e.target.value === "" ? undefined : Number(e.target.value))
                         }
                       />
                     </FormControl>

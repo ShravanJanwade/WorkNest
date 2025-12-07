@@ -14,10 +14,7 @@ interface EditTaskFormWrapperProps {
   id: string;
 }
 
-export const EditTaskFormWrapper = ({
-  onCancel,
-  id,
-}: EditTaskFormWrapperProps) => {
+export const EditTaskFormWrapper = ({ onCancel, id }: EditTaskFormWrapperProps) => {
   const workspaceId = useWorkspaceId();
 
   const { data: initialValues, isLoading: isLoadingTask } = useGetTask({

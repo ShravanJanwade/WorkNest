@@ -86,7 +86,7 @@ export const ChangePasswordModal = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {/* Old Password */}
+            {}
             <FormField
               control={form.control}
               name="oldPassword"
@@ -102,6 +102,7 @@ export const ChangePasswordModal = ({
                         disabled={isPending}
                         className="pr-10"
                       />
+
                       <button
                         type="button"
                         onClick={() => setShowOldPassword(!showOldPassword)}
@@ -121,7 +122,7 @@ export const ChangePasswordModal = ({
               )}
             />
 
-            {/* New Password */}
+            {}
             <FormField
               control={form.control}
               name="newPassword"
@@ -137,6 +138,7 @@ export const ChangePasswordModal = ({
                         disabled={isPending}
                         className="pr-10"
                       />
+
                       <button
                         type="button"
                         onClick={() => setShowNewPassword(!showNewPassword)}
@@ -156,7 +158,7 @@ export const ChangePasswordModal = ({
               )}
             />
 
-            {/* Password Requirements */}
+            {}
             {newPassword && (
               <div className="space-y-3 p-4 bg-muted/50 rounded-lg border">
                 <p className="text-sm font-medium">Password Requirements:</p>
@@ -171,7 +173,7 @@ export const ChangePasswordModal = ({
                       className={cn(
                         passwordValidation.requirements.minLength
                           ? "text-green-600"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground",
                       )}
                     >
                       At least 8 characters
@@ -187,7 +189,7 @@ export const ChangePasswordModal = ({
                       className={cn(
                         passwordValidation.requirements.hasUppercase
                           ? "text-green-600"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground",
                       )}
                     >
                       One uppercase letter
@@ -203,7 +205,7 @@ export const ChangePasswordModal = ({
                       className={cn(
                         passwordValidation.requirements.hasLowercase
                           ? "text-green-600"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground",
                       )}
                     >
                       One lowercase letter
@@ -219,7 +221,7 @@ export const ChangePasswordModal = ({
                       className={cn(
                         passwordValidation.requirements.hasNumber
                           ? "text-green-600"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground",
                       )}
                     >
                       One number
@@ -235,7 +237,7 @@ export const ChangePasswordModal = ({
                       className={cn(
                         passwordValidation.requirements.hasSpecialChar
                           ? "text-green-600"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground",
                       )}
                     >
                       One special character (!@#$%^&*...)
@@ -243,15 +245,12 @@ export const ChangePasswordModal = ({
                   </div>
                 </div>
 
-                {/* Password Strength Meter */}
+                {}
                 <div className="pt-2 space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Password Strength:</span>
                     <span
-                      className={cn(
-                        "font-medium",
-                        getStrengthColor(passwordValidation.strength)
-                      )}
+                      className={cn("font-medium", getStrengthColor(passwordValidation.strength))}
                     >
                       {getStrengthLabel(passwordValidation.strength)}
                     </span>
@@ -263,7 +262,7 @@ export const ChangePasswordModal = ({
                         passwordValidation.strength === "weak" && "bg-red-500",
                         passwordValidation.strength === "medium" && "bg-yellow-500",
                         passwordValidation.strength === "strong" && "bg-blue-500",
-                        passwordValidation.strength === "very-strong" && "bg-green-500"
+                        passwordValidation.strength === "very-strong" && "bg-green-500",
                       )}
                       style={{
                         width: `${getStrengthWidth(passwordValidation.strength)}%`,
@@ -274,7 +273,7 @@ export const ChangePasswordModal = ({
               </div>
             )}
 
-            {/* Confirm Password */}
+            {}
             <FormField
               control={form.control}
               name="confirmPassword"
@@ -290,6 +289,7 @@ export const ChangePasswordModal = ({
                         disabled={isPending}
                         className="pr-10"
                       />
+
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -309,7 +309,7 @@ export const ChangePasswordModal = ({
               )}
             />
 
-            {/* Actions */}
+            {}
             <div className="flex gap-3 pt-4">
               <Button
                 type="button"

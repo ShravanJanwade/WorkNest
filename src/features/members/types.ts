@@ -6,7 +6,6 @@ export enum MemberRole {
   EMPLOYEE = "EMPLOYEE",
 }
 
-// Role hierarchy for permission checking
 export const ROLE_HIERARCHY: Record<MemberRole, number> = {
   [MemberRole.ADMIN]: 3,
   [MemberRole.MANAGER]: 2,

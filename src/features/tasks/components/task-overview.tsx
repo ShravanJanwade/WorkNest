@@ -40,9 +40,7 @@ export const TaskOverview = ({ task }: TaskOverviewProps) => {
             <TaskDate value={task.dueDate} className="text-sm font-medium" />
           </OverviewProperty>
           <OverviewProperty label="Status">
-            <Badge variant={task.status}>
-              {snakeCaseToTitleCase(task.status)}
-            </Badge>
+            <Badge variant={task.status}>{snakeCaseToTitleCase(task.status)}</Badge>
           </OverviewProperty>
         </div>
       </div>

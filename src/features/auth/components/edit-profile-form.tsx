@@ -5,18 +5,18 @@ import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { 
-  ArrowLeftIcon, 
-  ImageIcon, 
-  Loader, 
-  User, 
-  MapPin, 
-  Briefcase, 
-  Building2, 
-  UserCog, 
+import {
+  ArrowLeftIcon,
+  ImageIcon,
+  Loader,
+  User,
+  MapPin,
+  Briefcase,
+  Building2,
+  UserCog,
   Calendar,
   Shield,
-  KeyRound
+  KeyRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -73,7 +73,6 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
     },
   });
 
-  // Set initial image preview from existing image URL
   useEffect(() => {
     if (initialValues.prefs?.imageUrl) {
       setImagePreview(initialValues.prefs.imageUrl);
@@ -90,10 +89,9 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
       { form: finalValues },
       {
         onSuccess: () => {
-          // Don't reset form to preserve values
           setImagePreview(null);
         },
-      }
+      },
     );
   };
 
@@ -101,7 +99,7 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
     const file = e.target.files?.[0];
     if (file) {
       form.setValue("image", file);
-      // Create preview URL
+
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
     }
@@ -122,7 +120,7 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
         onSuccess: () => {
           setIsPasswordModalOpen(false);
         },
-      }
+      },
     );
   };
 
@@ -154,50 +152,48 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
         <CardContent className="p-7">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {/* Unverified Email Warning */}
+              {}
               {!initialValues.emailVerification && (
-                  <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-md">
-                      <div className="flex items-start justify-between">
-                          <div className="flex">
-                              <div className="flex-shrink-0">
-                                  <Shield className="h-5 w-5 text-amber-500" />
-                              </div>
-                              <div className="ml-3">
-                                  <p className="text-sm text-amber-700">
-                                      Your email address is not verified. 
-                                      <span className="block mt-1">
-                                          Please check your inbox for the verification link. 
-                                          Verify to enable security features like MFA.
-                                      </span>
-                                  </p>
-                              </div>
-                          </div>
-                          
-                          <Button
-                              type="button" 
-                              variant="outline"
-                              size="sm"
-                              className="bg-white border-amber-200 text-amber-700 hover:bg-amber-100 hover:text-amber-800 ml-4 whitespace-nowrap"
-                              disabled={resendVerification.isPending}
-                              onClick={() => resendVerification.mutate()}
-                          >
-                              {resendVerification.isPending && (
-                                  <Loader className="h-3 w-3 mr-2 animate-spin" />
-                              )}
-                              Resend Email
-                          </Button>
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-md">
+                  <div className="flex items-start justify-between">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <Shield className="h-5 w-5 text-amber-500" />
                       </div>
+                      <div className="ml-3">
+                        <p className="text-sm text-amber-700">
+                          Your email address is not verified.
+                          <span className="block mt-1">
+                            Please check your inbox for the verification link. Verify to enable
+                            security features like MFA.
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="bg-white border-amber-200 text-amber-700 hover:bg-amber-100 hover:text-amber-800 ml-4 whitespace-nowrap"
+                      disabled={resendVerification.isPending}
+                      onClick={() => resendVerification.mutate()}
+                    >
+                      {resendVerification.isPending && (
+                        <Loader className="h-3 w-3 mr-2 animate-spin" />
+                      )}
+                      Resend Email
+                    </Button>
                   </div>
+                </div>
               )}
-              
-              {/* Profile Header Section */}
+
+              {}
               <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 p-8">
                 <div className="flex items-center gap-6">
                   <div className="relative group">
                     <Avatar className="size-24 border-4 border-background shadow-xl ring-2 ring-primary/20">
-                      {currentImage && (
-                        <AvatarImage src={currentImage} alt={initialValues.name} />
-                      )}
+                      {currentImage && <AvatarImage src={currentImage} alt={initialValues.name} />}
                       <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-white text-2xl font-bold">
                         {avatarFallback}
                       </AvatarFallback>
@@ -221,6 +217,7 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                         onChange={handleImageChange}
                         disabled={isPending}
                       />
+
                       {currentImage && form.watch("image") ? (
                         <Button
                           type="button"
@@ -245,14 +242,12 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                         </Button>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      JPG, PNG, or JPEG, max 1MB
-                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">JPG, PNG, or JPEG, max 1MB</p>
                   </div>
                 </div>
               </div>
 
-              {/* Personal Information Section */}
+              {}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
                   <User className="size-5 text-primary" />
@@ -269,7 +264,11 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                           Full Name
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="Enter your full name" className="bg-background" />
+                          <Input
+                            {...field}
+                            placeholder="Enter your full name"
+                            className="bg-background"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -293,6 +292,7 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="address"
@@ -303,7 +303,11 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                             Address
                           </FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="123 Main St, City" className="bg-background" />
+                            <Input
+                              {...field}
+                              placeholder="123 Main St, City"
+                              className="bg-background"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -313,7 +317,7 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                 </div>
               </div>
 
-              {/* Professional Information Section */}
+              {}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
                   <Briefcase className="size-5 text-primary" />
@@ -331,12 +335,17 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                             Profession / Role
                           </FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Software Engineer" className="bg-background" />
+                            <Input
+                              {...field}
+                              placeholder="Software Engineer"
+                              className="bg-background"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="company"
@@ -353,6 +362,7 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="reportingManager"
@@ -379,7 +389,7 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                   <h3 className="text-xl font-bold">Security</h3>
                 </div>
                 <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 border space-y-6">
-                  {/* Password Change */}
+                  {}
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium flex items-center gap-2">
@@ -400,10 +410,10 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                       Change Password
                     </Button>
                   </div>
-                  
+
                   <DottedSeparator />
-                  
-                  {/* MFA Toggle */}
+
+                  {}
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium flex items-center gap-2">
@@ -414,24 +424,23 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                         Require a 6-digit email OTP when logging in for extra security
                       </p>
                       {!initialValues.emailVerification && (
-                          <p className="text-xs text-amber-600 font-medium mt-1 flex items-center gap-1">
-                              Verify your email to enable this feature
-                          </p>
+                        <p className="text-xs text-amber-600 font-medium mt-1 flex items-center gap-1">
+                          Verify your email to enable this feature
+                        </p>
                       )}
                     </div>
-                     <Switch 
-                        checked={initialValues.prefs?.mfaEnabled || false}
-                        onCheckedChange={(checked) => updateMfa(
-                            { enabled: checked }, 
-                            { onSuccess: () => router.refresh() } // Refresh to update UI
-                        )}
-                        disabled={isUpdatingMfa || !initialValues.emailVerification}
-                      />
+                    <Switch
+                      checked={initialValues.prefs?.mfaEnabled || false}
+                      onCheckedChange={(checked) =>
+                        updateMfa({ enabled: checked }, { onSuccess: () => router.refresh() })
+                      }
+                      disabled={isUpdatingMfa || !initialValues.emailVerification}
+                    />
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {}
               <div className="flex items-center justify-between pt-6 border-t">
                 <Button
                   type="button"
@@ -443,9 +452,9 @@ export const EditProfileForm = ({ initialValues, onCancel }: EditProfileFormProp
                 >
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
-                  size="lg" 
+                <Button
+                  type="submit"
+                  size="lg"
                   disabled={isPending}
                   className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                 >

@@ -21,7 +21,6 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { data: user, isLoading } = useCurrent();
 
-  // Show loading while checking user
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -30,7 +29,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     );
   }
 
-  // Redirect Super Admin to their panel - they shouldn't access regular dashboard
   if (user?.prefs?.isSuperAdmin) {
     redirect("/superadmin");
   }

@@ -13,7 +13,6 @@ import { Task } from "@/features/tasks/types";
 import { ActivityLog, ActivityLogWithUser, ActivityAction } from "../types";
 
 const app = new Hono()
-  // Get activity log for a task
   .get(
     "/",
     sessionMiddleware,
@@ -22,7 +21,7 @@ const app = new Hono()
       z.object({
         taskId: z.string(),
         limit: z.string().optional(),
-      })
+      }),
     ),
     async (c) => {
       try {
@@ -30,7 +29,6 @@ const app = new Hono()
         const user = c.get("user");
         const { taskId, limit } = c.req.valid("query");
 
-        // Check if ACTIVITY_LOG_ID is configured
         if (!ACTIVITY_LOG_ID) {
           return c.json({
             data: {
@@ -40,14 +38,9 @@ const app = new Hono()
           });
         }
 
-        // Get the task to verify workspace access
         let task: Task;
         try {
-          task = await databases.getDocument<Task>(
-            DATABASE_ID,
-            TASKS_ID,
-            taskId
-          );
+          task = await databases.getDocument<Task>(DATABASE_ID, TASKS_ID, taskId);
         } catch {
           return c.json({ error: "Task not found" }, 404);
         }
@@ -62,7 +55,6 @@ const app = new Hono()
           return c.json({ error: "Unauthorized" }, 401);
         }
 
-        // Get activity logs
         const activities = await databases.listDocuments<ActivityLog>(
           DATABASE_ID,
           ACTIVITY_LOG_ID,
@@ -70,13 +62,11 @@ const app = new Hono()
             Query.equal("taskId", taskId),
             Query.orderDesc("$createdAt"),
             Query.limit(parseInt(limit || "50")),
-          ]
+          ],
         );
 
-        // Get unique user IDs
         const userIds = Array.from(new Set(activities.documents.map((a) => a.userId)));
 
-        // Fetch user details
         const { users } = await createAdminClient();
         const userPromises = userIds.map(async (userId) => {
           try {
@@ -98,7 +88,6 @@ const app = new Hono()
         const usersData = await Promise.all(userPromises);
         const userMap = new Map(usersData.map((u) => [u.$id, u]));
 
-        // Enrich activities with user data
         const enrichedActivities: ActivityLogWithUser[] = activities.documents.map((activity) => ({
           ...activity,
           user: userMap.get(activity.userId) || {
@@ -123,9 +112,8 @@ const app = new Hono()
           },
         });
       }
-    }
+    },
   )
-  // Create an activity log entry (internal use)
   .post(
     "/",
     sessionMiddleware,
@@ -138,7 +126,7 @@ const app = new Hono()
         oldValue: z.string().optional(),
         newValue: z.string().optional(),
         metadata: z.string().optional(),
-      })
+      }),
     ),
     async (c) => {
       try {
@@ -150,30 +138,24 @@ const app = new Hono()
           return c.json({ error: "Activity logging not configured" }, 500);
         }
 
-        const activity = await databases.createDocument(
-          DATABASE_ID,
-          ACTIVITY_LOG_ID,
-          ID.unique(),
-          {
-            taskId,
-            userId: user.$id,
-            action,
-            field: field || null,
-            oldValue: oldValue || null,
-            newValue: newValue || null,
-            metadata: metadata || null,
-          }
-        );
+        const activity = await databases.createDocument(DATABASE_ID, ACTIVITY_LOG_ID, ID.unique(), {
+          taskId,
+          userId: user.$id,
+          action,
+          field: field || null,
+          oldValue: oldValue || null,
+          newValue: newValue || null,
+          metadata: metadata || null,
+        });
 
         return c.json({ data: activity });
       } catch (error) {
         console.error("Activity POST error:", error);
         return c.json({ error: "Failed to log activity" }, 500);
       }
-    }
+    },
   );
 
-// Helper function to log activity (exported for use in other routes)
 export async function logActivity(
   databases: any,
   userId: string,
@@ -184,7 +166,7 @@ export async function logActivity(
     oldValue?: string;
     newValue?: string;
     metadata?: Record<string, any>;
-  }
+  },
 ) {
   if (!ACTIVITY_LOG_ID) {
     console.warn("Activity logging not configured - ACTIVITY_LOG_ID is missing");
@@ -192,20 +174,15 @@ export async function logActivity(
   }
 
   try {
-    await databases.createDocument(
-      DATABASE_ID,
-      ACTIVITY_LOG_ID,
-      ID.unique(),
-      {
-        taskId,
-        userId,
-        action,
-        field: options?.field || null,
-        oldValue: options?.oldValue || null,
-        newValue: options?.newValue || null,
-        metadata: options?.metadata ? JSON.stringify(options.metadata) : null,
-      }
-    );
+    await databases.createDocument(DATABASE_ID, ACTIVITY_LOG_ID, ID.unique(), {
+      taskId,
+      userId,
+      action,
+      field: options?.field || null,
+      oldValue: options?.oldValue || null,
+      newValue: options?.newValue || null,
+      metadata: options?.metadata ? JSON.stringify(options.metadata) : null,
+    });
   } catch (error) {
     console.error("Failed to log activity:", error);
   }

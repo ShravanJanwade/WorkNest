@@ -1,4 +1,3 @@
-// components/task-description-ai.tsx
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -18,7 +17,6 @@ export const TaskDescription = ({ task }: TaskDescriptionProps) => {
   const [value, setValue] = useState(task.description || "");
   const { mutate, isPending } = useUpdateTask();
 
-  // Prompt input state (editable by user)
   const defaultPrompt = `Write a clear, concise, professional task description for a Jira-like issue.
 Task title: "${task.name}"
 Current description: "${task.description || "none"}"
@@ -27,19 +25,17 @@ Output only the description text.`;
 
   const [prompt, setPrompt] = useState(defaultPrompt);
 
-  // AI UI state
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiGenerated, setAiGenerated] = useState(""); // final text
-  const [aiTyped, setAiTyped] = useState(""); // typing animation text shown progressively
+  const [aiGenerated, setAiGenerated] = useState("");
+  const [aiTyped, setAiTyped] = useState("");
   const [aiError, setAiError] = useState<string | null>(null);
 
   const typingRef = useRef<number | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    // reset prompt if task changes (keeping user edits if any)
     setPrompt((prev) => (prev === defaultPrompt ? defaultPrompt : prev));
-    // cleanup typing interval on unmount
+
     return () => {
       if (typingRef.current) {
         window.clearInterval(typingRef.current);
@@ -48,7 +44,6 @@ Output only the description text.`;
         controllerRef.current.abort();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task.$id]);
 
   const handleSave = () => {
@@ -58,12 +53,11 @@ Output only the description text.`;
         onSuccess: () => {
           setIsEditing(false);
         },
-      }
+      },
     );
   };
 
   async function generateWithAI() {
-    // Cancel any previous in-flight request/typing
     if (controllerRef.current) {
       controllerRef.current.abort();
     }
@@ -98,12 +92,8 @@ Output only the description text.`;
       const text = String(json.text || "");
       setAiGenerated(text);
 
-      // Typing animation: character-by-character
       let i = 0;
-      const speed = Math.max(
-        12,
-        Math.round(22 - Math.min(12, text.length / 40))
-      ); // tuned speed
+      const speed = Math.max(12, Math.round(22 - Math.min(12, text.length / 40)));
       setAiTyped("");
       typingRef.current = window.setInterval(() => {
         i++;
@@ -165,18 +155,14 @@ Output only the description text.`;
           <Button
             onClick={() => {
               setIsEditing((prev) => !prev);
-              // reset AI UI when toggling
+
               clearAI();
               setAiError(null);
             }}
             size="sm"
             variant="secondary"
           >
-            {isEditing ? (
-              <XIcon className="size-4 mr-2" />
-            ) : (
-              <PencilIcon className="size-4 mr-2" />
-            )}
+            {isEditing ? <XIcon className="size-4 mr-2" /> : <PencilIcon className="size-4 mr-2" />}
             {isEditing ? "Cancel" : "Edit"}
           </Button>
         </div>
@@ -194,11 +180,9 @@ Output only the description text.`;
             disabled={isPending}
           />
 
-          {/* Prompt input */}
+          {}
           <div className="bg-slate-50 border rounded-lg p-3">
-            <label className="text-sm font-medium text-slate-700">
-              AI prompt
-            </label>
+            <label className="text-sm font-medium text-slate-700">AI prompt</label>
             <textarea
               className="w-full mt-2 p-3 text-sm rounded-md border border-slate-200 focus:ring-2 focus:ring-slate-300 focus:outline-none resize-none"
               rows={4}
@@ -206,6 +190,7 @@ Output only the description text.`;
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Write a clear prompt for the AI..."
             />
+
             <div className="mt-2 flex items-center gap-x-3">
               <Button
                 size="sm"
@@ -217,17 +202,11 @@ Output only the description text.`;
                 {aiLoading ? "Generating…" : "Generate with AI"}
               </Button>
 
-              <Button
-                size="sm"
-                onClick={() => setPrompt(defaultPrompt)}
-                variant="ghost"
-              >
+              <Button size="sm" onClick={() => setPrompt(defaultPrompt)} variant="ghost">
                 Reset prompt
               </Button>
 
-              <div className="ml-auto text-xs text-muted-foreground">
-                {prompt.length} chars
-              </div>
+              <div className="ml-auto text-xs text-muted-foreground">{prompt.length} chars</div>
             </div>
           </div>
 
@@ -240,11 +219,11 @@ Output only the description text.`;
             </div>
           </div>
 
-          {/* AI response area */}
+          {}
           <div className="mt-2">
             {aiLoading && (
               <div className="p-4 rounded-lg border border-slate-100 overflow-hidden bg-gradient-to-r from-white to-slate-50">
-                {/* Animated Gemini-like skeleton */}
+                {}
                 <div className="space-y-3">
                   <div className="h-4 rounded-lg bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 animate-[pulse_1.6s_ease-in-out_infinite]" />
                   <div className="h-3 rounded-lg bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 animate-[pulse_1.6s_ease-in-out_infinite] w-11/12" />
@@ -252,9 +231,7 @@ Output only the description text.`;
                   <div className="h-3 rounded-lg bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 animate-[pulse_1.6s_ease-in-out_infinite] w-9/12" />
                 </div>
                 <div className="mt-3 flex items-center gap-x-2">
-                  <div className="text-xs text-muted-foreground">
-                    Generating with Gemini…
-                  </div>
+                  <div className="text-xs text-muted-foreground">Generating with Gemini…</div>
                   <div className="ml-auto text-xs text-muted-foreground">•</div>
                 </div>
               </div>
@@ -274,9 +251,7 @@ Output only the description text.`;
                     Clear
                   </Button>
                   <div className="ml-auto text-xs text-muted-foreground">
-                    {aiGenerated
-                      ? `${aiGenerated.length} chars`
-                      : `${aiTyped.length} chars`}
+                    {aiGenerated ? `${aiGenerated.length} chars` : `${aiTyped.length} chars`}
                   </div>
                 </div>
               </div>

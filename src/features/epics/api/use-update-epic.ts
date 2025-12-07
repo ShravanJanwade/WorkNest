@@ -4,13 +4,9 @@ import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<
-  (typeof client.api.epics)[":epicId"]["$patch"],
-  200
->;
-type RequestType = InferRequestType<
-  (typeof client.api.epics)[":epicId"]["$patch"]
->;
+type ResponseType = InferResponseType<(typeof client.api.epics)[":epicId"]["$patch"], 200>;
+
+type RequestType = InferRequestType<(typeof client.api.epics)[":epicId"]["$patch"]>;
 
 export const useUpdateEpic = () => {
   const queryClient = useQueryClient();

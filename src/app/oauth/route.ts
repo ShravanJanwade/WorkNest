@@ -1,6 +1,3 @@
-// src/app/oauth/route.js
-// Reference: https://appwrite.io/docs/tutorials/nextjs-ssr-auth/step-7
-
 import { AUTH_COOKIE } from "@/features/auth/constants";
 
 import { createAdminClient } from "@/lib/appwrite";
@@ -29,4 +26,3 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.redirect(`${request.nextUrl.origin}/`);
 }
-

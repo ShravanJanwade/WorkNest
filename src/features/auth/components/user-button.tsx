@@ -35,7 +35,7 @@ export const UserButton = () => {
 
   const avatarFallback = name
     ? name.charAt(0).toUpperCase()
-    : email.charAt(0).toUpperCase() ?? "U";
+    : (email.charAt(0).toUpperCase() ?? "U");
 
   return (
     <DropdownMenu modal={false}>
@@ -47,12 +47,7 @@ export const UserButton = () => {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        side="bottom"
-        className="w-60"
-        sideOffset={10}
-      >
+      <DropdownMenuContent align="end" side="bottom" className="w-60" sideOffset={10}>
         <div className="flex flex-col items-center justify-center gap-2 px-2.5 py-4">
           <Avatar className="size-[52px] border border-neutral-300">
             <AvatarImage src={user.prefs?.imageUrl} alt={name} />
@@ -61,9 +56,7 @@ export const UserButton = () => {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-neutral-900">
-              {name || "User"}
-            </p>
+            <p className="text-sm font-medium text-neutral-900">{name || "User"}</p>
             <p className="text-xs text-neutral-500">{email}</p>
           </div>
         </div>
@@ -73,8 +66,8 @@ export const UserButton = () => {
           className="h-10 flex items-center justify-center font-medium cursor-pointer"
         >
           <Link href="/profile">
-             <UserIcon className="size-4 mr-2" />
-             Profile
+            <UserIcon className="size-4 mr-2" />
+            Profile
           </Link>
         </DropdownMenuItem>
         <DottedSeparator className="mb-1" />

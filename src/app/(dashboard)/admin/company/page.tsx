@@ -45,19 +45,22 @@ const AdminCompanyPage = () => {
       toast.error("Please provide a reason with at least 10 characters");
       return;
     }
-    
-    requestDelete({ json: { reason: deleteReason } }, {
-      onSuccess: () => {
-        setIsDeleteOpen(false);
-        setDeleteReason("");
-        toast.success("Deletion request submitted. Super Admin will review.");
-      }
-    });
+
+    requestDelete(
+      { json: { reason: deleteReason } },
+      {
+        onSuccess: () => {
+          setIsDeleteOpen(false);
+          setDeleteReason("");
+          toast.success("Deletion request submitted. Super Admin will review.");
+        },
+      },
+    );
   };
 
   return (
     <div className="flex flex-col gap-y-6 p-6">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
@@ -74,15 +77,13 @@ const AdminCompanyPage = () => {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
             Company Profile
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Manage your organization's information
-          </p>
+          <p className="text-muted-foreground mt-1">Manage your organization's information</p>
         </div>
       </div>
 
       <Separator />
 
-      {/* Company Info Card */}
+      {}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -118,13 +119,15 @@ const AdminCompanyPage = () => {
               )}
               <div className="flex items-center gap-2 pt-4">
                 <span className="text-sm text-muted-foreground">Status:</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  company.status === "active" 
-                    ? "bg-green-100 text-green-700" 
-                    : company.deleteRequested 
-                    ? "bg-amber-100 text-amber-700"
-                    : "bg-gray-100 text-gray-700"
-                }`}>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    company.status === "active"
+                      ? "bg-green-100 text-green-700"
+                      : company.deleteRequested
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-gray-100 text-gray-700"
+                  }`}
+                >
                   {company.deleteRequested ? "Deletion Pending" : company.status}
                 </span>
               </div>
@@ -139,7 +142,7 @@ const AdminCompanyPage = () => {
         </CardContent>
       </Card>
 
-      {/* Danger Zone */}
+      {}
       {company && !company.deleteRequested && (
         <Card className="border-red-200">
           <CardHeader>
@@ -160,7 +163,7 @@ const AdminCompanyPage = () => {
                 <DialogHeader>
                   <DialogTitle>Request Company Deletion</DialogTitle>
                   <DialogDescription>
-                    This will submit a deletion request to the Super Admin. All workspaces, 
+                    This will submit a deletion request to the Super Admin. All workspaces,
                     projects, and data will be permanently deleted if approved.
                   </DialogDescription>
                 </DialogHeader>
@@ -174,8 +177,8 @@ const AdminCompanyPage = () => {
                       rows={4}
                     />
                   </div>
-                  <Button 
-                    variant="destructive" 
+                  <Button
+                    variant="destructive"
                     onClick={handleRequestDelete}
                     disabled={isRequesting || deleteReason.length < 10}
                     className="w-full"

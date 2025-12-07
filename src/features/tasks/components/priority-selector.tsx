@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ChevronUp,
-  ChevronDown,
-  ChevronsUp,
-  ChevronsDown,
-  Minus,
-} from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronsUp, ChevronsDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TaskPriority } from "../types";
 import {
@@ -107,29 +101,16 @@ interface PriorityIconProps {
   showLabel?: boolean;
 }
 
-export const PriorityIcon = ({
-  priority,
-  className,
-  showLabel = false,
-}: PriorityIconProps) => {
+export const PriorityIcon = ({ priority, className, showLabel = false }: PriorityIconProps) => {
   const config = priorityConfig[priority];
   const Icon = config.icon;
 
   return (
     <div className={cn("flex items-center gap-1.5", className)}>
-      <div
-        className={cn(
-          "flex items-center justify-center w-5 h-5 rounded",
-          config.bgColor
-        )}
-      >
+      <div className={cn("flex items-center justify-center w-5 h-5 rounded", config.bgColor)}>
         <Icon className={cn("h-3.5 w-3.5", config.color)} />
       </div>
-      {showLabel && (
-        <span className={cn("text-sm font-medium", config.color)}>
-          {config.label}
-        </span>
-      )}
+      {showLabel && <span className={cn("text-sm font-medium", config.color)}>{config.label}</span>}
     </div>
   );
 };
@@ -150,7 +131,7 @@ export const PriorityBadge = ({ priority, className }: PriorityBadgeProps) => {
         config.bgColor,
         config.borderColor,
         config.color,
-        className
+        className,
       )}
     >
       <Icon className="h-3 w-3" />

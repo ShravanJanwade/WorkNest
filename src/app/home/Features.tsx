@@ -1,14 +1,7 @@
-'use client'
+"use client";
 
 import { motion } from "framer-motion";
-import {
-  Rocket,
-  BellRing,
-  Cloud,
-  BrainCircuit,
-  ShieldCheck,
-  Code2,
-} from "lucide-react";
+import { Rocket, BellRing, Cloud, BrainCircuit, ShieldCheck, Code2 } from "lucide-react";
 import { useEffect } from "react";
 
 const features = [
@@ -69,7 +62,10 @@ export default function FeaturesUltra() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          Why <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">Choose TaskForge?</span>
+          Why{" "}
+          <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
+            Choose TaskForge?
+          </span>
         </motion.h2>
         <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
           We've packed in magic, muscle, and a little mischief. ✨
@@ -94,12 +90,12 @@ export default function FeaturesUltra() {
             </h3>
             <p className="text-gray-600 mt-2">{desc}</p>
 
-            {/* Easter Egg Hint */}
+            {}
             <div className="absolute bottom-4 right-4 text-xs text-gray-400 group-hover:text-purple-400 transition-opacity opacity-0 group-hover:opacity-100">
               {hint}
             </div>
 
-            {/* Secret Pulse Glow on Hover */}
+            {}
             <div className="absolute -inset-1 opacity-0 group-hover:opacity-100 transition rounded-3xl pointer-events-none">
               <div className="h-full w-full rounded-3xl border border-purple-500/30 animate-pulse" />
             </div>
@@ -107,7 +103,7 @@ export default function FeaturesUltra() {
         ))}
       </div>
 
-      {/* Glowy BG blob */}
+      {}
       <div className="absolute -z-10 top-[20%] left-[50%] -translate-x-1/2 h-[400px] w-[400px] bg-gradient-to-tr from-purple-500 to-blue-500 opacity-20 blur-3xl rounded-full" />
     </section>
   );

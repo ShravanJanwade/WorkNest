@@ -27,15 +27,15 @@ export const CommentThread = ({ taskId }: CommentThreadProps) => {
           )}
         </h3>
       </div>
-      
+
       <DottedSeparator />
-      
-      {/* Comment Input */}
+
+      {}
       <CommentInput taskId={taskId} />
-      
+
       <DottedSeparator />
-      
-      {/* Comments List */}
+
+      {}
       {isLoading ? (
         <div className="flex items-center justify-center py-8">
           <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
@@ -43,11 +43,7 @@ export const CommentThread = ({ taskId }: CommentThreadProps) => {
       ) : data && data.documents.length > 0 ? (
         <div className="space-y-4">
           {data.documents.map((comment) => (
-            <CommentItem
-              key={comment.$id}
-              comment={comment}
-              taskId={taskId}
-            />
+            <CommentItem key={comment.$id} comment={comment} taskId={taskId} />
           ))}
         </div>
       ) : (

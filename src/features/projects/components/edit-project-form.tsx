@@ -1,4 +1,3 @@
-// src/features/projects/components/edit-project-form.tsx
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -34,7 +33,6 @@ interface EditProjectFormProps {
   initialValues: Project;
 }
 
-/* helper: convert base64 string -> Blob */
 function b64ToBlob(b64: string, mime = "image/png") {
   const byteChars = atob(b64);
   const byteNumbers = new Array(byteChars.length);
@@ -45,21 +43,15 @@ function b64ToBlob(b64: string, mime = "image/png") {
   return new Blob([byteArray], { type: mime });
 }
 
-/* helper: convert base64 string -> File (useful to send to server) */
-function b64ToFile(
-  b64: string,
-  filename = "ai-generated.png",
-  mime = "image/png"
-) {
+function b64ToFile(b64: string, filename = "ai-generated.png", mime = "image/png") {
   const blob = b64ToBlob(b64, mime);
   return new File([blob], filename, { type: mime });
 }
 
-/* Small child component that renders the image UI and uses hooks safely */
 function ImageGenerator({
   fieldValue,
   onFilePicked,
-  onSetImageValue, // called to set final image URL in form (string URL or File)
+  onSetImageValue,
   isPending,
   initialName,
 }: {
@@ -73,7 +65,7 @@ function ImageGenerator({
 
   const [isGenOpen, setIsGenOpen] = useState(false);
   const [genPrompt, setGenPrompt] = useState(
-    `Generate a clean, modern project icon for a project named "${initialName}". Minimal, flat, single-color background, simple symbol that hints at collaboration and tasks. Square composition.`
+    `Generate a clean, modern project icon for a project named "${initialName}". Minimal, flat, single-color background, simple symbol that hints at collaboration and tasks. Square composition.`,
   );
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedB64, setGeneratedB64] = useState<string | null>(null);
@@ -110,31 +102,27 @@ function ImageGenerator({
         return;
       }
 
-      // If server reports pending+url (ImageKit background work), show URL
       if (json.pending && json.url) {
         setGeneratedUrl(json.url);
         setIsGenerating(false);
         return;
       }
 
-      // If server returned an uploaded asset (preferred)
       if (json.uploaded?.url) {
         setGeneratedUrl(json.uploaded.url);
         setIsGenerating(false);
         return;
       }
 
-      // If server returned base64 preview
       if (json.b64) {
         setGeneratedB64(String(json.b64));
-        // create blob preview URL for the <img>
+
         try {
           const blob = b64ToBlob(String(json.b64));
           const url = URL.createObjectURL(blob);
           setObjectPreviewUrl(url);
-          setGeneratedUrl(url); // preview URL
+          setGeneratedUrl(url);
         } catch {
-          // keep generatedUrl null and rely on data: preview
           setObjectPreviewUrl(null);
           setGeneratedUrl(null);
         }
@@ -151,26 +139,19 @@ function ImageGenerator({
   }
 
   async function handleAcceptGenerated() {
-    // If we have a public HTTP URL (ImageKit), set URL directly so server will store string
     if (generatedUrl && /^https?:\/\//.test(generatedUrl)) {
       onSetImageValue(generatedUrl);
       setIsGenOpen(false);
       return;
     }
 
-    // If server gave us base64, convert to File and set that (so submit will upload the File)
     if (generatedB64) {
-      // create a File from the base64 and set it to form
-      const file = b64ToFile(
-        generatedB64,
-        `${initialName || "project"}-ai.png`
-      );
+      const file = b64ToFile(generatedB64, `${initialName || "project"}-ai.png`);
       onSetImageValue(file);
       setIsGenOpen(false);
       return;
     }
 
-    // If we only have a blob/object URL (preview only), try to fetch it and convert to File (best effort)
     if (objectPreviewUrl) {
       try {
         const resp = await fetch(objectPreviewUrl);
@@ -208,11 +189,7 @@ function ImageGenerator({
               className="object-cover w-full h-full"
             />
           ) : fieldValue ? (
-            <img
-              src={String(fieldValue)}
-              alt="preview"
-              className="object-cover w-full h-full"
-            />
+            <img src={String(fieldValue)} alt="preview" className="object-cover w-full h-full" />
           ) : generatedB64 ? (
             <img
               src={`data:image/png;base64,${generatedB64}`}
@@ -220,11 +197,7 @@ function ImageGenerator({
               className="object-cover w-full h-full"
             />
           ) : generatedUrl ? (
-            <img
-              src={generatedUrl}
-              alt="preview"
-              className="object-cover w-full h-full"
-            />
+            <img src={generatedUrl} alt="preview" className="object-cover w-full h-full" />
           ) : (
             <div className="text-neutral-400 flex items-center justify-center">
               <ImageIcon className="w-7 h-7" />
@@ -233,9 +206,7 @@ function ImageGenerator({
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-medium">
-            {initialName || "Project Icon"}
-          </div>
+          <div className="text-sm font-medium">{initialName || "Project Icon"}</div>
           <div className="text-xs text-muted-foreground mt-1">
             JPG, PNG, SVG or JPEG — recommended 1:1, max 1MB
           </div>
@@ -286,9 +257,7 @@ function ImageGenerator({
 
       {isGenOpen && (
         <div className="mt-2 p-4 rounded-lg border bg-white shadow-sm">
-          <label className="block text-sm font-semibold mb-2">
-            Image prompt
-          </label>
+          <label className="block text-sm font-semibold mb-2">Image prompt</label>
           <textarea
             value={genPrompt}
             onChange={(e) => setGenPrompt(e.target.value)}
@@ -298,12 +267,7 @@ function ImageGenerator({
           />
 
           <div className="mt-3 flex items-center gap-x-3">
-            <Button
-              size="sm"
-              type="button"
-              onClick={handleGenerate}
-              disabled={isGenerating}
-            >
+            <Button size="sm" type="button" onClick={handleGenerate} disabled={isGenerating}>
               {isGenerating ? "Generating…" : "Generate Image"}
             </Button>
 
@@ -321,18 +285,14 @@ function ImageGenerator({
               Close
             </Button>
 
-            <div className="ml-auto text-xs text-muted-foreground">
-              {genPrompt.length} chars
-            </div>
+            <div className="ml-auto text-xs text-muted-foreground">{genPrompt.length} chars</div>
           </div>
 
           <div className="mt-4">
             {isGenerating && (
               <div className="rounded-lg border p-4 bg-gradient-to-r from-white to-slate-50 overflow-hidden">
                 <div className="h-40 w-full rounded-lg bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 animate-pulse" />
-                <div className="mt-3 text-xs text-muted-foreground">
-                  Generating image…
-                </div>
+                <div className="mt-3 text-xs text-muted-foreground">Generating image…</div>
               </div>
             )}
 
@@ -355,11 +315,7 @@ function ImageGenerator({
                 </div>
 
                 <div className="flex gap-x-2">
-                  <Button
-                    size="sm"
-                    type="button"
-                    onClick={handleAcceptGenerated}
-                  >
+                  <Button size="sm" type="button" onClick={handleAcceptGenerated}>
                     Use Image
                   </Button>
                   <Button
@@ -399,19 +355,15 @@ function ImageGenerator({
   );
 }
 
-export const EditProjectForm = ({
-  onCancel,
-  initialValues,
-}: EditProjectFormProps) => {
+export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProps) => {
   const router = useRouter();
   const { mutate, isPending } = useUpdateProject();
-  const { mutate: deleteProject, isPending: isDeletingProject } =
-    useDeleteProject();
+  const { mutate: deleteProject, isPending: isDeletingProject } = useDeleteProject();
 
   const [DeleteDialog, confirmDelete] = useConfirm(
     "Delete Workspace",
     "This action cannot be undone.",
-    "destructive"
+    "destructive",
   );
 
   const form = useForm<z.infer<typeof updateProjectSchema>>({
@@ -422,14 +374,10 @@ export const EditProjectForm = ({
     },
   });
 
-  // Top-level image state (file or URL)
-  const [fieldImageValue, setFieldImageValue] = useState<File | string | null>(
-    () => {
-      return initialValues.imageUrl ?? null;
-    }
-  );
+  const [fieldImageValue, setFieldImageValue] = useState<File | string | null>(() => {
+    return initialValues.imageUrl ?? null;
+  });
 
-  // Clean up created object URLs if any
   const createdObjectUrls = useRef<string[]>([]);
   useEffect(() => {
     return () => {
@@ -450,11 +398,10 @@ export const EditProjectForm = ({
         onSuccess: () => {
           window.location.href = `/workspaces/${initialValues.workspaceId}`;
         },
-      }
+      },
     );
   };
 
-  // IMPORTANT: send either File or string to the mutate call, don't coerce non-Files to ""
   const onSubmit = (values: z.infer<typeof updateProjectSchema>) => {
     const finalValues = {
       ...values,
@@ -462,8 +409,8 @@ export const EditProjectForm = ({
         values.image instanceof File
           ? values.image
           : typeof values.image === "string"
-          ? values.image
-          : "",
+            ? values.image
+            : "",
     };
 
     mutate({ form: finalValues, param: { projectId: initialValues.$id } });
@@ -488,7 +435,6 @@ export const EditProjectForm = ({
       setFieldImageValue(urlOrFile);
       form.setValue("image", urlOrFile, { shouldTouch: true });
     } else {
-      // a File
       setFieldImageValue(urlOrFile);
       form.setValue("image", urlOrFile, { shouldTouch: true });
     }
@@ -508,16 +454,14 @@ export const EditProjectForm = ({
                 ? onCancel
                 : () =>
                     router.push(
-                      `/workspaces/${initialValues.workspaceId}/projects/${initialValues.$id}`
+                      `/workspaces/${initialValues.workspaceId}/projects/${initialValues.$id}`,
                     )
             }
           >
             <ArrowLeftIcon className="size-4" />
             Back
           </Button>
-          <CardTitle className="text-xl font-bold">
-            {initialValues.name}
-          </CardTitle>
+          <CardTitle className="text-xl font-bold">{initialValues.name}</CardTitle>
         </CardHeader>
 
         <div className="px-7">
@@ -590,8 +534,7 @@ export const EditProjectForm = ({
           <div className="flex flex-col">
             <h3 className="font-bold">Danger Zone</h3>
             <p className="text-sm text-muted-foreground">
-              Deleting a project is irreversible and will remove all associated
-              data.
+              Deleting a project is irreversible and will remove all associated data.
             </p>
             <DottedSeparator className="py-7" />
             <Button

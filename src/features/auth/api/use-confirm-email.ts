@@ -6,10 +6,9 @@ import { client } from "@/lib/rpc";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-// Manual Type
 type RequestType = {
-    userId: string;
-    secret: string;
+  userId: string;
+  secret: string;
 };
 
 export const useConfirmEmail = () => {
@@ -18,9 +17,8 @@ export const useConfirmEmail = () => {
 
   const mutation = useMutation<any, Error, RequestType>({
     mutationFn: async ({ userId, secret }) => {
-      // @ts-ignore
-      const response = await client.api.auth["verify-email"].$post({ 
-          json: { userId, secret } 
+      const response = await client.api.auth["verify-email"].$post({
+        json: { userId, secret },
       });
       return await response.json();
     },

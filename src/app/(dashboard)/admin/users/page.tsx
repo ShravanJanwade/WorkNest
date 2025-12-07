@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { redirect } from "next/navigation";
-import { 
-  Users, 
-  UserPlus, 
+import {
+  Users,
+  UserPlus,
   Search,
   Shield,
   UserCog,
   Briefcase,
   MoreVertical,
-  Mail
+  Mail,
 } from "lucide-react";
 
 import { useCurrent } from "@/features/auth/api/use-current";
@@ -58,7 +58,7 @@ const AdminUsersPage = () => {
   const { mutate: inviteUser, isPending: isInviting } = useInviteUser();
   const { mutate: updateMember } = useUpdateMember();
   const { mutate: deleteMember } = useDeleteMember();
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<string>("EMPLOYEE");
@@ -73,26 +73,31 @@ const AdminUsersPage = () => {
     redirect("/sign-in");
   }
 
-  const filteredUsers = usersData?.documents?.filter((member: any) => 
-    member.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    member.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) ?? [];
+  const filteredUsers =
+    usersData?.documents?.filter(
+      (member: any) =>
+        member.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.email?.toLowerCase().includes(searchQuery.toLowerCase()),
+    ) ?? [];
 
   const handleInvite = () => {
     if (!inviteEmail || !selectedWorkspace) return;
-    
-    inviteUser({
-      json: {
-        email: inviteEmail,
-        role: inviteRole as "ADMIN" | "MANAGER" | "EMPLOYEE",
-        workspaceId: selectedWorkspace,
-      }
-    }, {
-      onSuccess: () => {
-        setInviteEmail("");
-        setIsInviteOpen(false);
-      }
-    });
+
+    inviteUser(
+      {
+        json: {
+          email: inviteEmail,
+          role: inviteRole as "ADMIN" | "MANAGER" | "EMPLOYEE",
+          workspaceId: selectedWorkspace,
+        },
+      },
+      {
+        onSuccess: () => {
+          setInviteEmail("");
+          setIsInviteOpen(false);
+        },
+      },
+    );
   };
 
   const handleRoleChange = (memberId: string, newRole: MemberRole) => {
@@ -112,13 +117,11 @@ const AdminUsersPage = () => {
 
   return (
     <div className="flex flex-col gap-y-6 p-6">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">User Management</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage team members and their roles
-          </p>
+          <p className="text-muted-foreground mt-1">Manage team members and their roles</p>
         </div>
         <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
           <DialogTrigger asChild>
@@ -130,9 +133,7 @@ const AdminUsersPage = () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Invite New User</DialogTitle>
-              <DialogDescription>
-                Send an invitation to add a new team member
-              </DialogDescription>
+              <DialogDescription>Send an invitation to add a new team member</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 pt-4">
               <div className="space-y-2">
@@ -190,8 +191,8 @@ const AdminUsersPage = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <Button 
-                onClick={handleInvite} 
+              <Button
+                onClick={handleInvite}
                 disabled={isInviting || !inviteEmail || !selectedWorkspace}
                 className="w-full"
               >
@@ -204,7 +205,7 @@ const AdminUsersPage = () => {
 
       <Separator />
 
-      {/* Search */}
+      {}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
@@ -215,7 +216,7 @@ const AdminUsersPage = () => {
         />
       </div>
 
-      {/* Users List */}
+      {}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -231,9 +232,7 @@ const AdminUsersPage = () => {
               ))}
             </div>
           ) : filteredUsers.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No users found
-            </div>
+            <div className="text-center py-8 text-muted-foreground">No users found</div>
           ) : (
             <div className="space-y-2">
               {filteredUsers.map((member: any) => (
@@ -251,7 +250,9 @@ const AdminUsersPage = () => {
                       <div className="flex items-center gap-2">
                         <p className="font-medium">{member.name || "Unknown User"}</p>
                         {member.userId === user?.$id && (
-                          <Badge variant="outline" className="text-xs">You</Badge>
+                          <Badge variant="outline" className="text-xs">
+                            You
+                          </Badge>
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground">{member.email}</p>
@@ -261,7 +262,7 @@ const AdminUsersPage = () => {
                     <Badge className={getRoleColor(member.role as MemberRole)}>
                       {getRoleLabel(member.role as MemberRole)}
                     </Badge>
-                    {/* Only show dropdown for other users, not current user */}
+                    {}
                     {member.userId !== user?.$id && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -270,19 +271,25 @@ const AdminUsersPage = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleRoleChange(member.$id, MemberRole.ADMIN)}>
+                          <DropdownMenuItem
+                            onClick={() => handleRoleChange(member.$id, MemberRole.ADMIN)}
+                          >
                             <Shield className="h-4 w-4 mr-2 text-red-600" />
                             Make Admin
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleRoleChange(member.$id, MemberRole.MANAGER)}>
+                          <DropdownMenuItem
+                            onClick={() => handleRoleChange(member.$id, MemberRole.MANAGER)}
+                          >
                             <UserCog className="h-4 w-4 mr-2 text-blue-600" />
                             Make Manager
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleRoleChange(member.$id, MemberRole.EMPLOYEE)}>
+                          <DropdownMenuItem
+                            onClick={() => handleRoleChange(member.$id, MemberRole.EMPLOYEE)}
+                          >
                             <Briefcase className="h-4 w-4 mr-2 text-green-600" />
                             Make Employee
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => handleRemoveMember(member.$id)}
                             className="text-red-600"
                           >

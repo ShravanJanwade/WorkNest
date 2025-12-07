@@ -3,15 +3,7 @@
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { 
-  Settings, 
-  Building2, 
-  Shield, 
-  Bell, 
-  Palette,
-  ArrowLeft,
-  Save
-} from "lucide-react";
+import { Settings, Building2, Shield, Bell, Palette, ArrowLeft, Save } from "lucide-react";
 
 import { useCurrent } from "@/features/auth/api/use-current";
 import { useUpdateMfa } from "@/features/auth/api/use-update-mfa";
@@ -44,7 +36,7 @@ const AdminSettingsPage = () => {
 
   return (
     <div className="flex flex-col gap-y-6 p-6">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => router.back()}>
@@ -64,16 +56,14 @@ const AdminSettingsPage = () => {
       <Separator />
 
       <div className="grid gap-6">
-        {/* General Settings */}
+        {}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building2 className="h-5 w-5 text-violet-600" />
               General Settings
             </CardTitle>
-            <CardDescription>
-              Basic organization configuration
-            </CardDescription>
+            <CardDescription>Basic organization configuration</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
@@ -98,55 +88,46 @@ const AdminSettingsPage = () => {
           </CardContent>
         </Card>
 
-        {/* Security Settings */}
+        {}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-blue-600" />
               Security
             </CardTitle>
-            <CardDescription>
-              Security and access control settings
-            </CardDescription>
+            <CardDescription>Security and access control settings</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Two-Factor Authentication (Email)</Label>
-                <p className="text-sm text-muted-foreground">
-                  Require 6-digit email OTP for login
-                </p>
+                <p className="text-sm text-muted-foreground">Require 6-digit email OTP for login</p>
               </div>
-              <Switch 
+              <Switch
                 checked={user?.prefs?.mfaEnabled || false}
-                onCheckedChange={(checked) => updateMfa(
-                    { enabled: checked }, 
-                    { onSuccess: () => router.refresh() } // Refresh to update UI
-                )}
+                onCheckedChange={(checked) =>
+                  updateMfa({ enabled: checked }, { onSuccess: () => router.refresh() })
+                }
                 disabled={isUpdatingMfa}
               />
             </div>
           </CardContent>
         </Card>
 
-        {/* Notification Settings */}
+        {}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5 text-amber-600" />
               Notifications
             </CardTitle>
-            <CardDescription>
-              Email and notification preferences
-            </CardDescription>
+            <CardDescription>Email and notification preferences</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Email Notifications for New Members</Label>
-                <p className="text-sm text-muted-foreground">
-                  Receive email when new members join
-                </p>
+                <p className="text-sm text-muted-foreground">Receive email when new members join</p>
               </div>
               <Switch defaultChecked />
             </div>
@@ -164,7 +145,7 @@ const AdminSettingsPage = () => {
         </Card>
       </div>
 
-      {/* Save Button */}
+      {}
       <div className="flex justify-end">
         <Button className="bg-gradient-to-r from-violet-600 to-indigo-600">
           <Save className="h-4 w-4 mr-2" />

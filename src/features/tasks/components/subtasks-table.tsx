@@ -82,7 +82,7 @@ export const SubtasksTable = ({ taskId }: SubtasksTableProps) => {
           onValueChange={(value) => setStatusFilter(value as TaskStatus | "all")}
         >
           <SelectTrigger className="w-[150px]">
-             <SelectValue placeholder="All Status" />
+            <SelectValue placeholder="All Status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
@@ -136,6 +136,7 @@ export const SubtasksTable = ({ taskId }: SubtasksTableProps) => {
                         className="size-6"
                         fallbackClassName="text-[10px]"
                       />
+
                       <span className="text-xs text-muted-foreground hidden xl:block">
                         {task.assignee.name}
                       </span>

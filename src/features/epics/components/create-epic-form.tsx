@@ -38,9 +38,7 @@ export const CreateEpicForm = ({ onCancel }: CreateEpicFormProps) => {
   const { mutate, isPending } = useCreateEpic();
 
   const form = useForm<z.infer<typeof createEpicSchema>>({
-    resolver: zodResolver(
-      createEpicSchema.omit({ workspaceId: true, projectId: true })
-    ),
+    resolver: zodResolver(createEpicSchema.omit({ workspaceId: true, projectId: true })),
     defaultValues: {
       name: "",
       description: "",
@@ -55,7 +53,7 @@ export const CreateEpicForm = ({ onCancel }: CreateEpicFormProps) => {
           form.reset();
           onCancel?.();
         },
-      }
+      },
     );
   };
 
@@ -84,6 +82,7 @@ export const CreateEpicForm = ({ onCancel }: CreateEpicFormProps) => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="description"
@@ -101,6 +100,7 @@ export const CreateEpicForm = ({ onCancel }: CreateEpicFormProps) => {
                   </FormItem>
                 )}
               />
+
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -115,6 +115,7 @@ export const CreateEpicForm = ({ onCancel }: CreateEpicFormProps) => {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="endDate"

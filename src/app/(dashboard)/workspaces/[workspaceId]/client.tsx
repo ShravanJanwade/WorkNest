@@ -28,8 +28,9 @@ import Link from "next/link";
 
 export const WorkspaceIdClient = () => {
   const workspaceId = useWorkspaceId();
-  const { data: analytics, isLoading: isLoadingAnalytics } =
-    useGetWorkspaceAnalytics({ workspaceId });
+  const { data: analytics, isLoading: isLoadingAnalytics } = useGetWorkspaceAnalytics({
+    workspaceId,
+  });
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
   });
@@ -40,11 +41,7 @@ export const WorkspaceIdClient = () => {
     workspaceId,
   });
 
-  const isLoading =
-    isLoadingAnalytics ||
-    isLoadingTasks ||
-    isLoadingProjects ||
-    isLoadingMembers;
+  const isLoading = isLoadingAnalytics || isLoadingTasks || isLoadingProjects || isLoadingMembers;
 
   if (isLoading) {
     return <PageLoader />;
@@ -58,7 +55,7 @@ export const WorkspaceIdClient = () => {
     <div className="h-full flex flex-col space-y-4">
       <WorkspaceDashboard data={analytics} />
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        {/* Keeping lists as supplementary data below the main dashboard */}
+        {}
         <TaskList data={tasks.documents} total={tasks.total} />
         <ProjectList data={projects.documents} total={projects.total} />
         <MemberList data={members.documents} total={members.total} />
@@ -151,9 +148,8 @@ export const ProjectList = ({ data, total }: ProjectListProps) => {
                       className="size-12"
                       fallbackClassName="text-lg"
                     />
-                    <p className="text-lg font-medium truncate">
-                      {project.name}
-                    </p>
+
+                    <p className="text-lg font-medium truncate">{project.name}</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -195,12 +191,8 @@ export const MemberList = ({ data, total }: MemberListProps) => {
                 <CardContent className="p-3 flex flex-col items-center gap-x-2">
                   <MemberAvatar name={member.name} className="size-12" />
                   <div className="flex flex-col items-center overflow-hidden">
-                    <p className="text-lg font-medium line-clamp-1">
-                      {member.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground line-clamp-1">
-                      {member.email}
-                    </p>
+                    <p className="text-lg font-medium line-clamp-1">{member.name}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-1">{member.email}</p>
                   </div>
                 </CardContent>
               </Card>
