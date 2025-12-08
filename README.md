@@ -1,8 +1,9 @@
 # WorkNest
+
 <br />
 December, 2025. <br />
 
-Full-stack Jira Clone project built by using Next JS 14, React, TypeScript, Shadcn UI, Tailwind CSS, Hono, and Appwrite.
+Full-stack Jira Clone project built by using Next JS 14, React, TypeScript, Shadcn UI, Tailwind CSS, Hono, backblaze,resend,nodemailer and Appwrite.
 
 ## Features
 
@@ -40,6 +41,17 @@ bun dev
 
 5. **Start building and customizing your Jira Clone!**
 
+6. **Demo Account**
+
+   Email: shravan@gmail.com
+
+   Password: Shravan@123.
+
+6. **Superadmin Account**
+
+   Email: superadmin@worknest.com
+
+   Password: SuperAdmin@123!
 
 ## Technologies Used
 
